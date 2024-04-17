@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "bun",
+			"group": "build",
+			"script": "--bun run dev",
+			"label": "bun run",
+			"detail": "run bun"
+		}
+	]
+}

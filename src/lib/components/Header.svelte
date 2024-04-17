@@ -1,0 +1,1 @@
+<h1 class="text-center mb-5"><slot></slot></h1>

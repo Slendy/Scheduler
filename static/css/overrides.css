@@ -1,0 +1,211 @@
+:root {
+    color-scheme: dark light;
+    --schedule-text-color-dark: #eee;
+    --schedule-bg-color-dark: #121212;
+    --schedule-accent-color-dark: rgba(23, 23, 23);
+    --schedule-accent2-dark: rgba(255, 255, 255, .04);
+    --schedule-schedulebg-dark: rgba(18, 18, 18, 0.9);
+    --schedule-scheduleborder-dark: rgba(255, 255, 255, .2);
+    --schedule-red-dark: #f64747;
+
+    --schedule-text-color-light: #5e7072;
+    --schedule-bg-color-light: white;
+    --schedule-accent-color-light: #f7f7f7;
+    --schedule-accent2-light: rgba(0, 0, 0, .04);
+    --schedule-schedulebg-light: rgba(255, 255, 255, 0.9);
+    --schedule-scheduleborder-light: rgba(0, 0, 0, .2);
+    --schedule-red-light: #f22613;
+
+    --schedule-text-color: var(--schedule-text-color-light);
+    --schedule-bg-color: var(--schedule-bg-color-light);
+    --schedule-accent-color: var(--schedule-accent-color-light);
+    --schedule-accent2: var(--schedule-accent2-light);
+    --schedule-schedulebg: var(--schedule-schedulebg-light);
+    --schedule-scheduleborder: var(--schedule-scheduleborder-light);
+    --schedule-red: var(--schedule-red-light);
+}
+
+:root.darkMode {
+    --schedule-text-color: var(--schedule-text-color-dark);
+    --schedule-bg-color: var(--schedule-bg-color-dark);
+    --schedule-accent-color: var(--schedule-accent-color-dark);
+    --schedule-accent2: var(--schedule-accent2-dark);
+    --schedule-schedulebg: var(--schedule-schedulebg-dark);
+    --schedule-scheduleborder: var(--schedule-scheduleborder-dark);
+    --schedule-red: var(--schedule-red-dark);
+}
+/* BEGIN SITE SPECIFIC STYLES */
+.transition {
+    -moz-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    -webkit-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+}
+
+
+.force-transition {
+    -moz-transition: all 200ms ease-in-out !important;
+    -o-transition: all 200ms ease-in-out !important;
+    -webkit-transition: all 200ms ease-in-out !important;
+    transition: all 200ms ease-in-out !important;
+}
+
+.notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+}
+
+.toggle {
+    fill: var(--schedule-text-color);
+    cursor: pointer;
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    line-height: 20px;
+}
+
+.footer-container {
+    padding: 15px;
+    font-size: 1.2em;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* END SITE SPECIFIC STYLES */
+
+
+/* BEGIN BOOTSTRAP OVERRIDES */
+body {
+    /*--bs-body-font-family: "Open Sans", "Helvetica", serif;*/
+    --bs-body-bg: var(--schedule-bg-color) !important;
+    --bs-body-color: var(--schedule-text-color) !important;
+    --bs-border-color: var(--schedule-scheduleborder) !important;
+}
+
+nav {
+    background-color: var(--schedule-accent-color) !important;
+    border-bottom: 1px solid var(--schedule-accent2);
+}
+
+footer {
+    background-color: var(--schedule-accent-color) !important;
+    border-top: 1px solid var(--schedule-accent2);
+}
+
+.nav-link {
+    --bs-nav-link-hover-color: var(--schedule-red) !important;
+    --bs-nav-link-color: var(--schedule-text-color) !important;
+    --bs-navbar-active-color: var(--schedule-red) !important;
+}
+
+button {
+    --bs-accordion-active-bg: var(--schedule-accent2);
+    --bs-accordion-active-color: var(--schedule-red);
+    --bs-accordion-btn-focus-box-shadow: var(--schedule-accent2);
+}
+
+[data-bs-theme=dark] .accordion-button::after, .accordion-button::after {
+    --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='gray' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e") !important;
+    --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='gray' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e") !important;
+}
+
+div {
+    --bs-accordion-border-color: var(--schedule-scheduleborder) !important;
+}
+
+/* END BOOTSTRAP OVERRIDES */
+
+
+/* BEGIN SCHEDULE EDITOR STYLES */
+
+.schedule-title[contenteditable] {
+    height: 1.5em;
+    line-height: 1.5em;
+    max-width: fit-content;
+    width: 100%;
+    box-sizing: content-box;
+}
+
+.schedule-title[contenteditable]:hover {
+    background-color: var(--schedule-accent2);
+    border-radius: 3px;
+    outline: var(--schedule-accent2) solid 1px;
+}
+
+select {
+    background-color: var(--schedule-accent-color) !important;
+}
+
+
+.schedule-title[contenteditable]:focus {
+    background-color: var(--schedule-accent2);
+    border-radius: 5px;
+    outline: var(--schedule-scheduleborder) solid 2px;
+    z-index: 1;
+}
+
+.schedule-input {
+    background-color: var(--schedule-accent-color);
+    border-radius: 3px;
+    border: var(--schedule-accent2) solid 2px;
+}
+
+.schedule-input:focus {
+    background-color: var(--schedule-accent-color);
+    border-radius: 3px;
+    border: var(--schedule-scheduleborder) solid 2px;
+    outline: none;
+}
+
+.event-container {
+    display: inline-block;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.handle {
+    cursor: grab;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.sortable-ghost {
+    opacity: 0;
+}
+
+.grabbing * {
+    cursor: move !important; /* fallback: no `url()` support or images disabled */
+    cursor: -webkit-grabbing !important; /* Chrome 1-21, Safari 4+ */
+    cursor: -moz-grabbing !important; /* Firefox 1.5-26 */
+    cursor: grabbing !important; /* W3C standards syntax, should come least */
+}
+
+[contenteditable][placeholder]:empty:before {
+    content: attr(placeholder);
+    color: #999;
+    cursor: text;
+}
+
+/* END SCHEDULE EDITOR STYLES */
