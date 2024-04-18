@@ -6,17 +6,13 @@
 	export let data: PageData;
 </script>
 
-<svelte:head>
-	<title>Environments</title>
-</svelte:head>
-
 <Header>Environments</Header>
 
 {#await data.environments then environments}
-<div class="mb-3">
-	<h4 class="mb-3">There are {environments.length} environments</h4>
-	<a href="/admin/environments/add" class="btn btn-secondary">Add new environment</a>
-</div>
+	<div class="mb-3">
+		<h4 class="mb-3">There are {environments.length} environments</h4>
+		<a href="/admin/environments/add" class="btn btn-secondary">Add new environment</a>
+	</div>
 {/await}
 
 <div class="row row-cols-sm-auto row-cols-1 g-4">
@@ -24,7 +20,12 @@
 		<p>loading...</p>
 	{:then environments}
 		{#each environments as environment}
-			<EnvironmentCard {...environment} />
+			<EnvironmentCard
+				environmentId={environment._id}
+				environmentDomain={environment.environmentDomain}
+				environmentName={environment.environmentName}
+				totalSchedules={environment.schedules.size || 0}
+			/>
 		{/each}
 	{:catch error}
 		<p>Error: {error.message}</p>

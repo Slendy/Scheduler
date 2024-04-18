@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let userId: number;
+    export let userId: string;
     export let username: string;
     export let isAdmin: boolean;
     export let permissionMap: any;
@@ -20,8 +20,8 @@
             </p>
             <p class="card-text">
                 <span class="card-text fw-bold">Permissions:</span>
-                {#if permissionMap}
-                    <span class="card-text">{permissionMap}</span>
+                {#if permissionMap.size || 0 > 0}
+                    <span class="card-text">{JSON.stringify(permissionMap, null, 2)}</span>
                 {:else}
                     <span class="card-text">None</span>
                 {/if}

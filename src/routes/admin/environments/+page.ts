@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 export const load: PageLoad = ({ fetch }) => {
     return {
-        environments: fetch('http://localhost:5001/api/v1/environment/list').then((response) => response.json()).then((response) => response)
+        environments: fetch('/api/v1/environments/list').then((response) => response.json()).then((json) => json.environments)
     };
 };

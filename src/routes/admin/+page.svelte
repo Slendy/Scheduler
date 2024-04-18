@@ -8,4 +8,10 @@ export let data: PageData
 
 <Header>Scheduler</Header>
 
-<h3>Running {data.stats.totalEnvironments} environments with {data.stats.totalUsers} users</h3>
+{#await data.stats}
+<p>Loading...</p>
+{:then stats}
+<h3>Running {stats.totalEnvironments} environments with {stats.totalUsers} users</h3>
+{:catch error}
+<p>an error has occurred: {error.message}</p>
+{/await}
