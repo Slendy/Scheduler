@@ -1,7 +1,8 @@
 import { EnvironmentModel } from '$lib/server/models';
-import { error } from '@sveltejs/kit';
+import { apiResponse } from '$lib/server/utils';
 
 export const GET = async ({ }) => {
     const environments = await EnvironmentModel.find();
-    return Response.json({ environments });
+
+    return apiResponse(200, { environments });
 }

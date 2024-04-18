@@ -6,7 +6,7 @@
 	export let data: PageData;
 </script>
 
-<DeleteEnvironmentModal environmentName={data.environment.environmentName}/>
+<DeleteEnvironmentModal environmentName={data.environment.environmentName} environmentId={data.environment._id}/>
 
 <svelte:head>
 	<title>{data.environment.environmentName}</title>

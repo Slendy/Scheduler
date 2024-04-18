@@ -7,6 +7,13 @@
 			"script": "--bun run dev",
 			"label": "bun run",
 			"detail": "run bun"
+		},
+		{
+			"type": "bun",
+			"group": "none",
+			"script": "run check",
+			"label": "regenerate type files",
+			"detail": "bun run check"
 		}
 	]
 }
