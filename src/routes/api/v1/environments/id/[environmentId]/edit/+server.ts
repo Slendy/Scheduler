@@ -1,5 +1,5 @@
 import { EnvironmentModel } from '$lib/server/models';
-import { isValidObjectId, type ObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import isValidDomain from 'is-valid-domain';
 import { apiResponse } from '$lib/server/utils.js';
 import { error } from '@sveltejs/kit';
@@ -29,6 +29,7 @@ export const POST = async ({ params, request }) => {
     environment.environmentName = name.toString();
     environment.environmentDomain = domain.toString();
     environment.isVerified = false;
+
     await environment.save();
     console.log(`Updated environment ${environment._id} new name: '${name}', new domain: '${domain}'`)
     return apiResponse(200, { success: true, environment })

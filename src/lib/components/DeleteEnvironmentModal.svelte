@@ -1,18 +1,11 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import EnhancedForm from './EnhancedForm.svelte';
 
 	export let environmentName: string;
-    export let environmentId: string;
+	export let environmentId: string;
 
 	let deleteInput: string;
-	//TODO: figure out how to route the post to a /api handler
-    function handleSubmit(e) {
-        if(deleteInput != environmentName){
-            e.stopImmediatePropogation();
-        }
-    }
 </script>
 
 <div
@@ -22,21 +15,15 @@
 	aria-labelledby="deleteModalLabel"
 	aria-hidden="true"
 >
-	<form
-		method="post"
-        action="/api/v1/environments/id/{environmentId}/delete"
-        on:submit|preventDefault={(e) => {
-            if(deleteInput != environmentName) {
-                e.stopImmediatePropagation();
-            }
-        }}
-		use:enhance={() => {
-			return async ({ result }) => {
-				// pretty sure this isn't how you're supposed to use enhanced forms but fuck it we ball
-				if (result['success']) {
-					goto("/admin/environments");
-				}
-			};
+	<EnhancedForm
+		action={`/api/v1/environments/id/${environmentId}/delete`}
+		onSubmit={(e) => {
+			if (deleteInput != environmentName) {
+				e.stopImmediatePropagation();
+			}
+		}}
+		succeed={() => {
+			goto('/admin/environments');
 		}}
 	>
 		<div class="modal-dialog">
@@ -74,5 +61,5 @@
 				</div>
 			</div>
 		</div>
-	</form>
+	</EnhancedForm>
 </div>

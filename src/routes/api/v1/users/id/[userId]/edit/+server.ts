@@ -1,5 +1,5 @@
 import { UserModel } from '$lib/server/models';
-import { isValidObjectId, type ObjectId } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import { apiResponse } from '$lib/server/utils.js';
 import { error } from '@sveltejs/kit';
 
@@ -16,7 +16,7 @@ export const POST = async ({ params, request }) => {
     const data = await request.formData();
     const name = data.get('username');
     if (name == null || name.toString().length == 0) {
-        return apiResponse(400, { success: false, message: 'Invalid username name' })
+        return apiResponse(400, { success: false, message: 'Invalid username' })
     }
     const password = data.get('password');
     if (await UserModel.exists({ username: name, _id: { $ne: user._id } })) {

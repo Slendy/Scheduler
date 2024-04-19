@@ -24,6 +24,7 @@ export async function generateDefaultEnvironment() {
         let defaultEnvironment = new EnvironmentModel({
             environmentDomain: "example.com",
             environmentName: "default",
+            isVerified: false,
             schedules: [],
         });
         await defaultEnvironment.save();

@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import Header from '$lib/components/Header.svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	export let data;
 
 	export let formError: string | null = null;
 </script>
@@ -14,17 +13,13 @@
 
 <ErrorAlert message={formError} />
 
-<form
-	method="post"
-	action="/api/v1/users/id/{data.user._id}/edit"
-	use:enhance={() => {
-		return async ({ result }) => {
-			if (!result['success']) {
-				formError = result['message'];
-			} else {
-				goto(`/admin/users/`);
-			}
-		};
+<EnhancedForm
+	action={'/api/v1/users/id/' + data.user._id + '/edit'}
+	fail={(result) => {
+		formError = result.message;
+	}}
+	succeed={(_) => {
+		goto('/admin/users/');
 	}}
 >
 	<div class="mb-3">
@@ -59,4 +54,4 @@
 
 	<button class="btn btn-secondary" type="submit">Save changes</button>
 	<a href="/admin/users" class="btn btn-danger">Discard changes</a>
-</form>
+</EnhancedForm>

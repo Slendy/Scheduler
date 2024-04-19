@@ -1,5 +1,4 @@
 import { EnvironmentModel } from '$lib/server/models';
-import { isValidObjectId, type ObjectId } from 'mongoose';
 import isValidDomain from 'is-valid-domain';
 import { apiResponse } from '$lib/server/utils.js';
 
@@ -19,6 +18,7 @@ export const POST = async ({ request }) => {
     let newEnvironment = new EnvironmentModel({
         environmentName: name,
         environmentDomain: domain,
+        isVerified: false,
         schedules: [],
     })
     await newEnvironment.save();
