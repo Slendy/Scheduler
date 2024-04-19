@@ -14,6 +14,15 @@
 	if (dev) {
 		navBarItems[navBarItems.length] = ['/admin/debug', 'DEBUG'];
 	}
+
+	// this makes the navbar highlight subpages like /admin/environments/create 
+	// I don't like it, but I also don't like frontend yet here we are
+	function trimUrl(currentUrl: string){
+		let secondSlash = currentUrl.indexOf("/", 1);
+		let thirdSlash = currentUrl.indexOf("/", secondSlash + 1);
+		if(thirdSlash == -1) thirdSlash = currentUrl.length;
+		return currentUrl.substring(0, thirdSlash);
+	}
 </script>
 
 <svelte:head>
@@ -77,7 +86,7 @@
 			{#each navBarItems as navbar}
 				<ul class="navbar-nav me-4">
 					<li class="nav-item">
-						<a class="nav-link" class:active={$page.url.pathname == navbar[0]} href={navbar[0]}>
+						<a class="nav-link" class:active={(trimUrl($page.url.pathname) === navbar[0])} href={navbar[0]}>
 							{navbar[1]}
 						</a>
 					</li>

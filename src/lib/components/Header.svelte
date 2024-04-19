@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { beforeUpdate, onMount } from 'svelte';
 
 	export let title: string | null = null;
 
@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<title>{text}</title>
+	<title>{text || "Scheduler"}</title>
 </svelte:head>
 
 <h1 class="text-center mb-5" bind:this={content}><slot></slot></h1>

@@ -2,16 +2,19 @@ import type { LayoutLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 
 export const load: LayoutLoad = async ({ fetch, params }) => {
-    const { environmentId } = params;
-    let environment = await fetch('/api/v1/environments/id/' + environmentId)
+    const { userId } = params;
+    let user = await fetch('/api/v1/users/id/' + userId)
         .then((response) => {
             if (!response.ok) {
                 return null;
             }
             return response.json();
         })
-    if (environment == null) {
-        return redirect(301, "/admin/environments");
+        .catch((error) => {
+            console.log(error);
+        })
+    if (user == null) {
+        return redirect(301, "/admin/users");
     }
-    return { environment };
+    return { user };
 };
