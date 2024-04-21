@@ -28,6 +28,7 @@
     "prettier": "^3.1.1",
     "prettier-plugin-svelte": "^3.1.2",
     "svelte": "^4.2.7",
+    "svelte-adapter-bun": "^0.5.2",
     "svelte-check": "^3.6.0",
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
@@ -36,7 +37,6 @@
   },
   "type": "module",
   "dependencies": {
-    "dotenv": "^16.4.5",
     "is-valid-domain": "^0.1.6",
     "mongoose": "^8.3.2"
   }

@@ -1,0 +1,25 @@
+version: '3.5'
+services:
+  frontend:
+    image: scheduler:latest
+    build:
+      context: .
+    environment:
+      MONGO_URL: mongodb://root:schedule@db:27017/scheduler?authSource=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_started
+  db:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 'root'
+      MONGO_INITDB_ROOT_PASSWORD: 'schedule'
+    volumes:
+      - 'db:/data/db'
+    ports:
+      - "27017:27017"
+
+volumes:
+  db:

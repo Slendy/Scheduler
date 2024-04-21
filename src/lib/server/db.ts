@@ -1,9 +1,9 @@
 import { connect, type ConnectOptions } from 'mongoose';
 import { EnvironmentModel, UserModel } from './models';
-import { MONGO_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
-if (!MONGO_URL) {
-    throw new Error('Please add your Mongo URI to .env.local')
+if (!env.MONGO_URL) {
+    throw new Error('Please specify the MONGO_URI environment variable')
 }
 
 export async function generateDefaultUser() {
@@ -33,7 +33,7 @@ export async function generateDefaultEnvironment() {
 }
 
 export async function connectToDb() {
-    await connect(MONGO_URL, {
+    await connect(env.MONGO_URL, {
         serverSelectionTimeoutMS: 5000 // Timeout after 5s instead of 30s
     } as ConnectOptions);
 }

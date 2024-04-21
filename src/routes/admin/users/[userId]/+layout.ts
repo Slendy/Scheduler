@@ -1,7 +1,6 @@
-import type { LayoutLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 
-export const load: LayoutLoad = async ({ fetch, params }) => {
+export const load = async ({ fetch, params }) => {
     const { userId } = params;
     let user = await fetch('/api/v1/users/id/' + userId)
         .then((response) => {

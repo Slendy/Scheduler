@@ -1,6 +1,5 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
-export const load: PageLoad = ({ fetch }) => {
+export const load = ({ fetch }) => {
     return {
         users: fetch('/api/v1/users/list').then((response) => {
             if (response.ok) {

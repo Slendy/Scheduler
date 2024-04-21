@@ -1,7 +1,6 @@
-import type { PageLoad } from './$types';
 import { dev } from '$app/environment'
 import { redirect } from '@sveltejs/kit';
-export const load: PageLoad = async ({ fetch }) => {
+export const load = async ({ fetch }) => {
     if (!dev) {
         redirect(301, "/admin")
     }
