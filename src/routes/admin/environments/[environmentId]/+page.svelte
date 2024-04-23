@@ -1,12 +1,14 @@
 <script lang="ts">
 	import DeleteEnvironmentModal from '$lib/components/DeleteEnvironmentModal.svelte';
 	import ScheduleCard from '$lib/components/ScheduleCard.svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	export let data;
 </script>
 
-<DeleteEnvironmentModal environmentName={data.environment.environmentName} environmentId={data.environment._id}/>
+<DeleteEnvironmentModal
+	environmentName={data.environment.environmentName}
+	environmentId={data.environment._id}
+/>
 
 <svelte:head>
 	<title>{data.environment.environmentName}</title>
