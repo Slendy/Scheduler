@@ -4,19 +4,19 @@
 	import EditableSpan from '$lib/components/schedule/EditableSpan.svelte';
 	import VariationCard from '$lib/components/schedule/VariationCard.svelte';
 	import { verifySchedule as collectScheduleErrors } from '$lib/shared/schedule';
-	import type { ScheduleEvent, ScheduleVariation, Schedule } from '$lib/shared/types.js';
+	import type { Schedule } from '$lib/shared/types.js';
 	import { MultiSelect } from 'svelte-multiselect';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { goto } from '$app/navigation';
 
-    export let schedule: Schedule = {
-        scheduleId: '',
-        events: [],
-        name: '',
-        variations: [],
-    };
+	export let schedule: Schedule = {
+		scheduleId: '',
+		events: [],
+		name: '',
+		variations: []
+	};
 
 	function addNewEvent() {
 		schedule.events = [
@@ -88,7 +88,9 @@
 			e.preventDefault();
 		}
 	}}
-	succeed={(_) => goto(`/admin/environments/${environmentId}`)}
+	succeed={(_) => {
+		goto(`/admin/environments/${environmentId}`, { invalidateAll: true });
+	}}
 	fail={(result) => (errorMessages = result.errors)}
 	onSubmit={(e) => verifySchedule(e)}
 >
@@ -126,7 +128,6 @@
 							<input
 								class="schedule-input"
 								placeholder="Event name"
-								name="event-name"
 								maxlength="32"
 								bind:value={event.name}
 							/>
@@ -136,20 +137,13 @@
 							<input
 								class="schedule-input"
 								type="time"
-								name="start-time"
 								id="start-time"
 								bind:value={event.startTime}
 							/>
 						</div>
 						<div class="col my-1">
 							<label class="fw-bold ps-2 pe-1" for="end-time">END: </label>
-							<input
-								class="schedule-input"
-								type="time"
-								name="end-time"
-								id="end-time"
-								bind:value={event.endTime}
-							/>
+							<input class="schedule-input" type="time" id="end-time" bind:value={event.endTime} />
 						</div>
 						<!-- If all the variations have a name and have atleast 1 option -->
 						{#if schedule.variations.length > 0 && schedule.variations.reduce((sum, cur) => sum && cur.name.length > 0 && cur.options.length > 0, true)}
@@ -208,11 +202,10 @@
 			</div>
 		</div>
 
-		<div class="container text-center" transition:slide|global>
+		<div class="container text-center">
 			<div
 				class="d-flex justify-content-center row row-cols-auto variation-container"
 				id="variation-container"
-				transition:slide
 			>
 				{#each schedule.variations as variation}
 					<VariationCard

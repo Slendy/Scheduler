@@ -8,11 +8,11 @@
 	export let selectedVariation: string;
 	$: cachedSchedule = createCachedSchedule(schedule, scheduleDate);
 
-	$: console.log("cache:" + cachedSchedule?.events[0].endTimeDate)
+	//NOTE(josh): if this component starts acting wacky it's probably because of the global transition
 </script>
 
 {#if cachedSchedule != null}
-	<div class="schedule-view" id="schd-view" transition:scale|global>
+	<div class="schedule-view transition" id="schd-view" transition:scale|global>
 		<span class="schedule-title" id="schedule-title">
 			Schedule for {cachedSchedule?.events[0].startTimeDate.toLocaleString('en-US', {
 				month: 'long',
@@ -22,11 +22,11 @@
 		<table class="schedule-table" id="schedule-table">
 			<tbody>
 				<!-- <p>{JSON.stringify(cachedSchedule, null, 2)}</p> -->
-				{#each cachedSchedule.events.filter(e => schedule.variations.length == 0 || e.variations.includes(selectedVariation)) as event}
+				{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || e.variations.includes(selectedVariation)) as event}
 					<tr>
 						<td class="table-left">{event.name}</td>
-						<td class="table-right"
-							>{event.startTimeDate.toLocaleString('en-US', {
+						<td class="table-right">
+							{event.startTimeDate.toLocaleString('en-US', {
 								hour: 'numeric',
 								minute: 'numeric',
 								hour12: true
@@ -36,8 +36,8 @@
 									hour: 'numeric',
 									minute: 'numeric',
 									hour12: true
-								})}</td
-						>
+								})}
+						</td>
 					</tr>
 				{/each}
 			</tbody>

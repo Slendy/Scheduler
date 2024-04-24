@@ -19,7 +19,7 @@
 		formError = result.message;
 	}}
 	succeed={(_) => {
-		goto('/admin/users/');
+		goto('/admin/users/', { invalidateAll: true });
 	}}
 >
 	<div class="mb-3">

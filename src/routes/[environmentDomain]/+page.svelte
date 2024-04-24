@@ -3,7 +3,6 @@
 	import ScheduleEventTable from '$lib/components/schedule/ScheduleEventTable.svelte';
 	import ScheduleView from '$lib/components/schedule/ScheduleView.svelte';
 	import type { Schedule } from '$lib/shared/types';
-	import { scale } from 'svelte/transition';
 
 	let testSchedule: Schedule = {
 		scheduleId: '',
@@ -27,7 +26,7 @@
 	<script>
 		// we need to put this script in the header and not in onMount, otherwise the page flashes the default on load
 		const getPreferredScheme = () =>
-				window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
+			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
 
 		let storedTheme = localStorage.getItem('colorTheme') ?? getPreferredScheme();
 

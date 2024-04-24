@@ -22,18 +22,18 @@ export function verifySchedule(schedule: Schedule): string[] {
         }
         console.log('past the variation checks', variation.options);
         for (let option of variation.options) {
-            console.log(option);
             let timeSeconds = 0;
             for (let i = 0; i < schedule.events.length; i++) {
                 let event = schedule.events[i];
                 // skip events that aren't part of this variation, or don't skip when we don't have any variations
-                if (!event.variations.includes(option) && schedule.events.length !== 0) {
+                if (!event.variations.includes(option) && schedule.variations.length !== 0) {
+                    console.log("skipping this event check")
                     continue;
                 }
                 if (event.name.length === 0) {
                     errors.push('All events in the schedule must have a name');
                 }
-                if (event.variations.length === 0 && schedule.events.length !== 0) {
+                if (event.variations.length === 0 && schedule.variations.length !== 0) {
                     errors.push('Events must be a part of at least one variation');
                 }
                 if (event.startTime.length === 0) {
@@ -41,6 +41,13 @@ export function verifySchedule(schedule: Schedule): string[] {
                 }
                 if (event.endTime.length === 0) {
                     errors.push(`Event '${event.name}' does not have a end start time`);
+                }
+                console.log("start time: ", event.startTime)
+                console.log("end time: ", event.endTime)
+                if (event.startTime.length !== 0 &&
+                    event.endTime.length !== 0 &&
+                    event.startTime === event.endTime) {
+                    errors.push(`Event '${event.name}' start time and end time are the same`);
                 }
                 let startTime = convertTimeToSeconds(event.startTime)
                 let endTime = convertTimeToSeconds(event.endTime);
@@ -82,15 +89,15 @@ export function createCachedSchedule(schedule: Schedule, scheduleDate: Date): Ca
 export function extractHoursAndSeconds(time: string): [number, number] {
     let components = time.split(":");
     if (components.length !== 2) return [NaN, NaN];
-    
+
     let hourAndSecond = components.map((e) => parseInt(e));
 
     return [hourAndSecond[0], hourAndSecond[1]];
 }
 
-export function convertTimeToDate(time: string, baseDate: Date = new Date()){
+export function convertTimeToDate(time: string, baseDate: Date = new Date()) {
     let timeComponents = extractHoursAndSeconds(time);
-    
+
     baseDate.setHours(timeComponents[0], timeComponents[1], 0)
     return baseDate;
 }
