@@ -14,7 +14,7 @@
 <ErrorAlert message={formError} />
 
 <EnhancedForm
-	action={`/api/v1/environments/id/${data.environment._id}/edit`}
+	action={`/api/v1/admin/environments/id/${data.environment._id}/edit`}
 	fail={(result) => {
 		formError = result.message;
 	}}

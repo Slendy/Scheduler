@@ -1,6 +1,6 @@
 export const load = ({ fetch }) => {
     return {
-        stats: fetch('/api/v1/stats').then((response) => {
+        stats: fetch('/api/v1/admin/stats').then((response) => {
             if (response.ok) {
                 return response.json()
             }

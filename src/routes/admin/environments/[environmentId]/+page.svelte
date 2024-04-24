@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DeleteEnvironmentModal from '$lib/components/DeleteEnvironmentModal.svelte';
-	import ScheduleCard from '$lib/components/ScheduleCard.svelte';
+	import ScheduleCard from '$lib/components/schedule/ScheduleCard.svelte';
 
 	export let data;
 </script>
@@ -55,31 +55,6 @@
 	<div class="row row-cols-1 row-cols-md-4 g-4">
 		{#each data.environment.schedules as schedule}
 			<ScheduleCard environmentId={data.environment._id} {...schedule} />
-			<div class="col">
-				<div class="card" style="width: 18rem;">
-					<div class="card-header">
-						{schedule.scheduleId}
-					</div>
-					<ul class="card-body mb-0">
-						<p class="card-text">
-							<span class="card-text fw-bold">Schedule Name:</span>
-							<span class="card-text">{schedule.name}</span>
-						</p>
-						<p class="card-text">
-							<span class="card-text fw-bold">Published?:</span>
-							<span class="card-text">{schedule.isPublished}</span>
-						</p>
-						<p class="card-text">
-							<span class="card-text fw-bold"># Events:</span>
-							<span class="card-text">{schedule.events}</span>
-						</p>
-						<a
-							href="/admin/environments/{data.environment._id}/schedule/{schedule.scheduleId}"
-							class="btn btn-secondary">View Schedule</a
-						>
-					</ul>
-				</div>
-			</div>
 		{/each}
 	</div>
 {/if}

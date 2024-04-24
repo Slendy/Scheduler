@@ -12,7 +12,7 @@
 <ErrorAlert message={formError} />
 
 <EnhancedForm
-	action={'/api/v1/environments/add'}
+	action={'/api/v1/admin/environments/add'}
 	fail={(result) => {
 		formError = result.message;
 	}}

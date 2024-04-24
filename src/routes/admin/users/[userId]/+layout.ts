@@ -2,7 +2,7 @@ import { redirect } from "@sveltejs/kit";
 
 export const load = async ({ fetch, params }) => {
     const { userId } = params;
-    let user = await fetch('/api/v1/users/id/' + userId)
+    let user = await fetch('/api/v1/admin/users/id/' + userId)
         .then((response) => {
             if (!response.ok) {
                 return null;

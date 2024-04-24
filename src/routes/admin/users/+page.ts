@@ -1,7 +1,8 @@
 import { error } from '@sveltejs/kit';
+
 export const load = ({ fetch }) => {
     return {
-        users: fetch('/api/v1/users/list').then((response) => {
+        users: fetch('/api/v1/admin/users/list').then((response) => {
             if (response.ok) {
                 return response.json()
             }

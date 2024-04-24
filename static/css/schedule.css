@@ -1,0 +1,305 @@
+/* light theme */
+
+html {
+    color-scheme: dark light;
+    --text-color: #5e7072;
+    --bg-color: white;
+    --accent-color: #f7f7f7;
+    --accent2: rgba(0, 0, 0, .04);
+    --schedulebg: rgba(255, 255, 255, 0.97);
+    --scheduleborder: rgba(0, 0, 0, .2);
+    --red: #f22613;
+}
+
+html.darkMode {
+    --text-color: #eee;
+    --bg-color: #121212;
+    --accent-color: rgba(23, 23, 23);
+    --accent2: rgba(255, 255, 255, .04);
+    --schedulebg: rgba(18, 18, 18, 0.97);
+    --scheduleborder: rgba(255, 255, 255, .2);
+    --red: #f64747;
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        --text-color: #eee;
+        --bg-color: #121212;
+        --accent-color: rgba(23, 23, 23);
+        --accent2: rgba(255, 255, 255, .04);
+        --schedulebg: rgba(18, 18, 18, 0.97);
+        --scheduleborder: rgba(255, 255, 255, .2);
+        --red: #f64747;
+    }
+
+    html.lightMode {
+        --text-color: #5e7072;
+        --bg-color: white;
+        --accent-color: #f7f7f7;
+        --accent2: rgba(0, 0, 0, .04);
+        --schedulebg: rgba(255, 255, 255, 0.97);
+        --scheduleborder: rgba(0, 0, 0, .2);
+        --red: #f22613;
+    }
+}
+
+body {
+    background: var(--bg-color);
+    touch-action: manipulation;
+}
+
+.table-left {
+    padding-right: 5px;
+    word-wrap: normal;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.table-right {
+    padding-left: 5px;
+    margin-right: 15px;
+}
+
+.no-select {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+.transition {
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.schedule-title {
+    display: block;
+    font-weight: bold;
+    /* margin-top: .5em; */
+}
+
+.schedule-table {
+    /*    table-layout: fixed;*/
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.schedule-view {
+    color: var(--text-color);
+    font-family: 'Open Sans', "Helvetica", serif;
+    font-size: 2.5vmax;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 46.25%;
+    max-height: 90%;
+    width: 70%;
+    overflow: auto;
+    scroll-snap-align: center;
+    white-space: nowrap;
+    backface-visibility: hidden;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0);
+    transform: translate(-50%, -50%);
+    background-color: var(--schedulebg);
+    border-radius: 10px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--scheduleborder);
+    padding: .5em 0;
+}
+
+.toggle {
+    fill: var(--text-color);
+    position: absolute;
+    left: .5em;
+    top: .5em;
+    padding: 0;
+    cursor: pointer;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+    color: var(--text-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.footer {
+    color: var(--text-color);
+    position: fixed;
+    width: 100%;
+    box-sizing: border-box;
+    bottom: 0;
+    left: 0;
+    padding: .75em;
+    font-family: "Open Sans", "Helvetica", serif;
+    font-size: 100%;
+    background-color: var(--accent-color);
+    border-top: 1px solid var(--accent2);
+}
+
+.footer-button {
+    font-family: "Open Sans", "Helvetica", serif;
+    font-weight: bold;
+    font-size: 100%;
+    cursor: pointer;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    color: var(--text-color);
+}
+
+.footer-text {
+    padding-right: 1.2em;
+    float: right;
+    font-size: 115%;
+}
+
+.refresh {
+    color: #eee;
+    position: fixed;
+    width: 100%;
+    bottom: auto;
+    z-index: 1;
+    padding: .25em .25em .25em .75em;
+    background-color: rgb(44, 124, 176);
+    border-top: 1px solid rgb(56 149 210);
+}
+
+.update,
+.update:link,
+.update:visited,
+.update:hover,
+.update:active {
+    color: #eee;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.header {
+    color: var(--text-color);
+    text-align: center;
+    font-size: 700%;
+    font-size: 9.5vmin;
+    font-family: 'Open Sans', "Helvetica", serif;
+    display: inherit;
+}
+
+.timer {
+    color: var(--text-color);
+    text-align: center;
+    font-size: 700%;
+    font-size: 9.5vmin;
+    font-family: 'Open Sans', "Helvetica", serif;
+}
+
+.timer-date {
+    color: var(--text-color);
+    font-family: "Open Sans", "Helvetica", serif;
+    font-size: 200%;
+    font-size: 4.1vmin;
+    font-weight: 400;
+}
+
+.vertical-center {
+    width: 70%;
+    position: absolute;
+    top: 44%;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    text-align: center;
+    touch-action: inherit;
+}
+
+.event-text {
+    font-weight: 300;
+    padding: .2em;
+}
+
+.event-break {
+    display: block;
+    content: "";
+    margin-top: calc(1em + 5vh);
+}
+
+.timer-break {
+    display: block;
+    content: "";
+    margin-top: 1em;
+}
+
+.event-wrapper {
+    display: inline;
+}
+
+.timer-wrapper {
+    display: inline-block;
+    touch-action: manipulation;
+}
+
+.timer-label {
+    display: inherit;
+    font-weight: 100;
+    margin-right: .5em;
+}
+
+.timer-number {
+    display: inherit;
+    font-weight: bold;
+    padding-left: .5em;
+    padding-right: .35em;
+}
+
+.footer-selector {
+    padding: 3px;
+}
+
+.selected {
+    color: var(--red)
+}
+
+#alunch,
+#blunch,
+#clunch {
+    padding: 3px;
+}
+
+@media only screen and (max-width: 500px) {
+    .header,
+    .timer {
+        font-size: 6vmin;
+    }
+}
+
+@media only screen and (min-width: 2000px) {
+    .header,
+    .timer {
+        font-size: 3.5vmax;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .schedule-view {
+        width: 99%;
+    }
+}
+
+@media only screen and (max-height: 420px) {
+    .header,
+    .timer {
+        font-size: 4vmin;
+    }
+
+    .schedule-view {
+        width: 90%;
+        font-size: 4vmin;
+    }
+}

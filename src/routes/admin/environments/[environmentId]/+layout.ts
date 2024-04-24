@@ -2,7 +2,7 @@ import { redirect } from "@sveltejs/kit";
 
 export const load = async ({ fetch, params }) => {
     const { environmentId } = params;
-    let environment = await fetch('/api/v1/environments/id/' + environmentId)
+    let environment = await fetch('/api/v1/admin/environments/id/' + environmentId)
         .then((response) => {
             if (!response.ok) {
                 return null;

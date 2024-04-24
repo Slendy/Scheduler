@@ -11,14 +11,15 @@ const userSchema = new Schema<IUser>({
 
 const eventSchema = new Schema({
     name: String,
-    startTime: Number, // the number of milliseconds into the day
-    endTime: Number,
+    startTime: String,
+    endTime: String,
 }, { _id: false, })
 
 const scheduleSchema = new Schema({
     scheduleId: String,
     name: String,
     isPublished: Boolean,
+    variations: [String],
     events: [eventSchema]
 }, { _id: false, });
 

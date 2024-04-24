@@ -1,13 +1,31 @@
 <script>
-	import { beforeUpdate, onMount } from 'svelte';
+	
+	export function setInitialScheme() {	
+		const getPreferredScheme = () =>
+			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
+
+		let storedTheme = localStorage.getItem('colorTheme') ?? getPreferredScheme();
+
+		if (storedTheme === 'dark') {
+			enableDarkMode();
+		} else {
+			disableDarkMode();
+		}
+
+		window.onload = function () {
+			document.body.classList.add('transition');
+		};
+	}
 
 	function enableDarkMode() {
 		document.querySelector(':root')?.setAttribute('data-bs-theme', 'dark');
 		document.querySelector(':root')?.classList.add('darkMode');
+		document.querySelector(':root')?.classList.remove('lightMode');
 	}
 	function disableDarkMode() {
 		document.querySelector(':root')?.setAttribute('data-bs-theme', 'light');
 		document.querySelector(':root')?.classList.remove('darkMode');
+		document.querySelector(':root')?.classList.add('lightMode');
 	}
 
 	// update theme on button press

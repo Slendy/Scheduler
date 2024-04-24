@@ -24,7 +24,7 @@
 				environmentId={environment._id}
 				environmentDomain={environment.environmentDomain}
 				environmentName={environment.environmentName}
-				totalSchedules={environment.schedules.size || 0}
+				totalSchedules={environment.schedules.length || 0}
 			/>
 		{/each}
 	{:catch error}
