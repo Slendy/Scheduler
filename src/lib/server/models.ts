@@ -13,13 +13,19 @@ const eventSchema = new Schema({
     name: String,
     startTime: String,
     endTime: String,
+    variations: [String],
+}, { _id: false, })
+
+const scheduleVariationSchema = new Schema({
+    name: String,
+    options: [String,]
 }, { _id: false, })
 
 const scheduleSchema = new Schema({
     scheduleId: String,
     name: String,
     isPublished: Boolean,
-    variations: [String],
+    variations: [scheduleVariationSchema],
     events: [eventSchema]
 }, { _id: false, });
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { beforeUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	export let title: string | null = null;
 

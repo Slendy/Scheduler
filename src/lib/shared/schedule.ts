@@ -25,6 +25,11 @@ export function verifySchedule(schedule: Schedule): string[] {
             let timeSeconds = 0;
             for (let i = 0; i < schedule.events.length; i++) {
                 let event = schedule.events[i];
+                console.log(schedule.events)
+                if(!event.variations){
+                    errors.push(`Event '${event.name}' is missing variations. (try recreating the event).`)
+                    continue;
+                }
                 // skip events that aren't part of this variation, or don't skip when we don't have any variations
                 if (!event.variations.includes(option) && schedule.variations.length !== 0) {
                     console.log("skipping this event check")

@@ -18,6 +18,8 @@
 		variations: []
 	};
 
+	export let redirect: string;
+
 	function addNewEvent() {
 		schedule.events = [
 			...schedule.events,
@@ -89,7 +91,7 @@
 		}
 	}}
 	succeed={(_) => {
-		goto(`/admin/environments/${environmentId}`, { invalidateAll: true });
+		goto(redirect, { invalidateAll: true });
 	}}
 	fail={(result) => (errorMessages = result.errors)}
 	onSubmit={(e) => verifySchedule(e)}
@@ -221,9 +223,20 @@
 		<hr />
 
 		<div class="d-inline">
-			<button class="btn btn-secondary m-1" type="submit">Create schedule</button>
+			<button class="btn btn-secondary m-1" type="submit">
+				{schedule.scheduleId.length == 0 ? 'Create schedule' : 'Save schedule'}
+			</button>
 
-			<a href="/admin/environments/{environmentId}" class="btn btn-danger m-1">Discard</a>
+			{#if schedule.scheduleId.length == 0}
+				<a href="/admin/environments/{environmentId}" class="btn btn-danger m-1"> Discard </a>
+			{:else}
+				<a
+					href="/admin/environments/{environmentId}/schedule/{schedule.scheduleId}"
+					class="btn btn-danger m-1"
+				>
+					Discard changes
+				</a>
+			{/if}
 		</div>
 	</div>
 </EnhancedForm>

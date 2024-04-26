@@ -1,5 +1,6 @@
 <script lang="ts">
 	import DeleteEnvironmentModal from '$lib/components/DeleteEnvironmentModal.svelte';
+	import OneThirdHeader from '$lib/components/OneThirdHeader.svelte';
 	import ScheduleCard from '$lib/components/schedule/ScheduleCard.svelte';
 
 	export let data;
@@ -14,8 +15,9 @@
 	<title>{data.environment.environmentName}</title>
 </svelte:head>
 
-<div class="row row-cols-1 row-cols-md-3 mb-5">
-	<div class="col">
+<OneThirdHeader>
+	{data.environment.environmentName}
+	<div slot="left">
 		<a
 			href="/admin/environments/{data.environment._id}/schedule/new"
 			class="btn btn-secondary float-start m-1 mt-2"
@@ -23,10 +25,7 @@
 			Create schedule
 		</a>
 	</div>
-	<div class="col">
-		<h1 class="fw-bold text-center">{data.environment.environmentName}</h1>
-	</div>
-	<div class="col d-flex justify-content-end align-items-center">
+	<div slot="right">
 		<button
 			class="btn btn-danger float-end m-1 mt-2"
 			data-bs-toggle="modal"
@@ -37,7 +36,7 @@
 			class="btn btn-secondary float-end m-1 mt-2">Edit environment</a
 		>
 	</div>
-</div>
+</OneThirdHeader>
 
 {#if data.environment.schedules.length == 0}
 	<div class="h-100 d-flex align-items-center justify-content-center">

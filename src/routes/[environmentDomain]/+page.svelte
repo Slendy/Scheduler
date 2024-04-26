@@ -11,7 +11,7 @@
 		events: [
 			{
 				name: 'test event',
-				startTime: '4:00',
+				startTime: '0:00',
 				endTime: '23:59',
 				variations: []
 			}
@@ -46,19 +46,20 @@
 		}
 	</script>
 </svelte:head>
-<body class="transition">
-	<DarkModeToggle />
+<body class="transition"></body>
 
+<DarkModeToggle />
+
+<div
+	class="schedule-container transition"
+>
 	<ScheduleView schedule={testSchedule} {selectedVariation} />
-	{#if displayTable}
-		<ScheduleEventTable schedule={testSchedule} {selectedVariation} />
-	{/if}
-	<footer class="footer refresh" style="display:none" id="refresh">
+	<footer class="schedule-footer refresh" style="display:none" id="refresh">
 		<span> A newer version is available. Please</span>
 		<a id="update" class="update"> refresh this page</a>
 		<span> to activate it.</span>
 	</footer>
-	<div class="footer transition" id="transition-footer">
+	<div class="schedule-footer transition" id="transition-footer">
 		<span style="padding-right: 4px">Made by josh</span>
 		<span> | </span>
 		<div id="footer-selectors" style="display: inline">
@@ -80,4 +81,13 @@
 		>
 		<span class="footer-text" id="footer-right"></span>
 	</div>
-</body>
+</div>
+{#if displayTable}
+	<div
+		style="position: absolute; top: 46.25%; left: 50%; width: 70%; max-height 90%; text-align: center; transform: translate(-50%, -50%)"
+	>
+		<ScheduleEventTable schedule={testSchedule} {selectedVariation} />
+	</div>
+{/if}
+
+<!-- </body> -->
