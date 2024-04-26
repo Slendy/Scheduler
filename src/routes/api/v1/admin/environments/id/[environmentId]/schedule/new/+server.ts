@@ -2,8 +2,8 @@ import { EnvironmentModel } from '$lib/server/models';
 import { apiFormError, apiFormErrorCustom, apiFormSuccess } from '$lib/server/utils.js';
 import { isValidObjectId } from 'mongoose';
 import type { Schedule } from '$lib/shared/types.js';
+import { mongo } from 'mongoose';
 import { verifySchedule } from '$lib/shared/schedule.js';
-import { randomUUID } from 'crypto';
 
 export const POST = async ({ request, params }) => {
     const { environmentId } = params;
@@ -30,7 +30,7 @@ export const POST = async ({ request, params }) => {
         return apiFormErrorCustom({ errors: scheduleErrors })
     }
 
-    schedule.scheduleId = randomUUID();
+    schedule.scheduleId = new mongo.ObjectId().toString();
 
     environment.schedules.push(schedule);
     await environment.save();
