@@ -18,6 +18,16 @@ body {
     flex-direction: column;
 }
 
+.table-container {
+    position: absolute;
+    top: 46.25%;
+    left: 50%;
+    width: 70%;
+    max-height: 90%;
+    text-align: center;
+    transform: translate(-50%, -50%)
+}
+
 .toggle {
     fill: var(--schedule-text-color);
     position: absolute;
@@ -176,8 +186,10 @@ a:active {
 }
 
 @media only screen and (max-width: 500px) {
-    .header,.timer {
-        font-size:6vmin
+
+    .header,
+    .timer {
+        font-size: 6vmin
     }
 }
 

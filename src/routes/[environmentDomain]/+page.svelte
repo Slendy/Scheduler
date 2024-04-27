@@ -50,9 +50,7 @@
 
 <DarkModeToggle />
 
-<div
-	class="schedule-container transition"
->
+<div class="schedule-container transition">
 	<ScheduleView schedule={testSchedule} {selectedVariation} />
 	<footer class="schedule-footer refresh" style="display:none" id="refresh">
 		<span> A newer version is available. Please</span>
@@ -83,11 +81,7 @@
 	</div>
 </div>
 {#if displayTable}
-	<div
-		style="position: absolute; top: 46.25%; left: 50%; width: 70%; max-height 90%; text-align: center; transform: translate(-50%, -50%)"
-	>
+	<div class="table-container">
 		<ScheduleEventTable schedule={testSchedule} {selectedVariation} />
 	</div>
 {/if}
-
-<!-- </body> -->
