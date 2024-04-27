@@ -1,38 +1,57 @@
-# create-svelte
+# Scheduler
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+An open source service for scheduling events and publishing live countdowns.
 
-## Creating a project
+## Disclaimer
+> [!WARNING]
+> This application is still in development, and is not currently meant to be used in production environments due to unimplemented security and instability. 
+> The database schema is also not final and subject to change at any time.
 
-If you're seeing this, you've probably already done this step. Congrats!
 
+## Development
+
+### Requirements
+
+The recommended IDE for development is VSCode.
+
+This project is made in SvelteKit and requires the Bun runtime to be installed. To install Bun, follow the instructions located on their [`website`](https://bun.sh)
+
+### Running locally
+
+First begin by cloning the repository
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+git clone https://github.com/Slendy/Scheduler
+```
+Next, install the required dependencies
+```bash
+bun install
 ```
 
-## Developing
+The application requires a MongoDB database which is configured by setting the `MONGO_URL` environment variable or by creating a `.env.development` file.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+To run the development server use the preconfigured build task or type
 ```bash
-npm run dev
+bun --bun run dev
+```
+The app will be available at `http://localhost:5173` and any changes you make to the code or markup will be hot reloaded. Note that if you make changes to the database models the application must be restarted due to how they are compiled by mongoose.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+## Deployment
+### Building manually
+To compile the project run:
+```bash
+bun run build
+```
+The resulting build output will be stored in the `/build` folder and can be ran with:
+```bash
+bun run start
 ```
 
-## Building
-
-To create a production version of your app:
-
+### Using Docker
+To run this project using Docker, you can use the example [`compose.yml`](https://github.com/Slendy/Scheduler/compose.yml) to build your own image or optionally use the premade Docker image with 
 ```bash
-npm run build
+docker pull ghcr.io/slendy/scheduler:main
+``` 
+If you decide to run Scheduler with a reverse proxy like Nginx you will need to forward the origin header to the server, otherwise things like form submissions won't function.
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+proxy_set_header Origin https://$host;
+```
