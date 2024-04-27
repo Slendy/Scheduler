@@ -5,14 +5,18 @@
 	import VariationCard from '$lib/components/schedule/VariationCard.svelte';
 	import { verifySchedule as collectScheduleErrors } from '$lib/shared/schedule';
 	import type { Schedule } from '$lib/shared/types.js';
-	import { MultiSelect } from 'svelte-multiselect';
+	import { SortableList } from '@sonderbase/svelte-sortablejs';
 	import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { goto } from '$app/navigation';
+	import RadioSelector from '../RadioSelector.svelte';
+	import EventRow from './EventRow.svelte';
 
 	export let schedule: Schedule = {
 		scheduleId: '',
+		scheduleType: 'one-time',
+		scheduleDate: undefined,
+		scheduleWeekdays: undefined,
 		events: [],
 		name: '',
 		variations: []
@@ -20,10 +24,21 @@
 
 	export let redirect: string;
 
+	export let environmentId: string;
+
+	export let actionUrl: string;
+
+	// I wanna krill myself
+	$: serializedSchedule = JSON.stringify(schedule);
+
+	let errorMessages: string[] | undefined = undefined;
+	let errorTimer: NodeJS.Timeout | undefined;
+
 	function addNewEvent() {
 		schedule.events = [
 			...schedule.events,
 			{
+				eventId: generateRandomId(),
 				name: '',
 				startTime: '',
 				endTime: '',
@@ -50,14 +65,20 @@
 				// @ts-ignore
 				(tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
 			);
+
+			if (crypto.randomUUID) {
+				generateRandomId = crypto.randomUUID;
+			}
 		}
 	});
 
-	// I wanna krill myself
-	$: serializedSchedule = JSON.stringify(schedule);
-
-	let errorMessages: string[] | undefined = undefined;
-	let errorTimer: NodeJS.Timeout | undefined;
+	// most browsers don't let you use randomUUID() in a local environment so by default we use a less secure version
+	// and when mounting the component we replace this function if randomUUID exists.
+	let generateRandomId: () => string = function () {
+		return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
+			(+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16)
+		);
+	};
 
 	// some simple client-side checks before submitting form to server
 	function verifySchedule(e: Event) {
@@ -76,9 +97,20 @@
 		e.stopImmediatePropagation();
 	}
 
-	export let environmentId: string;
+	function getStore(sortable: any): string[] {
+		return [];
+	}
 
-	export let actionUrl: string;
+	// this is used to recreate the sortable list whenever we let go of an item to force
+	// the items to actually refresh. TLDR; I wanna krill myself part 2: electric boogaloo
+	let eventRecreate = generateRandomId();
+	function setStore(sortable: any) {
+		let newOrder: string[] = sortable.toArray();
+		schedule.events = schedule.events
+			.slice()
+			.sort((a, b) => newOrder.indexOf(a.eventId) - newOrder.indexOf(b.eventId));
+		eventRecreate = generateRandomId();
+	}
 </script>
 
 <ErrorAlert messages={errorMessages} />
@@ -121,62 +153,13 @@
 		</div>
 
 		<div id="event-container" class="event-container">
-			{#each schedule.events as event}
-				<div class="d-block event-block" transition:slide>
-					<div class="row row-cols-auto justify-content-center align-items-center">
-						<div class="col m-1">
-							<div class="d-inline px-1 me-1 mt-1 handle">☰</div>
-
-							<input
-								class="schedule-input"
-								placeholder="Event name"
-								maxlength="32"
-								bind:value={event.name}
-							/>
-						</div>
-						<div class="col my-1">
-							<label class="fw-bold ps-2 pe-1" for="start-time">START: </label>
-							<input
-								class="schedule-input"
-								type="time"
-								id="start-time"
-								bind:value={event.startTime}
-							/>
-						</div>
-						<div class="col my-1">
-							<label class="fw-bold ps-2 pe-1" for="end-time">END: </label>
-							<input class="schedule-input" type="time" id="end-time" bind:value={event.endTime} />
-						</div>
-						<!-- If all the variations have a name and have atleast 1 option -->
-						{#if schedule.variations.length > 0 && schedule.variations.reduce((sum, cur) => sum && cur.name.length > 0 && cur.options.length > 0, true)}
-							<div class="col my-1">
-								<div class="option-container d-inline">
-									{#each schedule.variations as variation}
-										<label class="fw-bold ps-2 pe-1 d-inline" for="variation-{variation.name}"
-											>{variation.name}
-										</label>
-
-										<MultiSelect bind:selected={event.variations} options={variation.options} />
-									{/each}
-								</div>
-							</div>
-						{/if}
-						<div class="col my-1 mt-2">
-							<div class="d-inline mt-1">
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<i
-									class="bi bi-trash clickable text-danger"
-									on:click={() => {
-										schedule.events = schedule.events.filter((t) => t != event);
-									}}
-								>
-								</i>
-							</div>
-						</div>
-					</div>
-				</div>
-			{/each}
+			{#key eventRecreate}
+				<SortableList class="" handle=".handle" store={{ get: getStore, set: setStore }}>
+					{#each schedule.events as event}
+						<EventRow bind:event bind:schedule {generateRandomId} />
+					{/each}
+				</SortableList>
+			{/key}
 		</div>
 
 		<hr />
@@ -222,6 +205,35 @@
 
 		<hr />
 
+		<div class="row row-cols-1 mb-2">
+			<div class="col">
+				<h5 class="fw-bold d-inline">Schedule type</h5>
+			</div>
+		</div>
+
+		<div class="container text-center">
+			<RadioSelector
+				name="schedule-type"
+				bind:value={schedule.scheduleType}
+				options={[
+					{ label: 'One-time', id: 'one-time' },
+					{ label: 'Repeating', id: 'repeating' }
+				]}
+			/>
+			{#if schedule.scheduleType == 'one-time'}
+				<div class="d-block m-3">
+					<div class="d-inline">
+						<label class="fw-bold ps-2 pe-1" for="schedule-date">Schedule Date: </label>
+						<input class="schedule-input" type="date" id="schedule-date" />
+					</div>
+				</div>
+			{:else}
+				<p>repeating</p>
+			{/if}
+		</div>
+
+		<hr />
+
 		<div class="d-inline">
 			<button class="btn btn-secondary m-1" type="submit">
 				{schedule.scheduleId.length == 0 ? 'Create schedule' : 'Save schedule'}
@@ -240,7 +252,3 @@
 		</div>
 	</div>
 </EnhancedForm>
-
-<svelte:head>
-	<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-</svelte:head>

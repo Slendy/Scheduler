@@ -19,14 +19,14 @@
 	<title>{text || "Scheduler"}</title>
 </svelte:head>
 
-<div class="row row-cols-1 row-cols-md-3 mb-5">
-	<div class="col">
+<div class="row row-cols-1 row-cols-md-3 mb-5 flex-column-reverse flex-md-row">
+	<div class="col d-flex justify-content-center justify-content-md-start align-items-center">
         <slot name="left"></slot>
 	</div>
 	<div class="col">
 		<h1 class="fw-bold text-center" bind:this={content}><slot></slot></h1>
 	</div>
-	<div class="col d-flex justify-content-end align-items-center">
+	<div class="col d-flex justify-content-center justify-content-md-end align-items-center">
         <slot name="right"></slot>
 	</div>
 </div>

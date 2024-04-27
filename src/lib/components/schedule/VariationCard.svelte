@@ -12,7 +12,6 @@
 
 	let internalOptions: Option[] = [];
 	$: options = internalOptions.map((o) => o.name);
-	$: console.log(options);
 
 	let placeholderValue = '';
 
@@ -65,7 +64,6 @@
 				placeholder={'New variation'}
 				bind:value={placeholderValue}
 				on:onsave={(event) => {
-					console.log(event);
 					internalOptions = [
 						...internalOptions,
 						{ name: event.detail.value, id: Date.now().toString() }

@@ -10,7 +10,7 @@ export const load = async ({ fetch, params }) => {
             return response.json();
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
         })
     if (user == null) {
         return redirect(301, "/admin/users");

@@ -37,6 +37,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@sonderbase/svelte-sortablejs": "^2.0.2",
     "@types/node": "^20.12.7",
     "is-valid-domain": "^0.1.6",
     "moment": "^2.30.1",

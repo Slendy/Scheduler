@@ -10,6 +10,7 @@ const userSchema = new Schema<IUser>({
 });
 
 const eventSchema = new Schema({
+    eventId: String,
     name: String,
     startTime: String,
     endTime: String,
@@ -23,6 +24,20 @@ const scheduleVariationSchema = new Schema({
 
 const scheduleSchema = new Schema({
     scheduleId: String,
+    scheduleType: {
+        type: String,
+        enum: ['repeating', 'one-time'],
+        default: 'one-time',
+    },
+    scheduleDate: {
+        type: String,
+        default: null,
+    },
+    scheduleWeekdays: {
+        type: [String],
+        enum: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+        default: null,
+    },
     name: String,
     isPublished: Boolean,
     variations: [scheduleVariationSchema],

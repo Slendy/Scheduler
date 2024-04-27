@@ -34,8 +34,6 @@ export const actions = {
             let parsedEnvironment = JSON.parse(serialized.toString());
             if (parsedEnvironment == null) return { success: false, message: 'Failed to parse json' }
 
-            console.log(parsedEnvironment);
-
             await EnvironmentModel.updateOne({_id: id}, parsedEnvironment)
 
             return { success: true }

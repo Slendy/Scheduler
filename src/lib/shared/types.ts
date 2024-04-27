@@ -12,14 +12,24 @@ export interface IEnvironment {
     schedules: [Schedule],
 }
 
+export const scheduleTypes = ['repeating', 'one-time'] as const;
+export type ScheduleType = typeof scheduleTypes[number];
+
+export const scheduleWeekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+export type ScheduleWeekdays = typeof scheduleWeekdays[number];
+
 export type Schedule = {
     scheduleId: string;
+    scheduleType: ScheduleType;
+    scheduleDate: string | undefined;
+    scheduleWeekdays: ScheduleWeekdays[] | undefined;
     name: string;
     events: ScheduleEvent[];
     variations: ScheduleVariation[];
 }
 
 export type ScheduleEvent = {
+    eventId: string;
     name: string;
     startTime: string;
     endTime: string;

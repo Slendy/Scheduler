@@ -9,13 +9,12 @@
 	let selectedVariation: string = '';
 	let selectedTime = 'current-time';
 	let selectedWindow = 'events';
-	let timeValue: any;
+	let timeValue: any = '00:00:00';
 	$: console.log(timeValue);
 	$: customTime =
 		selectedTime == 'current-time'
 			? undefined
 			: new Date(new Date(timeValue).setDate(new Date().getDate()));
-	$: console.log(selectedWindow);
 </script>
 
 <OneThirdHeader>
@@ -70,7 +69,7 @@
 		/>
 		<div class="m-3">
 			{#if selectedTime == 'custom-time'}
-				<input type="datetime-local" class="" bind:value={timeValue} />
+				<input type="time" step="1" class="" bind:value={timeValue} />
 			{/if}
 		</div>
 	</div>
