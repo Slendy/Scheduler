@@ -10,7 +10,9 @@
 	let selectedSchedule: string;
 
 	function importSchedule() {
-		schedule = environment.schedules.find((s: any) => s.scheduleId == selectedSchedule);
+		let importedSchedule = environment.schedules.find((s: any) => s.scheduleId == selectedSchedule);
+		importedSchedule.scheduleId = '';
+		schedule = importedSchedule;
 	}
 </script>
 
