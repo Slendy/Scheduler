@@ -3,8 +3,8 @@
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import EditableSpan from '$lib/components/schedule/EditableSpan.svelte';
 	import VariationCard from '$lib/components/schedule/VariationCard.svelte';
-	import { verifySchedule as collectScheduleErrors } from '$lib/shared/schedule';
-	import type { Schedule } from '$lib/shared/types.js';
+	import { verifySchedule as collectScheduleErrors, defaultSchedule } from '$lib/shared/schedule';
+	import { scheduleWeekdays, type Schedule } from '$lib/shared/types.js';
 	import { SortableList } from '@sonderbase/svelte-sortablejs';
 	import { onMount } from 'svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
@@ -12,15 +12,7 @@
 	import RadioSelector from '../RadioSelector.svelte';
 	import EventRow from './EventRow.svelte';
 
-	export let schedule: Schedule = {
-		scheduleId: '',
-		scheduleType: 'one-time',
-		scheduleDate: undefined,
-		scheduleWeekdays: undefined,
-		events: [],
-		name: '',
-		variations: []
-	};
+	export let schedule: Schedule = defaultSchedule;
 
 	export let redirect: string;
 
@@ -67,12 +59,12 @@
 			);
 
 			if (crypto.randomUUID) {
-				generateRandomId = crypto.randomUUID;
+				generateRandomId = () => crypto.randomUUID();
 			}
 		}
 	});
 
-	// most browsers don't let you use randomUUID() in a local environment so by default we use a less secure version
+	// some browsers don't let you use randomUUID() in a local environment so by default we use a less secure version
 	// and when mounting the component we replace this function if randomUUID exists.
 	let generateRandomId: () => string = function () {
 		return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
@@ -224,11 +216,21 @@
 				<div class="d-block m-3">
 					<div class="d-inline">
 						<label class="fw-bold ps-2 pe-1" for="schedule-date">Schedule Date: </label>
-						<input class="schedule-input" type="date" id="schedule-date" />
+						<input
+							class="schedule-input"
+							type="date"
+							id="schedule-date"
+							bind:value={schedule.scheduleDate}
+						/>
 					</div>
 				</div>
 			{:else}
-				<p>repeating</p>
+				<div class="d-block m-3">
+				{#each scheduleWeekdays as weekday}
+					<input type="checkbox" class="btn-check" id="btn-{weekday}" autocomplete="off" value={weekday} bind:group={schedule.scheduleWeekdays}/>
+					<label class="btn btn-outline-secondary text-capitalize" for="btn-{weekday}">{weekday}</label>
+				{/each}
+				</div>
 			{/if}
 		</div>
 

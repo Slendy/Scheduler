@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DeleteEnvironmentModal from '$lib/components/DeleteEnvironmentModal.svelte';
+	import DeleteEnvironmentModal from '$lib/components/modal/DeleteEnvironmentModal.svelte';
 	import OneThirdHeader from '$lib/components/OneThirdHeader.svelte';
 	import ScheduleCard from '$lib/components/schedule/ScheduleCard.svelte';
 
