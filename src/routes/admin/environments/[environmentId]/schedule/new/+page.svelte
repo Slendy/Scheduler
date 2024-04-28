@@ -13,13 +13,15 @@
 
 <Header>Create schedule</Header>
 
-<ImportScheduleModal bind:schedule environment={data.environment} />
+{#if data.environment.schedules.length > 0}
+	<ImportScheduleModal bind:schedule environment={data.environment} />
 
-<div class="text-center mb-3">
-	<button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importSchedule">
-		Import from existing schedule
-	</button>
-</div>
+	<div class="text-center mb-3">
+		<button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importSchedule">
+			Import from existing schedule
+		</button>
+	</div>
+{/if}
 
 <ScheduleEditor
 	bind:schedule
