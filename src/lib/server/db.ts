@@ -12,7 +12,7 @@ export async function generateDefaultUser() {
             username: "admin",
             isAdmin: true,
             permissionMap: {},
-            passwordHash: "bruh",
+            passwordHash: await Bun.password.hash("admin"),
         });
         await defaultUser.save();
         console.log("No users were found so a default admin user has been created.");

@@ -7,7 +7,7 @@
 <EnhancedForm
 	action={'/api/v1/auth/login'}
 	succeed={(response) => {
-		goto(response.redirect);
+		goto(response.redirect, { invalidateAll: true });
 	}}
 	fail={(response) => {
 		console.log(response);

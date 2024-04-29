@@ -9,6 +9,17 @@ const userSchema = new Schema<IUser>({
     passwordHash: { type: String, required: true }
 });
 
+const authTokenSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    authToken: { type: String, required: true },
+    // auth token expires every hour
+    authTokenExpiration: { type: Date, default: Date.now() + 1000 * 60 * 60 },
+    refreshToken: { type: String, required: true },
+    // refresh token expires when the document expires which is 1 month
+    // when a refresh token is used the token object is regenerated
+    expiresAt: { type: Date, default: Date.now() + 1000 * 60 * 60 * 24 * 30 },
+});
+
 const eventSchema = new Schema({
     eventId: String,
     name: String,
@@ -53,5 +64,7 @@ const environmentSchema = new Schema({
 });
 
 export const UserModel = model("User", userSchema);
+
+export const TokenModel = model("Token", authTokenSchema);
 
 export const EnvironmentModel = model("Environment", environmentSchema);

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { beforeUpdate, onMount } from 'svelte';
 	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
@@ -92,6 +91,7 @@
 							class="nav-link"
 							class:active={trimUrl($page.url.pathname) === navbar[0]}
 							href={navbar[0]}
+							data-sveltekit-preload-data={navbar[0] === '/logout' ? 'false' : undefined}
 						>
 							{navbar[1]}
 						</a>
