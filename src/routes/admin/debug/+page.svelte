@@ -2,22 +2,25 @@
 	import Header from '$lib/components/Header.svelte';
 
 	export let data;
+
+	let environments = JSON.parse(data.serializedEnvironments);
+	let users = JSON.parse(data.serializedUsers);
 </script>
 
 <Header>DEBUG</Header>
 
 <div class="m-3">
 	<h4>
-		There are {data.environments?.length || "undefined"} environments and {data.users?.length || "undefined"} users
+		There are {environments?.length || 'undefined'} environments and {users?.length || 'undefined'} users
 	</h4>
 </div>
 
 <div class="container-fluid">
 	<div class="row">
-		{#if data.environments != null}
+		{#if environments != null}
 			<div class="col">
 				<div class="accordion" id="environment-accordion">
-					{#each data.environments as environment}
+					{#each environments as environment}
 						<div class="accordion-item">
 							<h2 class="accordion-header">
 								<button
@@ -49,13 +52,13 @@
 				</div>
 			</div>
 		{:else}
-            <hr class="mt-3">
+			<hr class="mt-3" />
 			<h4>Failed to load environments</h4>
 		{/if}
-		{#if data.users != null}
+		{#if users != null}
 			<div class="col">
 				<div class="accordion" id="user-accordion">
-					{#each data.users as user}
+					{#each users as user}
 						<div class="accordion-item">
 							<h2 class="accordion-header">
 								<button
@@ -84,7 +87,7 @@
 				</div>
 			</div>
 		{:else}
-            <hr class="mt-3">
+			<hr class="mt-3" />
 			<h4>Failed to load users</h4>
 		{/if}
 	</div>

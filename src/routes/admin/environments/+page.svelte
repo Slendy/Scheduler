@@ -23,7 +23,7 @@
 				environmentId={environment._id}
 				environmentDomain={environment.environmentDomain}
 				environmentName={environment.environmentName}
-				totalSchedules={environment.schedules.length || 0}
+				totalSchedules={environment.totalSchedules || 0}
 			/>
 		{/each}
 	{:catch error}

@@ -4,5 +4,9 @@ import { apiResponse } from '$lib/server/utils';
 export const GET = async ({ }) => {
     const environments = await EnvironmentModel.find();
 
-    return apiResponse(200, { environments: environments.map(environment => environment.toApiResponse()) });
+    let environmentsResponse = environments.map(env => env.toApiResponse())
+        .map(env => ({ ...env, totalSchedules: env.schedules.length }))
+        .map(({ schedules, ...rest }) => rest);
+
+    return apiResponse(200, { environments: environmentsResponse });
 }

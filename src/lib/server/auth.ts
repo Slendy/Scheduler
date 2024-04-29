@@ -53,7 +53,7 @@ function generateRandomToken() {
 export async function generateToken(user: any) {
     if (user == undefined) return undefined;
 
-    console.log("Generated new token for user: ", user.username)
+    console.log("Generated new token for user:", user.username)
 
     let token = await TokenModel.create({
         user: user._id,
