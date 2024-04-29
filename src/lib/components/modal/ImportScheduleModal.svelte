@@ -44,13 +44,13 @@
 						{schedule.events.length} event{schedule.events.length == 1 ? '' : 's'},
 						{schedule.variations.length} variation{schedule.variations.length == 1 ? '' : 's'}
 					</p>
-					<p class="card-text">
-						{#if schedule.updatedAt != null}
+					{#if schedule.updatedAt != null}
+						<p class="card-text">
 							<small class="text-body-secondary">
 								Last updated {moment(schedule.updatedAt).fromNow()}
 							</small>
-						{/if}
-					</p>
+						</p>
+					{/if}
 				</div>
 			</div>
 		{/each}

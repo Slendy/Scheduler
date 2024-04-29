@@ -38,12 +38,14 @@
 				<span class="card-text">{events.length}</span>
 			</p>
 
-			<small class="d-block text-body-secondary">
-				Last updated {moment(updatedAt).fromNow()}
-			</small>
-			<small class="d-block text-body-secondary mb-3">
-				Created {moment(createdAt).fromNow()}
-			</small>
+			{#if createdAt != null && updatedAt != null}
+				<small class="d-block text-body-secondary">
+					Last updated {moment(updatedAt).fromNow()}
+				</small>
+				<small class="d-block text-body-secondary mb-3">
+					Created {moment(createdAt).fromNow()}
+				</small>
+			{/if}
 
 			<a href="/admin/environments/{environmentId}/schedule/{scheduleId}" class="btn btn-secondary">
 				View Schedule
