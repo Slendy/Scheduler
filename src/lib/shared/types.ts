@@ -5,13 +5,6 @@ export interface IUser {
     passwordHash: String;
 }
 
-export interface IEnvironment {
-    environmentName: String,
-    environmentDomain: String,
-    isVerified: Boolean,
-    schedules: [Schedule],
-}
-
 export const scheduleTypes = ['repeating', 'one-time'] as const;
 export type ScheduleType = typeof scheduleTypes[number];
 

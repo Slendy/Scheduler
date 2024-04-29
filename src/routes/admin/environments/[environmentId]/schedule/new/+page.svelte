@@ -7,7 +7,7 @@
 
 	export let data;
 
-	let schedule: Schedule = defaultSchedule;
+	let schedule: Schedule = { ...defaultSchedule };
 	//TODO redirect to newly created schedule instead
 </script>
 

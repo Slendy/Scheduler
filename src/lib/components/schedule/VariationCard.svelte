@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import EditableSpan from './EditableSpan.svelte';
+	import { MAX_VARIATION_NAME_LEN, MAX_VARIATION_OPTION_LEN } from '$lib/shared/schedule';
 	export let title: string = '';
 	type Option = {
 		id: string;
@@ -26,7 +27,7 @@
 			<EditableSpan
 				extraClasses={'card-text mt-1'}
 				placeholder={'Variation name'}
-				maxLength={16}
+				maxLength={MAX_VARIATION_NAME_LEN}
 				bind:value={title}
 			/>
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -45,7 +46,7 @@
 						<EditableSpan
 							extraClasses={'card-text mt-1'}
 							placeholder={'Variation'}
-							maxLength={16}
+							maxLength={MAX_VARIATION_OPTION_LEN}
 							bind:value={option.name}
 						/>
 					</div>

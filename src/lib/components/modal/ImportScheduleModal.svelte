@@ -2,6 +2,7 @@
 	import Modal from './Modal.svelte';
 	import type { Schedule } from '$lib/shared/types';
 	import { isScheduleModified } from '$lib/shared/schedule';
+	import moment from 'moment';
 
 	export let environment: any;
 
@@ -44,7 +45,11 @@
 						{schedule.variations.length} variation{schedule.variations.length == 1 ? '' : 's'}
 					</p>
 					<p class="card-text">
-						<small class="text-body-secondary">Last updated 3 mins ago</small>
+						{#if schedule.updatedAt != null}
+							<small class="text-body-secondary">
+								Last updated {moment(schedule.updatedAt).fromNow()}
+							</small>
+						{/if}
 					</p>
 				</div>
 			</div>

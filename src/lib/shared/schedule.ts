@@ -8,8 +8,13 @@ export const defaultSchedule: Schedule = {
     scheduleWeekdays: undefined,
     events: [],
     name: '',
-    variations: []
+    variations: [],
 };
+
+export const MAX_SCHEDULE_NAME_LEN = 32;
+export const MAX_VARIATION_NAME_LEN = 20;
+export const MAX_VARIATION_OPTION_LEN = 20;
+export const MAX_EVENT_NAME_LEN = 32;
 
 export function isScheduleModified(schedule: Schedule): boolean {
     if (schedule.name !== "") return true;
@@ -25,6 +30,9 @@ export function verifySchedule(schedule: Schedule): string[] {
     if (schedule.name.length === 0) {
         errors.push('The schedule must have a name');
     }
+    if (schedule.name.length > MAX_SCHEDULE_NAME_LEN) {
+        errors.push(`The schedule name is too long (${schedule.name.length} > ${MAX_SCHEDULE_NAME_LEN})`);
+    }
     if (!scheduleTypes.includes(schedule.scheduleType)) {
         errors.push('You must select a valid schedule type');
     }
@@ -36,30 +44,36 @@ export function verifySchedule(schedule: Schedule): string[] {
         errors.push('Schedules must have at least one event');
     }
     for (let variation of variations) {
-        console.log('variation:', variation);
         if (variation.name.length === 0) {
             errors.push('All variations must have a name');
+        }
+        if (variation.name.length > MAX_VARIATION_NAME_LEN) {
+            errors.push(`Variation name cannot be longer than ${MAX_VARIATION_NAME_LEN} characters`);
         }
         if (variation.options.length === 0) {
             errors.push('All variations must have at least one option');
         }
-        console.log('past the variation checks', variation.options);
+        
         for (let option of variation.options) {
+            if(option.length > MAX_VARIATION_OPTION_LEN){
+                errors.push(`Variation option name is too long (${option.length} > ${MAX_VARIATION_OPTION_LEN})`)
+            }
             let timeSeconds = 0;
             for (let i = 0; i < schedule.events.length; i++) {
                 let event = schedule.events[i];
-                console.log(schedule.events)
                 if (!event.variations) {
                     errors.push(`Event '${event.name}' is missing variations. (try recreating the event).`)
                     continue;
                 }
                 // skip events that aren't part of this variation, or don't skip when we don't have any variations
                 if (!event.variations.includes(option) && schedule.variations.length !== 0) {
-                    console.log("skipping this event check")
                     continue;
                 }
                 if (event.name.length === 0) {
                     errors.push(`Event #${i + 1} does not have a valid name`);
+                }
+                if (event.name.length > MAX_EVENT_NAME_LEN) {
+                    errors.push(`Event #${i + 1} name is too long (${event.name.length} > ${MAX_EVENT_NAME_LEN})`);
                 }
                 if (event.variations.length === 0 && schedule.variations.length !== 0) {
                     errors.push('Events must be a part of at least one variation');

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { type IUser, type IEnvironment } from '$lib/shared/types';
+import { type IUser } from '$lib/shared/types';
 
 
 const userSchema = new Schema<IUser>({
@@ -41,10 +41,11 @@ const scheduleSchema = new Schema({
     name: String,
     isPublished: Boolean,
     variations: [scheduleVariationSchema],
-    events: [eventSchema]
-}, { _id: false, });
+    events: [eventSchema],
+    history: [Schema.Types.Mixed]
+}, { _id: false, timestamps: true });
 
-const environmentSchema = new Schema<IEnvironment>({
+const environmentSchema = new Schema({
     environmentName: { type: String, required: true },
     environmentDomain: { type: String, required: true },
     isVerified: { type: Boolean, required: true },

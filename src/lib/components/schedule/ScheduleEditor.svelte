@@ -3,7 +3,7 @@
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import EditableSpan from '$lib/components/schedule/EditableSpan.svelte';
 	import VariationCard from '$lib/components/schedule/VariationCard.svelte';
-	import { verifySchedule as collectScheduleErrors, defaultSchedule } from '$lib/shared/schedule';
+	import { MAX_SCHEDULE_NAME_LEN, verifySchedule as collectScheduleErrors, defaultSchedule } from '$lib/shared/schedule';
 	import { scheduleWeekdays, type Schedule } from '$lib/shared/types.js';
 	import { SortableList } from '@sonderbase/svelte-sortablejs';
 	import { onMount } from 'svelte';
@@ -12,7 +12,7 @@
 	import RadioSelector from '../RadioSelector.svelte';
 	import EventRow from './EventRow.svelte';
 
-	export let schedule: Schedule = defaultSchedule;
+	export let schedule: Schedule = { ...defaultSchedule };
 
 	export let redirect: string;
 
@@ -123,7 +123,7 @@
 	<input name="data" type="hidden" value={serializedSchedule} />
 	<div class="text-center card p-3">
 		<div class="schedule-title fs-3 d-block">
-			<EditableSpan placeholder={'Schedule name'} maxLength={32} bind:value={schedule.name} />
+			<EditableSpan placeholder={'Schedule name'} maxLength={MAX_SCHEDULE_NAME_LEN} bind:value={schedule.name} />
 		</div>
 
 		<hr />
@@ -213,7 +213,7 @@
 				]}
 			/>
 			{#if schedule.scheduleType == 'one-time'}
-				<div class="d-block m-3">
+				<div class="d-block mt-3">
 					<div class="d-inline">
 						<label class="fw-bold ps-2 pe-1" for="schedule-date">Schedule Date: </label>
 						<input
@@ -225,7 +225,7 @@
 					</div>
 				</div>
 			{:else}
-				<div class="d-block m-3">
+				<div class="d-block mt-3">
 				{#each scheduleWeekdays as weekday}
 					<input type="checkbox" class="btn-check" id="btn-{weekday}" autocomplete="off" value={weekday} bind:group={schedule.scheduleWeekdays}/>
 					<label class="btn btn-outline-secondary text-capitalize" for="btn-{weekday}">{weekday}</label>

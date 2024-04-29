@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MAX_EVENT_NAME_LEN } from '$lib/shared/schedule';
 	import type { ScheduleEvent, Schedule } from '$lib/shared/types';
 	import { MultiSelect } from 'svelte-multiselect';
 
@@ -24,7 +25,7 @@
 			<input
 				class="schedule-input"
 				placeholder="Event name"
-				maxlength="32"
+				maxlength={MAX_EVENT_NAME_LEN}
 				bind:value={event.name}
 			/>
 		</div>

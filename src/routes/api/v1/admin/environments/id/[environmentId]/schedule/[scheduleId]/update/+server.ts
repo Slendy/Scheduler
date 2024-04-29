@@ -38,9 +38,28 @@ export const POST = async ({ request, params }) => {
         return apiFormErrorCustom({ errors: scheduleErrors });
     }
 
-    let scheduleIndex = environment.schedules.findIndex(s => s.scheduleId == existingSchedule.scheduleId);
+    // Create a copy of the existing schedule without it's history and timestamps
+    let { history, createdAt, updatedAt, ...historySchedule } = existingSchedule.toObject() as any;
 
-    environment.schedules[scheduleIndex] = newSchedule;
+    existingSchedule.name = newSchedule.name;
+    (existingSchedule as any).events = newSchedule.events;
+    (existingSchedule as any).variations = newSchedule.variations;
+    existingSchedule.scheduleType = newSchedule.scheduleType;
+    existingSchedule.scheduleDate = newSchedule.scheduleDate!;
+    existingSchedule.scheduleWeekdays = newSchedule.scheduleWeekdays!;
+
+
+    let time = new Date().toISOString();
+
+    // Store copy of schedule in history and truncate list at 10 entries, removing the oldest entries first.
+    let newHistoryList = (existingSchedule as any).history || [];
+    let itemsToRemove = Math.min(newHistoryList.length - 10, 0);
+    newHistoryList = newHistoryList.slice(itemsToRemove);
+    newHistoryList.push({ time, schedule: historySchedule });
+
+    // Add that to the history of the existing schedule
+    (existingSchedule as any).history = newHistoryList;
+
     await environment.save();
 
     return apiFormSuccess();
