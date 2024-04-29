@@ -11,5 +11,5 @@ export const GET = async ({ params }) => {
     if (user === null) {
         return error(404, "User not found");
     }
-    return Response.json(user);
+    return Response.json(user.toApiResponse());
 }

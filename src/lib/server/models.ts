@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 import { type IUser } from '$lib/shared/types';
 
 
@@ -7,6 +7,11 @@ const userSchema = new Schema<IUser>({
     permissionMap: { type: Map, of: String, required: true },
     isAdmin: { type: Boolean, required: true },
     passwordHash: { type: String, required: true }
+});
+
+userSchema.method('toApiResponse', function () {
+    let { passwordHash, ...userObject } = this.toObject();
+    return userObject;
 });
 
 const authTokenSchema = new Schema({
@@ -63,8 +68,13 @@ const environmentSchema = new Schema({
     schedules: [scheduleSchema],
 });
 
-export const UserModel = model("User", userSchema);
+environmentSchema.method('toApiResponse', function () {
+    let responseEnvironment: any = this.toObject({ getters: true });
 
-export const TokenModel = model("Token", authTokenSchema);
+    responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
+    return responseEnvironment;
+});
 
-export const EnvironmentModel = model("Environment", environmentSchema);
+export const UserModel = models['User'] || model('User', userSchema);
+export const TokenModel = models['Token'] || model('Token', authTokenSchema);
+export const EnvironmentModel = models['Environment'] || model('Environment', environmentSchema);

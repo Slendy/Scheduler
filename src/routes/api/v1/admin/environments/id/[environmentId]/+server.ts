@@ -12,9 +12,5 @@ export const GET = async ({ params }) => {
         return error(404, "Environment not found");
     }
 
-    let responseEnvironment: any = environment.toObject({getters: true});
-
-    responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
-
-    return Response.json(responseEnvironment);
+    return Response.json(environment.toApiResponse());
 }

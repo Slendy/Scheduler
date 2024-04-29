@@ -1,4 +1,4 @@
-import { UserModel } from '$lib/server/models';
+import { TokenModel, UserModel } from '$lib/server/models';
 import { isValidObjectId } from 'mongoose';
 import { apiFormError, apiFormSuccess } from '$lib/server/utils.js';
 
@@ -20,6 +20,12 @@ export const POST = async ({ params, request }) => {
     const password = data.get('password');
     if (await UserModel.exists({ username: name, _id: { $ne: user._id } })) {
         return apiFormError('A user already exists with this username')
+    }
+
+    if (password != null && password.toString().length > 0) {
+        user.password = Bun.password.hash(password.toString());
+        // if we change a user's password then invalidate all of their auth tokens
+        TokenModel.deleteMany({ user: user._id }).exec();
     }
 
     const isAdmin = data.get('isAdmin');
