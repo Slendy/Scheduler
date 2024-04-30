@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
+	import {
+		PUBLIC_GIT_BRANCH,
+		PUBLIC_GIT_SHA,
+		PUBLIC_BUILD_DATE,
+		PUBLIC_GIT_REMOTE
+	} from '$env/static/public';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 
 	let navBarItems = [
@@ -106,8 +112,15 @@
 	<footer class="footer transition">
 		<div class="footer-container">
 			<div class="container" style="height: 20px;">
-				<span class="float-start transition-workaround">Scheduler (hash)@branch</span>
-				<span class="transition-workaround float-end">Made by josh</span>
+				<span class="float-start transition-workaround">
+					Scheduler
+					<a href={PUBLIC_GIT_REMOTE + '/commit/' + PUBLIC_GIT_SHA}>
+						{PUBLIC_GIT_SHA.slice(0, 7)}@{PUBLIC_GIT_BRANCH}
+					</a>
+				</span>
+				<span class="transition-workaround float-end">
+					Built on {new Date(PUBLIC_BUILD_DATE).toLocaleDateString()}
+				</span>
 			</div>
 		</div>
 	</footer>

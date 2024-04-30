@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
+    "dev": "PUBLIC_GIT_SHA=$(git rev-parse --verify HEAD) PUBLIC_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) PUBLIC_VERSION=$npm_package_version PUBLIC_BUILD_DATE=$(date) PUBLIC_GIT_REMOTE=$(git ls-remote --get-url) vite dev",
+    "build": "PUBLIC_GIT_SHA=$(git rev-parse --verify HEAD) PUBLIC_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) PUBLIC_VERSION=$npm_package_version PUBLIC_BUILD_DATE=$(date) PUBLIC_GIT_REMOTE=$(git ls-remote --get-url) vite build",
     "preview": "vite preview",
     "test": "npm run test:integration && npm run test:unit",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
