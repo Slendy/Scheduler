@@ -129,7 +129,7 @@
 				<span class="float-start transition-workaround">
 					Scheduler
 					<a href={PUBLIC_GIT_REMOTE + '/commit/' + PUBLIC_GIT_SHA}>
-						{PUBLIC_GIT_SHA.slice(0, 7)}@{PUBLIC_GIT_BRANCH}
+						{PUBLIC_GIT_BRANCH}@{PUBLIC_GIT_SHA.slice(0, 7)}
 					</a>
 				</span>
 				<span class="transition-workaround float-end">
