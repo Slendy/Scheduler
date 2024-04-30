@@ -4,7 +4,8 @@
 	import { goto } from '$app/navigation';
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 
-	export let formError = '';
+	let formError = '';
+	let submitting = false;
 </script>
 
 <Header>Create new environment</Header>
@@ -12,6 +13,7 @@
 <ErrorAlert message={formError} />
 
 <EnhancedForm
+	bind:submitting
 	action={'/api/v1/admin/environments/add'}
 	fail={(result) => {
 		formError = result.message;
@@ -30,6 +32,6 @@
 		<input type="text" id="envDomain" name="envDomain" class="form-control" required />
 	</div>
 
-	<button class="btn btn-secondary" type="submit">Create environment</button>
-	<a href="/admin/environments" class="btn btn-danger">Discard changes</a>
+	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Create environment</button>
+	<a href="/admin/environments" class="btn btn-danger" class:disabled={submitting}>Discard changes</a>
 </EnhancedForm>

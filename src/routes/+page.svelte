@@ -7,4 +7,5 @@
 <button on:click={() => (counter += 1)}>Increment counter</button>
 <p>Counter: {counter}</p>
 
+<a href="/login">Log in</a>
 <a href="/admin">Admin link</a>

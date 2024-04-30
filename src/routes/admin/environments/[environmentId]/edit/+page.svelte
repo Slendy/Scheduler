@@ -6,6 +6,8 @@
 
 	export let data;
 
+	let submitting = false;
+
 	export let formError: string | null = null;
 </script>
 
@@ -14,12 +16,13 @@
 <ErrorAlert message={formError} />
 
 <EnhancedForm
+	bind:submitting
 	action={`/api/v1/admin/environments/id/${data.environment._id}/edit`}
 	fail={(result) => {
 		formError = result.message;
 	}}
 	succeed={(result) => {
-		goto(`/admin/environments/${result.environment._id}`);
+		goto(`/admin/environments/${result._id}`);
 	}}
 >
 	<div class="mb-3">
@@ -45,6 +48,6 @@
 		/>
 	</div>
 
-	<button class="btn btn-secondary" type="submit">Save changes</button>
-	<a href="/admin/environments/{data.environment._id}" class="btn btn-danger">Discard changes</a>
+	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Save changes</button>
+	<a href="/admin/environments/{data.environment._id}" class="btn btn-danger" class:disabled={submitting}>Discard changes</a>
 </EnhancedForm>

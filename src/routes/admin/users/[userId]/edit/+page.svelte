@@ -6,7 +6,8 @@
 
 	export let data;
 
-	export let formError: string | null = null;
+	let formError: string | null = null;
+	let submitting = false;
 </script>
 
 <Header>Edit {data.user.username}</Header>
@@ -14,6 +15,7 @@
 <ErrorAlert message={formError} />
 
 <EnhancedForm
+	bind:submitting
 	action={'/api/v1/admin/users/id/' + data.user._id + '/edit'}
 	fail={(result) => {
 		formError = result.message;
@@ -52,6 +54,6 @@
 		<label for="isAdmin" class="form-check-label">Admin</label>
 	</div>
 
-	<button class="btn btn-secondary" type="submit">Save changes</button>
-	<a href="/admin/users" class="btn btn-danger">Discard changes</a>
+	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Save changes</button>
+	<a href="/admin/users" class="btn btn-danger" class:disabled={submitting}>Discard changes</a>
 </EnhancedForm>

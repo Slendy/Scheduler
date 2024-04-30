@@ -10,11 +10,13 @@
 			} else {
 				fail(result);
 			}
+			submitting = false;
 		};
 	};
 
 	export let method = 'post';
 	export let action = '';
+	export let submitting = false;
 	export let fail: (result: any) => any = () => {};
 	export let succeed: (result: any) => any;
 	export let onSubmit: (e: Event) => any = () => {};
@@ -26,8 +28,15 @@
 	{method}
 	{action}
 	on:keydown={(e) => onKeydown(e)}
-	on:submit|preventDefault={(e) => onSubmit(e)}
-	
+	on:submit|preventDefault={(e) => {
+		if(submitting) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			return;
+		}
+		submitting = true;
+		onSubmit(e);
+	}}
 	use:enhance={() => submitFunction()}
 >
 	<slot></slot>

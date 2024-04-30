@@ -6,12 +6,15 @@
 	export let environmentName: string;
 	export let environmentId: string;
 
+	let submitting = false;
+
 	let deleteInput: string;
 </script>
 
 <Modal modalId={'deleteConfirmationModal'}>
 	<EnhancedForm
-		action={`/api/v1/environments/id/${environmentId}/delete`}
+		bind:submitting
+		action={`/api/v1/admin/environments/id/${environmentId}/delete`}
 		onSubmit={(e) => {
 			if (deleteInput != environmentName) {
 				e.stopImmediatePropagation();
@@ -40,11 +43,11 @@
 			/>
 		</div>
 		<div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			<button type="button" class="btn btn-secondary" class:disabled={submitting} data-bs-dismiss="modal">Cancel</button>
 			<button
 				type="submit"
 				class="btn btn-danger"
-				class:disabled={deleteInput != environmentName}
+				class:disabled={deleteInput != environmentName || submitting}
 				data-bs-dismiss="modal"
 				id="delete-confirmation"
 			>
