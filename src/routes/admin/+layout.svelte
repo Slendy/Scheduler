@@ -5,8 +5,10 @@
 		PUBLIC_GIT_BRANCH,
 		PUBLIC_GIT_SHA,
 		PUBLIC_BUILD_DATE,
-		PUBLIC_GIT_REMOTE
+		PUBLIC_GIT_REMOTE,
+		PUBLIC_VERSION
 	} from '$env/static/public';
+	const { MODE } = import.meta.env;
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 	import NProgress from 'nprogress';
 	import { navigating } from '$app/stores';
@@ -123,18 +125,33 @@
 	<div class="main-content container mb-3">
 		<slot></slot>
 	</div>
-	<footer class="footer transition">
-		<div class="footer-container">
-			<div class="container" style="height: 20px;">
-				<span class="float-start transition-workaround">
-					Scheduler
-					<a href={PUBLIC_GIT_REMOTE + '/commit/' + PUBLIC_GIT_SHA}>
-						{PUBLIC_GIT_BRANCH}@{PUBLIC_GIT_SHA.slice(0, 7)}
-					</a>
-				</span>
-				<span class="transition-workaround float-end">
-					Built on {new Date(PUBLIC_BUILD_DATE).toLocaleDateString()}
-				</span>
+	<footer class="footer transition d-flex">
+		<div class="container mt-3 mb-3">
+			<div class="row row-cols-md-2 row-cols-1">
+				<div class="col">
+					<span class="float-start transition-workaround">
+						<div>
+							<span class="fw-bold">
+								<a href="https://github.com/Slendy">@slendy</a>/scheduler/{PUBLIC_GIT_BRANCH}</span>
+						</div>
+						<div>
+							Version: {PUBLIC_VERSION}, Commit:
+							<a href={PUBLIC_GIT_REMOTE + '/commit/' + PUBLIC_GIT_SHA}>
+								{PUBLIC_GIT_SHA.slice(0, 7)}
+							</a>
+						</div>
+					</span>
+				</div>
+				<div class="col">
+					<span class="transition-workaround float-start float-md-end text-start text-md-end">
+						<div title="{PUBLIC_BUILD_DATE}">
+							Build date: {new Date(PUBLIC_BUILD_DATE).toLocaleDateString()}
+						</div>
+						<div>
+							Deployment: {MODE.charAt(0).toUpperCase() + MODE.slice(1)}
+						</div>
+					</span>
+				</div>
 			</div>
 		</div>
 	</footer>

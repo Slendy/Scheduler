@@ -10,11 +10,16 @@ export async function getUserFromCookie(cookies: Cookies) {
     }
 
     let token = await TokenModel.findOne({ authToken: authCookie }).populate('user');
-    if (token == undefined || token.authTokenExpiration.getTime() < Date.now()) {
+    if (token == undefined) {
+        return undefined
+    }
+
+    // if token is expired
+    if (Date.now() > token.authTokenExpiration.getTime()) {
         token = await TokenModel.findOne({ refreshToken: refreshCookie }).populate('user');
         if (token == undefined) return undefined;
 
-        // generate new token and refresh token
+        // generate new token and delete old one
         await TokenModel.deleteOne({ _id: token._id });
 
         let newToken = await generateToken(token.user);
@@ -59,6 +64,8 @@ export async function generateToken(user: any) {
         user: user._id,
         authToken: generateRandomToken(),
         refreshToken: generateRandomToken(),
+        authTokenExpiration: Date.now() + (1000 * 60 * 60),
+        expiresAt: Date.now() + (1000 * 60 * 60 * 24 * 30)
     });
 
     await token.populate('user');
