@@ -172,6 +172,15 @@ select {
     /* W3C standards syntax, should come least */
 }
 
+#nprogress .bar {
+    background: var(--schedule-red) !important;
+}
+
+#nprogress .spinner-icon {
+    border-top-color: var(--schedule-red) !important;
+    border-left-color: var(--schedule-red) !important;
+  }
+
 [contenteditable][placeholder]:empty:before {
     content: attr(placeholder);
     color: #999;

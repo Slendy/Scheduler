@@ -8,6 +8,8 @@
 		PUBLIC_GIT_REMOTE
 	} from '$env/static/public';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
+	import NProgress from 'nprogress';
+	import { navigating } from '$app/stores';
 
 	let navBarItems = [
 		['/admin', 'Home'],
@@ -27,6 +29,18 @@
 		let thirdSlash = currentUrl.indexOf('/', secondSlash + 1);
 		if (secondSlash == -1 || thirdSlash == -1) thirdSlash = currentUrl.length;
 		return currentUrl.substring(0, thirdSlash);
+	}
+
+	// NProgress css
+	import 'nprogress/nprogress.css';
+
+	$: {
+		if ($navigating) {
+			NProgress.start();
+		}
+		if (!$navigating) {
+			NProgress.done();
+		}
 	}
 </script>
 
