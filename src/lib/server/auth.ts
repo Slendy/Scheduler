@@ -10,12 +10,9 @@ export async function getUserFromCookie(cookies: Cookies) {
     }
 
     let token = await TokenModel.findOne({ authToken: authCookie }).populate('user');
-    if (token == undefined) {
-        return undefined
-    }
 
     // if token is expired
-    if (Date.now() > token.authTokenExpiration.getTime()) {
+    if (token == undefined || Date.now() > token.authTokenExpiration.getTime()) {
         token = await TokenModel.findOne({ refreshToken: refreshCookie }).populate('user');
         if (token == undefined) return undefined;
 
