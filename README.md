@@ -55,3 +55,10 @@ If you decide to run Scheduler with a reverse proxy like Nginx you will need to 
 ```
 proxy_set_header Origin https://$host;
 ```
+
+You will also need to set the `ORIGIN` environment variable in the Scheduler container with the same url as your reverse proxy domain, including any protocols and ports.
+
+For example, if your website was running on `https://prod.example.com` you would need to set the origin environment variable like so:
+```
+ORIGIN=https://prod.example.com:443
+```
