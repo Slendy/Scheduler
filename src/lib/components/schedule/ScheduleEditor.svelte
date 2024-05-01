@@ -24,7 +24,7 @@
 	$: serializedSchedule = JSON.stringify(schedule);
 
 	let errorMessages: string[] | undefined = undefined;
-	let errorTimer: NodeJS.Timeout | undefined;
+	let errorTimer: any | undefined;
 
 	function addNewEvent() {
 		schedule.events = [
