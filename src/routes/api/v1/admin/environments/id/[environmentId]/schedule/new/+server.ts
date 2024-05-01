@@ -30,9 +30,17 @@ export const POST = async ({ request, params }) => {
         return apiFormErrorCustom({ errors: scheduleErrors })
     }
 
-    schedule.scheduleId = new mongo.ObjectId().toString();
+    let newSchedule: Schedule = {
+        scheduleId: new mongo.ObjectId().toString(),
+        name: schedule.name,
+        scheduleDate: schedule.scheduleDate,
+        scheduleWeekdays: schedule.scheduleWeekdays,
+        scheduleType: schedule.scheduleType,
+        variations: schedule.variations,
+        events: schedule.events,
+    };
 
-    environment.schedules.push(schedule);
+    environment.schedules.push(newSchedule);
     await environment.save();
 
     return apiFormSuccess();
