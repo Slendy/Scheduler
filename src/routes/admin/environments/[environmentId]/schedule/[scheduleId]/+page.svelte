@@ -3,6 +3,8 @@
 	import RadioSelector from '$lib/components/RadioSelector.svelte';
 	import ScheduleView from '$lib/components/schedule/ScheduleView.svelte';
 	import ScheduleEventTable from '$lib/components/schedule/ScheduleEventTable.svelte';
+	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
+	import ScheduleEnableToggle from '$lib/components/schedule/ScheduleEnableToggle.svelte';
 
 	export let data;
 
@@ -10,11 +12,11 @@
 	let selectedTime = 'current-time';
 	let selectedWindow = 'events';
 	let timeValue: any = '00:00:00';
-	$: console.log(timeValue);
 	$: customTime =
 		selectedTime == 'current-time'
 			? undefined
 			: new Date(new Date(timeValue).setDate(new Date().getDate()));
+			
 </script>
 
 <OneThirdHeader>
@@ -30,7 +32,7 @@
 		<button
 			class="btn btn-danger float-end m-1 mt-2"
 			data-bs-toggle="modal"
-			data-bs-target="#deleteConfirmationModal">Delete schedule</button
+			data-bs-target="#scheduleDeleteConfirmation">Delete schedule</button
 		>
 		<a
 			href="/admin/environments/{data.environment._id}/schedule/{data.schedule.scheduleId}/edit"
@@ -40,6 +42,14 @@
 		</a>
 	</div>
 </OneThirdHeader>
+
+<DeleteScheduleModal environmentId={data.environment._id} scheduleId={data.schedule.scheduleId} scheduleName={data.schedule.name} />
+
+<div class="text-center mb-3">
+	<ScheduleEnableToggle environmentId={data.environment._id} scheduleId={data.schedule.scheduleId} enabled={data.schedule.enabled} active={false}/>
+</div>
+
+
 <div class="text-center mb-3">
 	<h4>Preview mode</h4>
 	<RadioSelector
@@ -74,6 +84,6 @@
 		</div>
 	</div>
 	<div class="d-flex border border-secondary p-2 rounded-3">
-		<ScheduleView schedule={data.schedule} {selectedVariation} bind:customTime />
+		<ScheduleView schedule={data.schedule} selectedVariations={['TODO FIXME']} bind:customTime />
 	</div>
 {/if}

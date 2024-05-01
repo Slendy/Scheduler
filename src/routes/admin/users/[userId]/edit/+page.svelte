@@ -36,11 +36,9 @@
 	</div>
 
 	<div class="mb-3">
-		<label class="form-label" for="password">Password</label>
-		<input type="password" id="password" class="form-control" />
+		<label class="form-label" for="password">Reset password</label>
+		<input type="password" id="password" class="form-control" name="password" />
 	</div>
-
-	<input type="hidden" name="password" />
 
 	<div class="mb-3 form-check form-switch">
 		<input

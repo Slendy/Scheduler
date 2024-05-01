@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createCachedSchedule } from '$lib/shared/schedule';
+	import { createCachedSchedule, getNextEvent } from '$lib/shared/schedule';
 	import type { Schedule, ScheduleEvent, ScheduleVariation } from '$lib/shared/types';
 	import { onMount } from 'svelte';
 	import moment, { type unitOfTime } from 'moment';
@@ -16,40 +16,17 @@
 		return label + 's';
 	}
 
-	function getNextEvent(time: Date) {
+	function getAndFormatNextEvent(time: Date) {
 		if (!browser) {
 			cachedSchedule = createCachedSchedule(schedule, scheduleDate);
 		}
-		let events = cachedSchedule?.events || [];
 
-		if (events.length == 0) {
+		if (cachedSchedule == null) {
+			console.error('Cached schedule is undefined');
 			return undefined;
 		}
 
-		let target = undefined;
-		let title = undefined;
-		let inProgress = undefined;
-		for (let i = 0; i < events.length; i++) {
-			if (schedule.variations.length > 0 && !events[i].variations.includes(selectedVariation))
-				continue;
-
-			if (
-				time.getTime() >= events[i].startTimeDate.getTime() &&
-				time.getTime() <= events[i].endTimeDate.getTime()
-			) {
-				inProgress = true;
-				target = events[i].endTimeDate;
-				title = events[i].name;
-			} else if (
-				events[i + 1] &&
-				time.getTime() >= events[i].endTimeDate.getTime() &&
-				time.getTime() <= events[i + 1].startTimeDate.getTime()
-			) {
-				inProgress = false;
-				target = events[i + 1].startTimeDate;
-				title = events[i + 1].name;
-			}
-		}
+		const { target, title, inProgress } = getNextEvent(cachedSchedule, time, selectedVariations);
 
 		if (target === undefined && title === undefined && inProgress == undefined) {
 			return undefined;
@@ -83,7 +60,7 @@
 	function setTime() {
 		time = customTime || new Date();
 
-		nextEvent = getNextEvent(time);
+		nextEvent = getAndFormatNextEvent(time);
 		if (nextEvent == null) return undefined;
 
 		let currentMoment = moment(time.getTime());
@@ -143,7 +120,7 @@
 
 	export let timeComponents: TimeComponent[] = ['year', 'month', 'day', 'hour', 'minute', 'second'];
 	// export let hiddenLabels: TimeComponent[] = ["millisecond"];
-	export let selectedVariation: string;
+	export let selectedVariations: string[];
 	export let customTime: Date | undefined = undefined;
 	export let time: Date | undefined = customTime;
 	export let scheduleDate: Date = new Date();

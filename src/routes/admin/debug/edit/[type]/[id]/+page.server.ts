@@ -4,9 +4,6 @@ import { redirect } from '@sveltejs/kit';
 import { isValidObjectId } from 'mongoose';
 
 export const load = async ({ params }) => {
-    if (!dev) {
-        return redirect(301, "/");
-    }
     if (!isValidObjectId(params.id)) {
         return redirect(301, "/admin/debug");
     }

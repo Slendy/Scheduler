@@ -10,6 +10,8 @@
 <Header>DEBUG</Header>
 
 <div class="m-3">
+	<a href="/admin/debug/timing" class="btn btn-secondary">Schedule event tester</a>
+	<hr>
 	<h4>
 		There are {environments?.length || 'undefined'} environments and {users?.length || 'undefined'} users
 	</h4>

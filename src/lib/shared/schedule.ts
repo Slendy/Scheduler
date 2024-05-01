@@ -1,11 +1,12 @@
-import type { CachedSchedule, EventWithDate, Schedule, ScheduleEvent } from '$lib/shared/types';
-import { scheduleTypes } from '$lib/shared/types';
+import type { CachedSchedule, EventWithDate, Schedule, ScheduleEvent, ScheduleWeekdays } from '$lib/shared/types';
+import { scheduleTypes, scheduleWeekdays } from '$lib/shared/types';
 
 export const defaultSchedule: Schedule = {
     scheduleId: '',
     scheduleType: 'one-time',
     scheduleDate: undefined,
     scheduleWeekdays: undefined,
+    enabled: false,
     events: [],
     name: '',
     variations: [],
@@ -53,9 +54,9 @@ export function verifySchedule(schedule: Schedule): string[] {
         if (variation.options.length === 0) {
             errors.push('All variations must have at least one option');
         }
-        
+
         for (let option of variation.options) {
-            if(option.length > MAX_VARIATION_OPTION_LEN){
+            if (option.length > MAX_VARIATION_OPTION_LEN) {
                 errors.push(`Variation option name is too long (${option.length} > ${MAX_VARIATION_OPTION_LEN})`)
             }
             let timeSeconds = 0;
@@ -107,8 +108,123 @@ export function verifySchedule(schedule: Schedule): string[] {
     return errors;
 }
 
+export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, selectedVariations: string[]): any {
+    if (!schedule) {
+        return undefined;
+    }
+
+    let events = schedule?.events || [];
+
+    if (events.length == 0) {
+        return undefined;
+    }
+
+    let target = undefined;
+    let title = undefined;
+    let inProgress = undefined;
+    for (let i = 0; i < events.length; i++) {
+        if (schedule.variations.length > 0 && selectedVariations.every(variation => !events[i].variations.includes(variation))) {
+            continue;
+        }
+
+        if (
+            time.getTime() >= events[i].startTimeDate.getTime() &&
+            time.getTime() <= events[i].endTimeDate.getTime()
+        ) {
+            inProgress = true;
+            target = events[i].endTimeDate;
+            title = events[i].name;
+        } else if (
+            events[i + 1] &&
+            time.getTime() >= events[i].endTimeDate.getTime() &&
+            time.getTime() <= events[i + 1].startTimeDate.getTime()
+        ) {
+            inProgress = false;
+            target = events[i + 1].startTimeDate;
+            title = events[i + 1].name;
+        }
+    }
+    if (inProgress == undefined || target == undefined || title == undefined) {
+        return undefined
+    }
+
+    return { inProgress, target, title }
+}
+
+function getLastEvent(schedule: Schedule, baseDate: Date): Date {
+    let highestDate = new Date(0);
+    for (let event of schedule.events) {
+        let eventEndDate = convertTimeToDate(event.endTime, baseDate);
+        if (eventEndDate > highestDate) {
+            highestDate = eventEndDate;
+        }
+    }
+    return highestDate;
+}
+
+export function getActiveSchedule(schedules: Schedule[], date: Date): Schedule | undefined {
+    if (date == null || isNaN(date.getTime())) {
+        return undefined;
+    }
+
+    // TODO: if the current date is a blockout return undefined
+
+    if (schedules.length == 0) {
+        return undefined;
+    }
+
+    let smallestScheduleDistance = Number.MAX_SAFE_INTEGER;
+    let smallestSchedule = undefined;
+
+    for (let schedule of schedules) {
+        if (!schedule.enabled) {
+            continue;
+        }
+
+        if (schedule.scheduleType == 'one-time' && schedule.scheduleDate) {
+            let scheduleDate = new Date(schedule.scheduleDate);
+
+            let scheduleDistance = scheduleDate.getTime() - date.getTime();
+
+            // if the beginning of the schedule day has already begun and the last event has already ended
+            if (scheduleDistance < 0 && date > getLastEvent(schedule, scheduleDate)) {
+                continue;
+            }
+            if (scheduleDistance < smallestScheduleDistance) {
+                smallestScheduleDistance = scheduleDistance;
+                smallestSchedule = schedule;
+            }
+        } else if (schedule.scheduleType == 'repeating' && schedule.scheduleWeekdays) {
+            let currentDayOfWeek = date.getDay();
+
+            for (let i = 0; i < 7; i++) {
+                // if this day of week isn't included in the schedule then skip
+                if (schedule.scheduleWeekdays.includes(scheduleWeekdays[i % 7])) {
+                    continue;
+                }
+                let scheduleDate = new Date(date);
+                scheduleDate.setDate(date.getDate() + 1);
+                let scheduleDistance = scheduleDate.getTime() - date.getTime();
+
+                if (scheduleDistance < 0 && date > getLastEvent(schedule, scheduleDate)) {
+                    continue;
+                }
+                if (scheduleDistance < smallestScheduleDistance) {
+                    smallestScheduleDistance = scheduleDistance;
+                    smallestSchedule = schedule;
+                }
+
+                currentDayOfWeek++;
+            }
+        }
+    }
+    return smallestSchedule;
+}
+
 export function createCachedSchedule(schedule: Schedule, scheduleDate: Date): CachedSchedule | undefined {
-    if (schedule == undefined) return undefined;
+    if (schedule == undefined) {
+        return undefined;
+    }
 
     let newEvents: (ScheduleEvent & EventWithDate)[] = [];
     for (let event of schedule.events) {
@@ -148,4 +264,23 @@ export function convertTimeToSeconds(time: string): number {
 
     return components.map((e) => parseInt(e))
         .reduce((sum, value, index) => (index == 0 ? 60 * 60 : 60) * value + sum, 0);
+}
+
+export function prettifyWeekday(weekday: string) {
+    return weekday.charAt(0).toUpperCase() + weekday.slice(1);
+}
+
+export function prettifyWeekdayList(daysOfWeek: string[]) {
+    let weekdays: ScheduleWeekdays[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+    let weekends: ScheduleWeekdays[] = ['saturday', 'sunday'];
+    if (weekdays.every(d => daysOfWeek.includes(d) && weekends.every(d => daysOfWeek.includes(d)))) {
+        return "Everyday";
+    } else if (weekdays.every(d => daysOfWeek.includes(d) && !weekends.some(d => daysOfWeek.includes(d)))) {
+        return "Weekdays";
+    } else if (weekends.every(d => daysOfWeek.includes(d) && !weekdays.some(d => daysOfWeek.includes(d)))) {
+        return "Weekends"
+    }
+    return daysOfWeek.slice(0, daysOfWeek.length - 1).map(d => prettifyWeekday(d).slice(0, 3)).join(", ")
+        + " and " +
+        prettifyWeekday(daysOfWeek[daysOfWeek.length - 1].slice(0, 3));
 }

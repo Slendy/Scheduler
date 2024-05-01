@@ -23,7 +23,8 @@ export const POST = async ({ params, request }) => {
     }
 
     if (password != null && password.toString().length > 0) {
-        user.password = Bun.password.hash(password.toString());
+        user.passwordHash = await Bun.password.hash(password.toString());
+
         // if we change a user's password then invalidate all of their auth tokens
         TokenModel.deleteMany({ user: user._id }).exec();
     }

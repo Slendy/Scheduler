@@ -14,7 +14,7 @@ export const POST = async ({ request, params }) => {
         return apiFormError('Environment not found', 404);
     }
 
-    const existingSchedule = environment.schedules.find(s => s.scheduleId == scheduleId);
+    const existingSchedule = environment.schedules.find((s: any) => s.scheduleId == scheduleId);
     if (!existingSchedule) {
         return apiFormError("Schedule not found", 404);
     }
@@ -39,7 +39,7 @@ export const POST = async ({ request, params }) => {
     }
 
     // Create a copy of the existing schedule without it's history and timestamps
-    let { history, createdAt, updatedAt, ...historySchedule } = existingSchedule.toObject() as any;
+    let { history, createdAt, updatedAt, enabled, ...historySchedule } = existingSchedule.toObject() as any;
 
     existingSchedule.name = newSchedule.name;
     (existingSchedule as any).events = newSchedule.events;

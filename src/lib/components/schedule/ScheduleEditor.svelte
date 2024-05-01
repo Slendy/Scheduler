@@ -3,7 +3,11 @@
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import EditableSpan from '$lib/components/schedule/EditableSpan.svelte';
 	import VariationCard from '$lib/components/schedule/VariationCard.svelte';
-	import { MAX_SCHEDULE_NAME_LEN, verifySchedule as collectScheduleErrors, defaultSchedule } from '$lib/shared/schedule';
+	import {
+		MAX_SCHEDULE_NAME_LEN,
+		verifySchedule as collectScheduleErrors,
+		defaultSchedule
+	} from '$lib/shared/schedule';
 	import { scheduleWeekdays, type Schedule } from '$lib/shared/types.js';
 	import { SortableList } from '@sonderbase/svelte-sortablejs';
 	import { onMount } from 'svelte';
@@ -14,9 +18,14 @@
 
 	export let schedule: Schedule = { ...defaultSchedule };
 
-	export let redirect: string;
-
 	export let environmentId: string;
+
+	export let redirectUrl: string;
+
+	export let discardUrl: string =
+		schedule.scheduleId.length == 0
+			? `/admin/environments/${environmentId}`
+			: `/admin/environments/${environmentId}/schedule/${schedule.scheduleId}`;
 
 	export let actionUrl: string;
 
@@ -93,6 +102,8 @@
 		return [];
 	}
 
+	//TODO: ensure that schedules dates don't conflict (and grey out repeating days of week that are already used)
+
 	// this is used to recreate the sortable list whenever we let go of an item to force
 	// the items to actually refresh. TLDR; I wanna krill myself part 2: electric boogaloo
 	let eventRecreate = generateRandomId();
@@ -115,7 +126,7 @@
 		}
 	}}
 	succeed={(_) => {
-		goto(redirect, { invalidateAll: true });
+		goto(redirectUrl, { invalidateAll: true });
 	}}
 	fail={(result) => (errorMessages = result.errors)}
 	onSubmit={(e) => verifySchedule(e)}
@@ -123,7 +134,11 @@
 	<input name="data" type="hidden" value={serializedSchedule} />
 	<div class="text-center card p-3">
 		<div class="schedule-title fs-3 d-block">
-			<EditableSpan placeholder={'Schedule name'} maxLength={MAX_SCHEDULE_NAME_LEN} bind:value={schedule.name} />
+			<EditableSpan
+				placeholder={'Schedule name'}
+				maxLength={MAX_SCHEDULE_NAME_LEN}
+				bind:value={schedule.name}
+			/>
 		</div>
 
 		<hr />
@@ -226,10 +241,19 @@
 				</div>
 			{:else}
 				<div class="d-block mt-3">
-				{#each scheduleWeekdays as weekday}
-					<input type="checkbox" class="btn-check" id="btn-{weekday}" autocomplete="off" value={weekday} bind:group={schedule.scheduleWeekdays}/>
-					<label class="btn btn-outline-secondary text-capitalize" for="btn-{weekday}">{weekday}</label>
-				{/each}
+					{#each scheduleWeekdays as weekday}
+						<input
+							type="checkbox"
+							class="btn-check"
+							id="btn-{weekday}"
+							autocomplete="off"
+							value={weekday}
+							bind:group={schedule.scheduleWeekdays}
+						/>
+						<label class="btn btn-outline-secondary text-capitalize" for="btn-{weekday}">
+							{weekday}
+						</label>
+					{/each}
 				</div>
 			{/if}
 		</div>
@@ -242,14 +266,9 @@
 			</button>
 
 			{#if schedule.scheduleId.length == 0}
-				<a href="/admin/environments/{environmentId}" class="btn btn-danger m-1"> Discard </a>
+				<a href={discardUrl} class="btn btn-danger m-1"> Discard </a>
 			{:else}
-				<a
-					href="/admin/environments/{environmentId}/schedule/{schedule.scheduleId}"
-					class="btn btn-danger m-1"
-				>
-					Discard changes
-				</a>
+				<a href={discardUrl} class="btn btn-danger m-1"> Discard changes </a>
 			{/if}
 		</div>
 	</div>

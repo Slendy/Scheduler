@@ -18,7 +18,7 @@ const authTokenSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     authToken: { type: String, required: true },
     // auth token expires every hour
-    authTokenExpiration: { type: Date, required: true},
+    authTokenExpiration: { type: Date, required: true },
     refreshToken: { type: String, required: true },
     // refresh token expires when the document expires which is 1 month
     // when a refresh token is used the token object is regenerated
@@ -55,7 +55,10 @@ const scheduleSchema = new Schema({
         default: null,
     },
     name: String,
-    isPublished: Boolean,
+    enabled: {
+        type: Boolean,
+        default: false,
+    },
     variations: [scheduleVariationSchema],
     events: [eventSchema],
     history: [Schema.Types.Mixed]
