@@ -9,7 +9,6 @@
 	export let data;
 
 	let allVariations = data.schedule.variations.map((v: any) => v.options).reduce((prev: any, cur: any) => [...prev, ...cur]);
-	$: console.log(allVariations);
 	//TODO: this should be user selectable
 	let selectedVariations: string[] = [];
 	let selectedTime = 'current-time';

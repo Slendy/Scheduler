@@ -119,12 +119,17 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
         return undefined;
     }
 
-    let target = undefined;
-    let title = undefined;
-    let inProgress = undefined;
+    let target = events[0].startTimeDate;
+    let title = events[0].name;
+    let inProgress = false;
+    let highestTime = 0;
     for (let i = 0; i < events.length; i++) {
         if (schedule.variations.length > 0 && events[i].variations.every(v => !selectedVariations.includes(v))) {
             continue;
+        }
+
+        if (events[i].endTimeDate.getTime() > highestTime) {
+            highestTime = events[i].endTimeDate.getTime();
         }
 
         if (
@@ -144,7 +149,8 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
             title = events[i + 1].name;
         }
     }
-    if (inProgress == undefined || target == undefined || title == undefined) {
+
+    if (time.getTime() > highestTime) {
         return undefined
     }
 
