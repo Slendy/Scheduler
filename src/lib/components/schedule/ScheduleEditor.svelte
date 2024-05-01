@@ -254,7 +254,7 @@
 							value={weekday}
 							bind:group={schedule.scheduleWeekdays}
 						/>
-						<label class="btn btn-outline-secondary text-capitalize" for="btn-{weekday}">
+						<label class="btn btn-outline-secondary text-capitalize my-1" for="btn-{weekday}">
 							{weekday}
 						</label>
 					{/each}
