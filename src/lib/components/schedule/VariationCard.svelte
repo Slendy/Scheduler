@@ -9,9 +9,14 @@
 	};
 	export let options: string[] = [];
 
+	export let generateRandomId: () => string;
+
 	export let deleteCallback: () => {};
 
-	let internalOptions: Option[] = [];
+	// initially set internalOptions otherwise it will be immediately cleared out by the reactive statement below
+	let internalOptions: Option[] = options.map(o => ({ name: o, id: generateRandomId() }));
+
+	// update options any time internalOptions changes
 	$: options = internalOptions.map((o) => o.name);
 
 	let placeholderValue = '';
@@ -67,7 +72,7 @@
 				on:onsave={(event) => {
 					internalOptions = [
 						...internalOptions,
-						{ name: event.detail.value, id: Date.now().toString() }
+						{ name: event.detail.value, id: generateRandomId() }
 					];
 					placeholderValue = '';
 				}}

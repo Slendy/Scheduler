@@ -203,6 +203,7 @@
 					<VariationCard
 						bind:title={variation.name}
 						bind:options={variation.options}
+						{generateRandomId}
 						deleteCallback={() =>
 							(schedule.variations = schedule.variations.filter((v) => v != variation))}
 					/>
