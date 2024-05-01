@@ -20,8 +20,8 @@
 	fail={(result) => {
 		formError = result.message;
 	}}
-	succeed={(_) => {
-		goto('/admin/users/', { invalidateAll: true });
+	succeed={async (_) => {
+		await goto('/admin/users/', { invalidateAll: true });
 	}}
 >
 	<div class="mb-3">

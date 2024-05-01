@@ -35,6 +35,8 @@
 	let errorMessages: string[] | undefined = undefined;
 	let errorTimer: any | undefined;
 
+	let submitting: boolean = false;
+
 	function addNewEvent() {
 		schedule.events = [
 			...schedule.events,
@@ -119,14 +121,15 @@
 <ErrorAlert messages={errorMessages} />
 
 <EnhancedForm
+	bind:submitting
 	action={actionUrl}
 	onKeydown={(e) => {
 		if (e.key === 'Enter') {
 			e.preventDefault();
 		}
 	}}
-	succeed={(_) => {
-		goto(redirectUrl, { invalidateAll: true });
+	succeed={async (_) => {
+		await goto(redirectUrl, { invalidateAll: true });
 	}}
 	fail={(result) => (errorMessages = result.errors)}
 	onSubmit={(e) => verifySchedule(e)}
@@ -262,15 +265,13 @@
 		<hr />
 
 		<div class="d-inline">
-			<button class="btn btn-secondary m-1" type="submit">
+			<button class="btn btn-secondary m-1" class:disabled={submitting} type="submit">
 				{schedule.scheduleId.length == 0 ? 'Create schedule' : 'Save schedule'}
 			</button>
 
-			{#if schedule.scheduleId.length == 0}
-				<a href={discardUrl} class="btn btn-danger m-1"> Discard </a>
-			{:else}
-				<a href={discardUrl} class="btn btn-danger m-1"> Discard changes </a>
-			{/if}
+			<a href={discardUrl} class="btn btn-danger m-1" class:disabled={submitting}>
+				{schedule.scheduleId.length == 0 ? 'Discard' : 'Discard changes'}
+			</a>
 		</div>
 	</div>
 </EnhancedForm>

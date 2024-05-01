@@ -20,8 +20,8 @@
 				e.stopImmediatePropagation();
 			}
 		}}
-		succeed={() => {
-			goto('/admin/environments');
+		succeed={async () => {
+			await goto('/admin/environments');
 		}}
 	>
 		<div class="modal-header">

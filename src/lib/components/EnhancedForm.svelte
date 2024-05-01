@@ -6,9 +6,9 @@
 	const submitFunction = () => {
 		return async ({ result }: { result: any }) => {
 			if (result.success) {
-				succeed(result);
+				await succeed(result);
 			} else {
-				fail(result);
+				await fail(result);
 			}
 			submitting = false;
 		};
@@ -28,14 +28,18 @@
 	{method}
 	{action}
 	on:keydown={(e) => onKeydown(e)}
-	on:submit|preventDefault={(e) => {
-		if(submitting) {
+	on:submit={(e) => {
+		if (submitting) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			return;
 		}
-		submitting = true;
+
 		onSubmit(e);
+
+		if (!e.defaultPrevented) {
+			submitting = true;
+		}
 	}}
 	use:enhance={() => submitFunction()}
 >

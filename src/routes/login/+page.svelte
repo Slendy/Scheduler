@@ -6,8 +6,8 @@
 <h1>Login</h1>
 <EnhancedForm
 	action={'/api/v1/auth/login'}
-	succeed={(response) => {
-		goto(response.redirect, { invalidateAll: true });
+	succeed={async (response) => {
+		await goto(response.redirect, { invalidateAll: true });
 	}}
 	fail={(response) => {
 		console.log(response);

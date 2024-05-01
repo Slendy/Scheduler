@@ -23,7 +23,7 @@ window.onload = function () {
             if(result.type === 'error'){
                 error = result.error.message;
             } else if(result.type === 'success'){
-                goto("/admin/debug");
+                await goto("/admin/debug");
             }
             console.log(result);
         }

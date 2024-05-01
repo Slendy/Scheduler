@@ -18,8 +18,8 @@
 	fail={(result) => {
 		formError = result.message;
 	}}
-	succeed={(result) => {
-		goto(`/admin/environments/${result.environment._id}`);
+	succeed={async (result) => {
+		await goto(`/admin/environments/${result.environment._id}`);
 	}}
 >
 	<div class="mb-3">
