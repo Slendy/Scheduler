@@ -93,6 +93,20 @@ div {
 
 /* END BOOTSTRAP OVERRIDES */
 
+/* BEGIN NPROGRESS OVERRIDES */
+#nprogress .bar {
+    background: var(--schedule-red) !important;
+}
+
+#nprogress .spinner-icon {
+    border-top-color: var(--schedule-red) !important;
+    border-left-color: var(--schedule-red) !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px var(--schedule-red), 0 0 5px var(--schedule-red) !important;
+}
+/* END NPROGRESS OVERRIDES */
 
 /* BEGIN SCHEDULE EDITOR STYLES */
 
@@ -170,15 +184,6 @@ select {
     cursor: grabbing !important;
     /* W3C standards syntax, should come least */
 }
-
-#nprogress .bar {
-    background: var(--schedule-red) !important;
-}
-
-#nprogress .spinner-icon {
-    border-top-color: var(--schedule-red) !important;
-    border-left-color: var(--schedule-red) !important;
-  }
 
 [contenteditable][placeholder]:empty:before {
     content: attr(placeholder);
