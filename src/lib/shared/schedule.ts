@@ -123,7 +123,7 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
     let title = undefined;
     let inProgress = undefined;
     for (let i = 0; i < events.length; i++) {
-        if (schedule.variations.length > 0 && selectedVariations.every(variation => !events[i].variations.includes(variation))) {
+        if (schedule.variations.length > 0 && events[i].variations.every(v => !selectedVariations.includes(v))) {
             continue;
         }
 

@@ -8,17 +8,22 @@
 		scheduleId: '',
 		name: 'Test schedule',
 		variations: [],
+		enabled: true,
+		scheduleDate: undefined,
+		scheduleType: 'one-time',
+		scheduleWeekdays: undefined,
 		events: [
 			{
 				name: 'test event',
 				startTime: '0:00',
 				endTime: '23:59',
-				variations: []
+				variations: [],
+				eventId: 'bruh'
 			}
 		]
 	};
 
-	let selectedVariation: string;
+	let selectedVariations: string[];
 	let displayTable: boolean = false;
 </script>
 
@@ -51,7 +56,7 @@
 <DarkModeToggle />
 
 <div class="schedule-container transition">
-	<ScheduleView schedule={testSchedule} {selectedVariation} />
+	<ScheduleView schedule={testSchedule} {selectedVariations} />
 	<footer class="schedule-footer refresh" style="display:none" id="refresh">
 		<span> A newer version is available. Please</span>
 		<a id="update" class="update"> refresh this page</a>
@@ -65,8 +70,13 @@
 				{#each variation.options as option}
 					<button
 						class="footer-button footer-selector transition"
-						class:selected={selectedVariation === option}
-						on:click={() => (selectedVariation = option)}>{option}</button
+						class:selected={selectedVariations.includes(option)}
+						on:click={() => {
+							// remove other selected options from this variation
+							selectedVariations = selectedVariations.filter((v) => !variation.options.includes(v));
+
+							selectedVariations.push(option);
+						}}>{option}</button
 					>
 					<span> | </span>
 				{/each}
@@ -82,6 +92,6 @@
 </div>
 {#if displayTable}
 	<div class="table-container">
-		<ScheduleEventTable schedule={testSchedule} {selectedVariation} />
+		<ScheduleEventTable schedule={testSchedule} {selectedVariations} />
 	</div>
 {/if}

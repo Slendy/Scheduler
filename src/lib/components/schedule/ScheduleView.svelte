@@ -10,6 +10,26 @@
 	// this should update only whenever schedule changes
 	$: cachedSchedule = createCachedSchedule(schedule, scheduleDate);
 
+	enum TimeComp {
+		Milliseconds,
+		Seconds,
+		Minutes,
+		Hours,
+		Days,
+		Months,
+		Years
+	}
+
+	const timeKeys = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'] as const;
+	type TimeComponent = (typeof timeKeys)[number];
+
+	export let timeComponents: TimeComponent[] = ['year', 'month', 'day', 'hour', 'minute', 'second'];
+	// export let hiddenLabels: TimeComponent[] = ["millisecond"];
+	export let selectedVariations: string[];
+	export let customTime: Date | undefined = undefined;
+	export let time: Date | undefined = customTime;
+	export let scheduleDate: Date = new Date();
+
 	function plural(value: number, label: string) {
 		if (value == 1) return label;
 
@@ -17,20 +37,16 @@
 	}
 
 	function getAndFormatNextEvent(time: Date) {
-		if (!browser) {
+		if (!browser || cachedSchedule == null) {
 			cachedSchedule = createCachedSchedule(schedule, scheduleDate);
 		}
 
-		if (cachedSchedule == null) {
-			console.error('Cached schedule is undefined');
+		let next = getNextEvent(cachedSchedule, time, selectedVariations);
+		if (next == null) {
 			return undefined;
 		}
 
-		const { target, title, inProgress } = getNextEvent(cachedSchedule, time, selectedVariations);
-
-		if (target === undefined && title === undefined && inProgress == undefined) {
-			return undefined;
-		}
+		const { target, title, inProgress } = next;
 
 		let exactTime = target?.toLocaleString('en-US', {
 			hour: 'numeric',
@@ -104,26 +120,6 @@
 			cancelAnimationFrame(timer);
 		};
 	});
-
-	enum TimeComp {
-		Milliseconds,
-		Seconds,
-		Minutes,
-		Hours,
-		Days,
-		Months,
-		Years
-	}
-
-	const timeKeys = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'] as const;
-	type TimeComponent = (typeof timeKeys)[number];
-
-	export let timeComponents: TimeComponent[] = ['year', 'month', 'day', 'hour', 'minute', 'second'];
-	// export let hiddenLabels: TimeComponent[] = ["millisecond"];
-	export let selectedVariations: string[];
-	export let customTime: Date | undefined = undefined;
-	export let time: Date | undefined = customTime;
-	export let scheduleDate: Date = new Date();
 
 	setTime();
 </script>

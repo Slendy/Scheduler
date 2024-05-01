@@ -5,7 +5,7 @@
 
 	export let schedule: Schedule;
 	export let scheduleDate: Date = new Date();
-	export let selectedVariation: string;
+	export let selectedVariations: string[];
 	export let transition: boolean = true;
 	$: cachedSchedule = createCachedSchedule(schedule, scheduleDate);
 
@@ -23,7 +23,7 @@
 			</span>
 			<table class="schedule-table">
 				<tbody>
-					{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || e.variations.includes(selectedVariation)) as event}
+					{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || selectedVariations.some(v => e.variations.includes(v))) as event}
 						<tr>
 							<td class="table-left">{event.name}</td>
 							<td class="table-right">

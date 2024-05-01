@@ -5,18 +5,27 @@
 	import ScheduleEventTable from '$lib/components/schedule/ScheduleEventTable.svelte';
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import ScheduleEnableToggle from '$lib/components/schedule/ScheduleEnableToggle.svelte';
-
+	
 	export let data;
 
-	let selectedVariation: string = '';
+	let allVariations = data.schedule.variations.map((v: any) => v.options).reduce((prev: any, cur: any) => [...prev, ...cur]);
+	$: console.log(allVariations);
+	//TODO: this should be user selectable
+	let selectedVariations: string[] = [];
 	let selectedTime = 'current-time';
 	let selectedWindow = 'events';
 	let timeValue: any = '00:00:00';
-	$: customTime =
-		selectedTime == 'current-time'
-			? undefined
-			: new Date(new Date(timeValue).setDate(new Date().getDate()));
-			
+	let customTime: Date | undefined;
+	$: {
+		if(selectedTime === 'current-time'){
+			customTime = undefined;
+		} else {
+			let time = timeValue.split(":");
+
+			customTime = new Date();
+			customTime.setHours(time[0], time[1], time[2]);
+		}
+	}
 </script>
 
 <OneThirdHeader>
@@ -64,7 +73,7 @@
 
 {#if selectedWindow === 'events'}
 	<div class="d-flex">
-		<ScheduleEventTable schedule={data.schedule} {selectedVariation} transition={false} />
+		<ScheduleEventTable schedule={data.schedule} selectedVariations={allVariations} transition={false} />
 	</div>
 {:else}
 	<div class="text-center mb-3">
@@ -84,6 +93,6 @@
 		</div>
 	</div>
 	<div class="d-flex border border-secondary p-2 rounded-3">
-		<ScheduleView schedule={data.schedule} selectedVariations={['TODO FIXME']} bind:customTime />
+		<ScheduleView schedule={data.schedule} selectedVariations={allVariations} bind:customTime />
 	</div>
 {/if}
