@@ -22,7 +22,7 @@
 			let time = timeValue.split(":");
 
 			customTime = new Date();
-			customTime.setHours(time[0], time[1], time[2]);
+			customTime.setHours(time[0] || null, time[1] || null, time[2] || null);
 		}
 	}
 </script>
