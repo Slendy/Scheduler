@@ -72,32 +72,6 @@
 		href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
 	/>
 	<link rel="shortcut icon" href="/favicon.ico" />
-	<script>
-		// set dark mode on page load
-		const getPreferredScheme = () =>
-			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
-
-		let storedTheme = localStorage.getItem('colorTheme') ?? getPreferredScheme();
-
-		if (storedTheme === 'dark') {
-			enableDarkMode();
-		} else {
-			disableDarkMode();
-		}
-
-		window.onload = function () {
-			document.body.classList.add('transition');
-		};
-
-		function enableDarkMode() {
-			document.querySelector(':root')?.setAttribute('data-bs-theme', 'dark');
-			document.querySelector(':root')?.classList.add('darkMode');
-		}
-		function disableDarkMode() {
-			document.querySelector(':root')?.setAttribute('data-bs-theme', 'light');
-			document.querySelector(':root')?.classList.remove('darkMode');
-		}
-	</script>
 </svelte:head>
 
 <div class="main-container">

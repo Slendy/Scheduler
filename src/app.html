@@ -4,8 +4,43 @@
 <head>
 	<meta charset="utf-8" />
 	<link rel="shortcut icon" href="%sveltekit.assets%/favicon.png" />
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+	<meta name="viewport"
+		content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 	%sveltekit.head%
+	<script>
+		const getPreferredScheme = () =>
+			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
+
+		let storedTheme = localStorage.getItem('colorTheme') ?? getPreferredScheme();
+
+		if (storedTheme === 'dark') {
+			enableDarkMode();
+		} else {
+			disableDarkMode();
+		}
+
+		window.onload = function () {
+			document.body.classList.add('transition');
+		};
+
+		function enableDarkMode() {
+			document.querySelector(':root')?.setAttribute('data-bs-theme', 'dark');
+			document.querySelector(':root')?.classList.add('darkMode');
+			document.querySelector(':root')?.classList.remove('lightMode');
+		}
+		function disableDarkMode() {
+			document.querySelector(':root')?.setAttribute('data-bs-theme', 'light');
+			document.querySelector(':root')?.classList.remove('darkMode');
+			document.querySelector(':root')?.classList.add('lightMode');
+		}
+		function toggleDarkMode() {
+			let isDarkMode = document.querySelector(':root')?.classList.contains('darkMode');
+			isDarkMode ? disableDarkMode() : enableDarkMode();
+			isDarkMode = !isDarkMode;
+			let theme = isDarkMode ? 'dark' : 'light';
+			localStorage.setItem('colorTheme', theme);
+		}
+	</script>
 </head>
 
 <body data-sveltekit-preload-data="hover">

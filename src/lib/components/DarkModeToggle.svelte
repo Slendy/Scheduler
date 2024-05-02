@@ -1,44 +1,10 @@
 <script>
-	export function setInitialScheme() {
-		const getPreferredScheme = () =>
-			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
-
-		let storedTheme = localStorage.getItem('colorTheme') ?? getPreferredScheme();
-
-		if (storedTheme === 'dark') {
-			enableDarkMode();
-		} else {
-			disableDarkMode();
-		}
-
-		window.onload = function () {
-			document.body.classList.add('transition');
-		};
-	}
-
-	function enableDarkMode() {
-		document.querySelector(':root')?.setAttribute('data-bs-theme', 'dark');
-		document.querySelector(':root')?.classList.add('darkMode');
-		document.querySelector(':root')?.classList.remove('lightMode');
-	}
-	function disableDarkMode() {
-		document.querySelector(':root')?.setAttribute('data-bs-theme', 'light');
-		document.querySelector(':root')?.classList.remove('darkMode');
-		document.querySelector(':root')?.classList.add('lightMode');
-	}
-
-	// update theme on button press
-	// side effect: if a user manually toggles their theme it will be forever saved
-	function toggleDarkMode() {
-		let isDarkMode = document.querySelector(':root')?.classList.contains('darkMode');
-		isDarkMode ? disableDarkMode() : enableDarkMode();
-		isDarkMode = !isDarkMode;
-		let theme = isDarkMode ? 'dark' : 'light';
-		localStorage.setItem('colorTheme', theme);
-	}
+	// @ts-nocheck
+	// toggleDarkMode() is defined in app.html
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore missing-declaration -->
 <svg
 	width="30"
 	height="30"

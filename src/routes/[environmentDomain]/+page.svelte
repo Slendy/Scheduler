@@ -27,30 +27,6 @@
 	let displayTable: boolean = false;
 </script>
 
-<svelte:head>
-	<script>
-		// we need to put this script in the header and not in onMount, otherwise the page flashes the default on load
-		const getPreferredScheme = () =>
-			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
-
-		let storedTheme = localStorage.getItem('colorTheme') ?? getPreferredScheme();
-
-		if (storedTheme === 'dark') {
-			enableDarkMode();
-		} else {
-			disableDarkMode();
-		}
-
-		function enableDarkMode() {
-			document.querySelector(':root')?.classList.add('darkMode');
-			document.querySelector(':root')?.classList.remove('lightMode');
-		}
-		function disableDarkMode() {
-			document.querySelector(':root')?.classList.add('lightMode');
-			document.querySelector(':root')?.classList.remove('darkMode');
-		}
-	</script>
-</svelte:head>
 <body class="transition"></body>
 
 <DarkModeToggle />
