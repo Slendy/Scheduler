@@ -2,12 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
     import ErrorAlert from '$lib/components/ErrorAlert.svelte'
-
-	/*
-window.onload = function () {
-        let data = document.getElementById("json-data");
-        data.value = JSON.stringify(JSON.parse(data.value), null, 4);
-    }*/
 	
     let error = '';
 	export let data;
@@ -25,7 +19,6 @@ window.onload = function () {
             } else if(result.type === 'success'){
                 await goto("/admin/debug");
             }
-            console.log(result);
         }
     }}
 	on:submit|preventDefault={(e) => {
