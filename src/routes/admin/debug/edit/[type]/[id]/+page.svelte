@@ -23,10 +23,9 @@
     }}
 	on:submit|preventDefault={(e) => {
 		try {
-			let data = JSON.parse(jsonData);
+			JSON.parse(jsonData);
 		} catch (error) {
 			e.stopImmediatePropagation();
-
 		}
 	}}
 >
