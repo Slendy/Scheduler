@@ -6,11 +6,7 @@
 	<link rel="shortcut icon" href="%sveltekit.assets%/favicon.png" />
 	<meta name="viewport"
 		content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
-	%sveltekit.head%
-</head>
-
-<body data-sveltekit-preload-data="hover">
-	<script>
+	<script data-cfasync="false">
 		const getPreferredScheme = () =>
 			window?.matchMedia?.('(prefers-color-scheme:dark)')?.matches ? 'dark' : 'light';
 
@@ -40,6 +36,10 @@
 			localStorage.setItem('colorTheme', theme);
 		}
 	</script>
+	%sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
 	<div style="display: contents">%sveltekit.body%</div>
 </body>
 <script>
