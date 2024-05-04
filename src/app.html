@@ -23,17 +23,17 @@
 		}
 
 		function enableDarkMode() {
-			document.querySelector(':root')?.setAttribute('data-bs-theme', 'dark');
-			document.querySelector(':root')?.classList.add('darkMode');
-			document.querySelector(':root')?.classList.remove('lightMode');
+			document.documentElement.setAttribute('data-bs-theme', 'dark');
+			document.documentElement.classList.add('darkMode');
+			document.documentElement.classList.remove('lightMode');
 		}
 		function disableDarkMode() {
-			document.querySelector(':root')?.setAttribute('data-bs-theme', 'light');
-			document.querySelector(':root')?.classList.remove('darkMode');
-			document.querySelector(':root')?.classList.add('lightMode');
+			document.documentElement.setAttribute('data-bs-theme', 'light');
+			document.documentElement.classList.remove('darkMode');
+			document.documentElement.classList.add('lightMode');
 		}
 		function toggleDarkMode() {
-			let isDarkMode = document.querySelector(':root')?.classList.contains('darkMode');
+			let isDarkMode = document.documentElement.classList.contains('darkMode');
 			isDarkMode ? disableDarkMode() : enableDarkMode();
 			isDarkMode = !isDarkMode;
 			let theme = isDarkMode ? 'dark' : 'light';
