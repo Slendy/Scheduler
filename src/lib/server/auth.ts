@@ -38,13 +38,13 @@ export function setCookieToken(cookies: Cookies, token: any) {
         path: '/',
         maxAge: 60 * 60,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
     });
     cookies.set('refresh-token', token.refreshToken, {
         path: '/',
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
     });
 }
 
