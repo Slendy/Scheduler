@@ -2,10 +2,10 @@
 	<div class="schedule-container">
 		<div class="countdown-container">
 			<div style="display: block">
-				<h1 class="header" id="event-name">Environment not found</h1>
+				<h1 class="header" id="event-name">No schedules found</h1>
 				<br class="event-break" />
 				<div class="timer-wrapper">
-					<span class="timer-label timer">(Is your domain configured correctly?)</span>
+					<span class="timer-label timer">Try checking back</span>
 				</div>
 				<br class="event-break" />
 				<div class="timer-wrapper">
