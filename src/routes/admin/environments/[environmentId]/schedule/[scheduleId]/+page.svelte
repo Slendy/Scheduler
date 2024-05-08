@@ -5,10 +5,13 @@
 	import ScheduleEventTable from '$lib/components/schedule/ScheduleEventTable.svelte';
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import ScheduleEnableToggle from '$lib/components/schedule/ScheduleEnableToggle.svelte';
-	
+	import { dayjs } from '$lib/shared/dayjs.js';
+
 	export let data;
 
-	let allVariations = data.schedule.variations.map((v: any) => v.options).reduce((prev: any, cur: any) => [...prev, ...cur]);
+	let allVariations = data.schedule.variations
+		.map((v: any) => v.options)
+		.reduce((prev: any, cur: any) => [...prev, ...cur]);
 	//TODO: this should be user selectable
 	let selectedVariations: string[] = [];
 	let selectedTime = 'current-time';
@@ -16,13 +19,18 @@
 	let timeValue: any = '00:00:00';
 	let customTime: Date | undefined;
 	$: {
-		if(selectedTime === 'current-time'){
+		if (selectedTime === 'current-time') {
 			customTime = undefined;
 		} else {
-			let time = timeValue.split(":");
+			let time = timeValue.split(':');
 
-			customTime = new Date();
-			customTime.setHours(time[0] || null, time[1] || null, time[2] || null);
+			let dateTime = dayjs()
+				.set('hour', time[0] || null)
+				.set('minute', time[1] || null)
+				.set('second', time[2] || null)
+				.startOf('millisecond');
+
+			customTime = dateTime.toDate();
 		}
 	}
 </script>
@@ -51,12 +59,20 @@
 	</div>
 </OneThirdHeader>
 
-<DeleteScheduleModal environmentId={data.environment._id} scheduleId={data.schedule.scheduleId} scheduleName={data.schedule.name} />
+<DeleteScheduleModal
+	environmentId={data.environment._id}
+	scheduleId={data.schedule.scheduleId}
+	scheduleName={data.schedule.name}
+/>
 
 <div class="text-center mb-3">
-	<ScheduleEnableToggle environmentId={data.environment._id} scheduleId={data.schedule.scheduleId} enabled={data.schedule.enabled} active={false}/>
+	<ScheduleEnableToggle
+		environmentId={data.environment._id}
+		scheduleId={data.schedule.scheduleId}
+		enabled={data.schedule.enabled}
+		active={false}
+	/>
 </div>
-
 
 <div class="text-center mb-3">
 	<h4>Preview mode</h4>
@@ -72,7 +88,12 @@
 
 {#if selectedWindow === 'events'}
 	<div class="d-flex">
-		<ScheduleEventTable schedule={data.schedule} selectedVariations={allVariations} transition={false} />
+		<ScheduleEventTable
+			schedule={data.schedule}
+			selectedVariations={allVariations}
+			transition={false}
+			limitHeight={false}
+		/>
 	</div>
 {:else}
 	<div class="text-center mb-3">

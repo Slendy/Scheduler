@@ -4,14 +4,14 @@ import { getActiveSchedule } from '$lib/shared/schedule.js';
 import { error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
-    const { environmentDomain } = params;
+    const { environmentDomain, epochTimestamp } = params;
 
     let environment = await EnvironmentModel.findOne({ environmentDomain });
     if (!environment) return error(404, "Environment not found");
 
     let schedules = environment.toApiResponse().schedules;
 
-    let activeSchedule = getActiveSchedule(schedules, dayjs.tz(dayjs(), environment.timeZone), environment.timeZone) as any
+    let activeSchedule = getActiveSchedule(schedules, dayjs.tz(dayjs(epochTimestamp), environment.timeZone), environment.timeZone) as any
     if (!activeSchedule) {
         return error(404, "No schedule found");
     }

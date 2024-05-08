@@ -67,6 +67,11 @@ const scheduleSchema = new Schema({
 const environmentSchema = new Schema({
     environmentName: { type: String, required: true },
     environmentDomain: { type: String, required: true },
+    timeZone: {
+        type: String,
+        required: true,
+        default: 'America/Chicago',
+    },
     isVerified: { type: Boolean, required: true },
     schedules: [scheduleSchema],
 });

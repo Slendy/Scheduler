@@ -1,5 +1,5 @@
 <script lang="ts">
-	import moment from 'moment';
+	import { dayjs } from '$lib/shared/dayjs';
 	import { fade } from 'svelte/transition';
 	import { prettifyWeekdayList } from '$lib/shared/schedule';
 
@@ -47,7 +47,7 @@
 			<div class="card-header text-center">
 				<div class="row">
 					<div class="col"></div>
-					<div class="col-7">
+					<div class="col-7" title={scheduleId}>
 						{#key headerText}
 							<button class="btn p-0 m-0" on:click={copyScheduleId} in:fade>
 								{headerText}
@@ -107,10 +107,10 @@
 			{#if createdAt != null && updatedAt != null}
 				<div class="card-footer">
 					<small class="d-block text-body-secondary">
-						Last updated {moment(updatedAt).fromNow()}
+						Last updated {dayjs(updatedAt).fromNow()}
 					</small>
 					<small class="d-block text-body-secondary">
-						Created {moment(createdAt).fromNow()}
+						Created {dayjs(createdAt).fromNow()}
 					</small>
 				</div>
 			{/if}

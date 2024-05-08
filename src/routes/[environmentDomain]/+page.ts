@@ -11,5 +11,5 @@ export const load = async ({ params, fetch }) => {
         throw error(404, "Environment not found");
     }
 
-    return { date: response.date, schedule: response.schedule }
+    return { schedule: response }
 }

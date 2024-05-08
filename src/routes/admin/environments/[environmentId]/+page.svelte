@@ -3,6 +3,7 @@
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import OneThirdHeader from '$lib/components/OneThirdHeader.svelte';
 	import ScheduleCard from '$lib/components/schedule/ScheduleCard.svelte';
+	import { dayjs } from '$lib/shared/dayjs.js';
 	import { getActiveSchedule } from '$lib/shared/schedule.js';
 
 	export let data;
@@ -10,7 +11,7 @@
 	let deleteScheduleId: string = '';
 	let deleteScheduleName: string = '';
 
-	$: activeSchedule = getActiveSchedule(data.environment.schedules, new Date());
+	$: activeSchedule = getActiveSchedule(data.environment.schedules, dayjs.tz(undefined, data.environment.timeZone), data.environment.timeZone);
 
 	// sort schedules by active first, then most recently updated
 	$: data.environment.schedules.sort((a: any, b: any) => {
