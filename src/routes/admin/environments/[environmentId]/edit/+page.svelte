@@ -56,11 +56,11 @@
 			aria-label="Timezone select"
 			id="envTimeZone"
 			name="envTimeZone"
-			value={data.environment.timeZone || 'Select timezone'}
+			value={data.environment.timeZone || 'Select time zone'}
 		>
 			<option selected={data.environment.timeZone == null} disabled hidden>Select time zone</option>
 			{#each timeZoneNames as timeZone}
-				<option selected={timeZone == data.environment.timeZone} value={timeZone.name}>
+				<option selected={timeZone.name == data.environment.timeZone} value={timeZone.name}>
 					{timeZone.name}
 					({timeZone.offset})
 				</option>

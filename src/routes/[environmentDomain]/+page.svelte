@@ -128,7 +128,6 @@
 							// remove other selected options from this variation
 							selectedVariations = selectedVariations.filter((v) => !variation.options.includes(v));
 
-							console.log(slugify(option));
 							$page.url.searchParams.set(slugify(variation.name), slugify(option));
 
 							replaceState($page.url, $page.state);
@@ -150,6 +149,6 @@
 </div>
 {#if displayTable}
 	<div class="table-container">
-		<ScheduleEventTable schedule={data.schedule} {selectedVariations} />
+		<ScheduleEventTable schedule={data.schedule} bind:selectedVariations />
 	</div>
 {/if}
