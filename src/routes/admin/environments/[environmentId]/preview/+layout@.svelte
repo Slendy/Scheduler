@@ -26,6 +26,7 @@
 	.overlay-container {
 		display: flex;
 		position: absolute;
+		z-index: 999;
 		align-items: center;
 		top: 1;
 		left: 50%;

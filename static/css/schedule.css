@@ -1,4 +1,4 @@
-body {
+.schedule-body {
     background: var(--schedule-bg-color);
     touch-action: manipulation;
     margin: 0;
@@ -40,10 +40,10 @@ body {
     cursor: pointer;
 }
 
-a:link,
-a:visited,
-a:hover,
-a:active {
+.schedule-link:link,
+.schedule-link:visited,
+.schedule-link:hover,
+.schedule-link:active {
     color: var(--schedule-text-color);
     font-weight: bold;
     text-decoration: none;

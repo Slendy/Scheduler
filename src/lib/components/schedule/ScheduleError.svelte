@@ -6,7 +6,7 @@
 	<link href="/css/schedule.css" rel="stylesheet" />
 </svelte:head>
 
-<body>
+<body class="schedule-body">
 	<div class="schedule-container center">
 		<div class="countdown-container">
 			<div style="display: block">
@@ -17,7 +17,7 @@
 				</div>
 				<br class="event-break" />
 				<div class="timer-wrapper">
-					<a class="link" href="/"><span class="timer-label">Back to homepage</span></a>
+					<a class="schedule-link link" href="/"><span class="timer-label">Back to homepage</span></a>
 				</div>
 			</div>
 		</div>

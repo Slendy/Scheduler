@@ -111,7 +111,7 @@
 	/>
 </svelte:head>
 
-<body class="transition"></body>
+<body class="transition schedule-body"></body>
 
 <div class="toggle">
 	<DarkModeToggle />
@@ -121,13 +121,13 @@
 	<ScheduleCountdown schedule={$page.data.schedule} bind:selectedVariations {onEventChange} />
 	<footer class="schedule-footer refresh" style="display:none" id="refresh">
 		<span> A newer version is available. Please</span>
-		<a id="update" class="update"> refresh this page</a>
+		<a id="update" class="link update"> refresh this page</a>
 		<span> to activate it.</span>
 	</footer>
 	<div class="schedule-footer transition" id="transition-footer">
 		<span>
 			Made by
-			<a href="https://github.com/Slendy" style="text-decoration: underline; font-weight: normal">
+			<a href="https://github.com/Slendy" style="text-decoration: underline; font-weight: normal" class="schedule-link">
 				josh
 			</a> |
 		</span>
