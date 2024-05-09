@@ -3,6 +3,7 @@
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { goto } from '$app/navigation';
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
+	import { timeZoneNames } from '$lib/shared/timezones.js';
 
 	let formError = '';
 	let submitting = false;
@@ -32,6 +33,23 @@
 		<input type="text" id="envDomain" name="envDomain" class="form-control" required />
 	</div>
 
-	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Create environment</button>
-	<a href="/admin/environments" class="btn btn-danger" class:disabled={submitting}>Discard changes</a>
+	<div class="mb-3">
+		<label for="envTimeZone" class="form-label">Environment time zone</label>
+		<select class="form-select" aria-label="Time zone select" id="envTimeZone" name="envTimeZone">
+			<option selected disabled hidden>Select time zone</option>
+			{#each timeZoneNames as timeZone}
+				<option value={timeZone.name}>
+					{timeZone.name}
+					({timeZone.offset})
+				</option>
+			{/each}
+		</select>
+	</div>
+
+	<button class="btn btn-secondary" class:disabled={submitting} type="submit">
+		Create environment
+	</button>
+	<a href="/admin/environments" class="btn btn-danger" class:disabled={submitting}>
+		Discard changes
+	</a>
 </EnhancedForm>

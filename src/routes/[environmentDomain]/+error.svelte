@@ -5,7 +5,7 @@
 				<h1 class="header" id="event-name">No schedules found</h1>
 				<br class="event-break" />
 				<div class="timer-wrapper">
-					<span class="timer-label timer">Try checking back</span>
+					<span class="timer-label timer">Try checking back later</span>
 				</div>
 				<br class="event-break" />
 				<div class="timer-wrapper">

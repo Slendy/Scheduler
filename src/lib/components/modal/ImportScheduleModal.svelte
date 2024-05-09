@@ -2,9 +2,10 @@
 	import Modal from './Modal.svelte';
 	import type { Schedule } from '$lib/shared/types';
 	import { isScheduleModified } from '$lib/shared/schedule';
-	import moment from 'moment';
+	import { dayjs } from '$lib/shared/dayjs';
 
 	export let environment: any;
+	$: sortedSchedules = environment.schedules.sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
 	export let schedule: Schedule;
 
@@ -30,7 +31,7 @@
 		{/if}
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		{#each environment.schedules as schedule}
+		{#each sortedSchedules as schedule}
 			<div
 				class="card m-3 transition"
 				class:border-primary={selectedSchedule == schedule.scheduleId}
@@ -47,7 +48,7 @@
 					{#if schedule.updatedAt != null}
 						<p class="card-text">
 							<small class="text-body-secondary">
-								Last updated {moment(schedule.updatedAt).fromNow()}
+								Last updated {dayjs(schedule.updatedAt).fromNow()}
 							</small>
 						</p>
 					{/if}

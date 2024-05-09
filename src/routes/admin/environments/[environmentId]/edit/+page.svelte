@@ -3,6 +3,7 @@
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import { timeZoneNames } from '$lib/shared/timezones.js';
 
 	export let data;
 
@@ -48,6 +49,31 @@
 		/>
 	</div>
 
+	<div class="mb-3">
+		<label for="envTimeZone" class="form-label">Environment time zone</label>
+		<select
+			class="form-select"
+			aria-label="Timezone select"
+			id="envTimeZone"
+			name="envTimeZone"
+			value={data.environment.timeZone || 'Select time zone'}
+		>
+			<option selected={data.environment.timeZone == null} disabled hidden>Select time zone</option>
+			{#each timeZoneNames as timeZone}
+				<option selected={timeZone.name == data.environment.timeZone} value={timeZone.name}>
+					{timeZone.name}
+					({timeZone.offset})
+				</option>
+			{/each}
+		</select>
+	</div>
+
 	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Save changes</button>
-	<a href="/admin/environments/{data.environment._id}" class="btn btn-danger" class:disabled={submitting}>Discard changes</a>
+	<a
+		href="/admin/environments/{data.environment._id}"
+		class="btn btn-danger"
+		class:disabled={submitting}
+	>
+		Discard changes
+	</a>
 </EnhancedForm>

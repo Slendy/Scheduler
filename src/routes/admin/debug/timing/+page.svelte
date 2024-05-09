@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { createCachedSchedule, getActiveSchedule, getNextEvent } from '$lib/shared/schedule';
+	import { dayjs } from '$lib/shared/dayjs.js';
 
 	export let data;
 	let query = new URLSearchParams($page.url.searchParams.toString());
@@ -49,7 +50,7 @@
 <pre>{JSON.stringify(data)}</pre>
 {#if environment != null}
 	<div>
-		<span>Active schedule: {getActiveSchedule(environment.schedules, new Date(time))?.name || 'no schedule'}</span>
+		<span>Active schedule: {getActiveSchedule(environment.schedules, dayjs(time), 'America/Chicago')?.schedule?.name || 'no schedule'}</span>
 	</div>
 {/if}
 {#if schedule != null}

@@ -1,5 +1,7 @@
-import type { CachedSchedule, EventWithDate, Schedule, ScheduleEvent, ScheduleWeekdays } from '$lib/shared/types';
+import type { CachedSchedule, EventWithDate, Schedule, ScheduleEvent, ScheduleWeekdays, ScheduleWithDate } from '$lib/shared/types';
 import { scheduleTypes, scheduleWeekdays } from '$lib/shared/types';
+import type { Dayjs } from 'dayjs';
+import { dayjs } from './dayjs';
 
 export const defaultSchedule: Schedule = {
     scheduleId: '',
@@ -157,19 +159,19 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
     return { inProgress, target, title }
 }
 
-function getLastEvent(schedule: Schedule, baseDate: Date): Date {
-    let highestDate = new Date(0);
+export function getLastEvent(schedule: Schedule, baseDate: Dayjs): Dayjs | undefined {
+    let highestDate: Dayjs | undefined;
     for (let event of schedule.events) {
         let eventEndDate = convertTimeToDate(event.endTime, baseDate);
-        if (eventEndDate > highestDate) {
+        if (highestDate == null || eventEndDate.isAfter(highestDate)) {
             highestDate = eventEndDate;
         }
     }
     return highestDate;
 }
 
-export function getActiveSchedule(schedules: Schedule[], date: Date): Schedule | undefined {
-    if (date == null || isNaN(date.getTime())) {
+export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
+    if (zonedDate == null) {
         return undefined;
     }
 
@@ -179,8 +181,9 @@ export function getActiveSchedule(schedules: Schedule[], date: Date): Schedule |
         return undefined;
     }
 
-    let smallestScheduleDistance = Number.MAX_SAFE_INTEGER;
-    let smallestSchedule = undefined;
+    let date = zonedDate.toDate();
+
+    let scheduleDistances = [];
 
     for (let schedule of schedules) {
         if (!schedule.enabled) {
@@ -188,43 +191,70 @@ export function getActiveSchedule(schedules: Schedule[], date: Date): Schedule |
         }
 
         if (schedule.scheduleType == 'one-time' && schedule.scheduleDate) {
-            let scheduleDate = new Date(schedule.scheduleDate);
+            let scheduleDate = dayjs.tz(schedule.scheduleDate, timeZone).startOf('day');
 
-            let scheduleDistance = scheduleDate.getTime() - date.getTime();
+            let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
-            // if the beginning of the schedule day has already begun and the last event has already ended
-            if (scheduleDistance < 0 && date > getLastEvent(schedule, scheduleDate)) {
+            let lastEvent = getLastEvent(schedule, scheduleDate);
+            if (lastEvent == null) {
+                console.error("Schedule " + schedule.scheduleId + " has no last event");
                 continue;
             }
-            if (scheduleDistance < smallestScheduleDistance) {
-                smallestScheduleDistance = scheduleDistance;
-                smallestSchedule = schedule;
+
+            // if the beginning of the schedule day has already begun and the last event has already ended
+            if (scheduleDistance < 0 && zonedDate.isAfter(lastEvent)) {
+                continue;
             }
+
+            scheduleDistances.push({ scheduleDistance, scheduleDate, schedule });
         } else if (schedule.scheduleType == 'repeating' && schedule.scheduleWeekdays) {
             let currentDayOfWeek = date.getDay();
 
             for (let i = 0; i < 7; i++) {
                 // if this day of week isn't included in the schedule then skip
-                if (schedule.scheduleWeekdays.includes(scheduleWeekdays[i % 7])) {
+                if (!schedule.scheduleWeekdays.includes(scheduleWeekdays[i % 7])) {
                     continue;
                 }
-                let scheduleDate = new Date(date);
-                scheduleDate.setDate(date.getDate() + 1);
-                let scheduleDistance = scheduleDate.getTime() - date.getTime();
+                let scheduleDate = dayjs.tz(date, timeZone).startOf('day').set('day', i);
+                let isBlockout = false;
+                // if we have to look ahead a whole year it's chalked
+                const MAX_LOOKAHEAD = 52;
+                let iterations = 0;
+                while ((scheduleDate.startOf('day').isBefore(zonedDate.startOf('day') as any) || isBlockout) && iterations < MAX_LOOKAHEAD) {
+                    scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7);
+                    iterations++;
+                }
+                let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
-                if (scheduleDistance < 0 && date > getLastEvent(schedule, scheduleDate)) {
+                let lastEvent = getLastEvent(schedule, scheduleDate);
+                if (lastEvent == null) {
+                    console.error("Schedule " + schedule.scheduleId + " has no last event");
                     continue;
                 }
-                if (scheduleDistance < smallestScheduleDistance) {
-                    smallestScheduleDistance = scheduleDistance;
-                    smallestSchedule = schedule;
+
+                if (scheduleDistance < 0 && zonedDate.isAfter(lastEvent)) {
+                    continue;
                 }
+
+                scheduleDistances.push({ scheduleDistance, scheduleDate, schedule });
 
                 currentDayOfWeek++;
             }
         }
     }
-    return smallestSchedule;
+
+    scheduleDistances.sort((a, b) => {
+        // schedules with specific dates should override repeating schedules
+        if (a.schedule.scheduleType == 'one-time' && b.schedule.scheduleType == 'repeating') {
+            return -1;
+        } else if (b.schedule.scheduleType == 'one-time' && a.schedule.scheduleType == 'repeating') {
+            return 1;
+        }
+
+        return a.scheduleDistance - b.scheduleDistance;
+    })
+
+    return scheduleDistances[0] || undefined;
 }
 
 export function createCachedSchedule(schedule: Schedule, scheduleDate: Date): CachedSchedule | undefined {
@@ -257,11 +287,10 @@ export function extractHoursAndSeconds(time: string): [number, number] {
     return [hourAndSecond[0], hourAndSecond[1]];
 }
 
-export function convertTimeToDate(time: string, baseDate: Date = new Date()) {
+export function convertTimeToDate(time: string, baseDate: Dayjs) {
     let timeComponents = extractHoursAndSeconds(time);
 
-    baseDate.setHours(timeComponents[0], timeComponents[1], 0)
-    return baseDate;
+    return baseDate.set('hour', timeComponents[0]).set('minute', timeComponents[1]);
 }
 
 export function convertTimeToSeconds(time: string): number {
