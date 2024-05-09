@@ -78,7 +78,7 @@
 		time = customTime || new Date();
 
 		let newNextEvent = getAndFormatNextEvent(time);
-		if(newNextEvent != nextEvent){
+		if (newNextEvent != nextEvent) {
 			onEventChange(nextEvent, newNextEvent);
 			nextEvent = newNextEvent;
 		}
@@ -202,10 +202,6 @@
 		display: block;
 	}
 
-	.header-wrapper {
-		margin-bottom: 1.2rem;
-	}
-
 	.event-wrapper {
 		display: inline-block;
 	}
@@ -231,6 +227,12 @@
 		font-family: 'Open Sans', 'Helvetica', serif;
 	}
 
+	.timer-break {
+		display: block;
+		content: '';
+		margin-top: 1em;
+	}
+
 	.timer-date {
 		color: var(--schedule-text-color);
 		font-family: 'Open Sans', 'Helvetica', serif;
@@ -238,10 +240,6 @@
 		font-size: 200%;
 		font-size: 4.1vmin;
 		font-weight: 400;
-	}
-
-	.countdown-wrapper {
-		margin-bottom: 2.85em;
 	}
 
 	.timer-wrapper {
@@ -270,7 +268,7 @@
 	.event-break {
 		display: block;
 		content: '';
-		margin-top: calc(1em + 4.8vh);
+		margin-top: calc(1em + 4.85vh);
 	}
 
 	.transition {
@@ -287,7 +285,7 @@
 		min-height: 10vmin;
 		vertical-align: middle;
 		background-color: var(--schedule-text-color);
-		border-radius: .5em;
+		border-radius: 0.5em;
 	}
 
 	.placeholder-small {
@@ -333,7 +331,6 @@
 		}
 
 		.countdown-container {
-			width: 90%;
 			font-size: 5vmin;
 		}
 	}

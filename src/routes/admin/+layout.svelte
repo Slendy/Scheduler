@@ -57,12 +57,7 @@
 		rel="stylesheet"
 		crossorigin="anonymous"
 	/>
-	<link href="/css/colors.css" rel="stylesheet" />
 	<link href="/css/overrides.css" rel="stylesheet" />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap"
-		rel="stylesheet"
-	/>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 		crossorigin="anonymous"

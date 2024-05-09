@@ -62,6 +62,17 @@
 	</div>
 </OneThirdHeader>
 
+<div class="d-flex mb-3" style="margin-top: -3rem">
+	<div class="text-center m-auto">
+		<a
+			href="/admin/environments/{data.environment._id}/preview"
+			class="btn btn-primary float-start m-1 mt-2"
+		>
+			Preview environment
+		</a>
+	</div>
+</div>
+
 <div class="d-flex mb-3">
 	<div class="text-center m-auto">
 		<a

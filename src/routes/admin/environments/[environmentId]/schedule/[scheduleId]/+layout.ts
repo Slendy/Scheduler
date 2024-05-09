@@ -1,7 +1,7 @@
 import type { Schedule } from "$lib/shared/types";
 import { redirect } from "@sveltejs/kit";
 
-export const load = async ({ fetch, params, parent }) => {
+export const load = async ({ params, parent }) => {
     const { scheduleId } = params;
     const { environment } = await parent();
 
