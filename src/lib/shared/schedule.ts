@@ -203,7 +203,6 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
 
             // if the beginning of the schedule day has already begun and the last event has already ended
             if (scheduleDistance < 0 && zonedDate.isAfter(lastEvent)) {
-                console.log("skipping one-time")
                 continue;
             }
 
@@ -214,21 +213,17 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
             for (let i = 0; i < 7; i++) {
                 // if this day of week isn't included in the schedule then skip
                 if (!schedule.scheduleWeekdays.includes(scheduleWeekdays[i % 7])) {
-                    console.log("skipping ", scheduleWeekdays[i % 7])
                     continue;
                 }
-                console.log("finding next schedule for " + [scheduleWeekdays[i % 7]])
                 let scheduleDate = dayjs.tz(date, timeZone).startOf('day').set('day', i);
                 let isBlockout = false;
                 // if we have to look ahead a whole year it's chalked
                 const MAX_LOOKAHEAD = 52;
                 let iterations = 0;
                 while ((scheduleDate.startOf('day').isBefore(zonedDate.startOf('day') as any) || isBlockout) && iterations < MAX_LOOKAHEAD) {
-                    console.log("stepping forward by 1 week");
                     scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7);
                     iterations++;
                 }
-                console.log(scheduleDate.toISOString());
                 let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
                 let lastEvent = getLastEvent(schedule, scheduleDate);
@@ -248,7 +243,6 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
         }
     }
 
-    console.log(scheduleDistances.sort((a, b) => a.scheduleDistance - b.scheduleDistance).map(s => s.scheduleDate.toISOString()));
     scheduleDistances.sort((a, b) => {
         // schedules with specific dates should override repeating schedules
         if (a.schedule.scheduleType == 'one-time' && b.schedule.scheduleType == 'repeating') {
