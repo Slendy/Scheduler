@@ -51,7 +51,6 @@
 
 .schedule-footer {
     color: var(--schedule-text-color);
-    /* position: fixed; */
     width: 100%;
     box-sizing: border-box;
     bottom: 0;
@@ -122,12 +121,13 @@
         font-size: 3.5vmax;
     }
 }
+*/
 
 @media only screen and (max-width: 1000px) {
-    .schedule-container {
+    .table-container {
         width: 99%;
     }
-} */
+}
 
 @media only screen and (max-height: 420px) {
     /* .header,
