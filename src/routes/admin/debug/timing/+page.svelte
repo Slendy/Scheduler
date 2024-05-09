@@ -50,7 +50,7 @@
 <pre>{JSON.stringify(data)}</pre>
 {#if environment != null}
 	<div>
-		<span>Active schedule: {getActiveSchedule(environment.schedules, dayjs(time), 'America/Chicago')?.name || 'no schedule'}</span>
+		<span>Active schedule: {getActiveSchedule(environment.schedules, dayjs(time), 'America/Chicago')?.schedule?.name || 'no schedule'}</span>
 	</div>
 {/if}
 {#if schedule != null}

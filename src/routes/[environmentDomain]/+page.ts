@@ -1,4 +1,5 @@
 import { error } from "@sveltejs/kit";
+import { hashObject } from "$lib/shared/hash.js";
 
 export const load = async ({ params, fetch }) => {
     const { environmentDomain } = params;
@@ -11,5 +12,5 @@ export const load = async ({ params, fetch }) => {
         throw error(404, "Environment not found");
     }
 
-    return { schedule: response }
+    return { schedule: response, scheduleHash: await hashObject(response) }
 }

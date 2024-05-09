@@ -28,7 +28,8 @@
 	export let selectedVariations: string[];
 	export let customTime: Date | undefined = undefined;
 	export let time: Date | undefined = customTime;
-	export let scheduleDate: Date = new Date();
+	export let scheduleDate: Date = new Date(schedule?.scheduleDate as string);
+	export let onEventChange: (oldEvent: any, newEvent: any) => any = () => {};
 
 	function plural(value: number, label: string) {
 		if (value == 1) return label;
@@ -76,7 +77,13 @@
 	function setTime() {
 		time = customTime || new Date();
 
-		nextEvent = getAndFormatNextEvent(time);
+		let newNextEvent = getAndFormatNextEvent(time);
+		if(newNextEvent != nextEvent){
+			onEventChange(nextEvent, newNextEvent);
+			nextEvent = newNextEvent;
+		}
+
+		// don't calculate durations if we don't have a target
 		if (nextEvent == null) return undefined;
 
 		let currentMoment = dayjs(time.getTime());
@@ -110,7 +117,7 @@
 		requestAnimationFrame(updateFrame);
 	}
 
-	export let nextEvent: any;
+	let nextEvent: any;
 	let durations: any[];
 
 	onMount(() => {

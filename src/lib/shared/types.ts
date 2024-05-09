@@ -1,3 +1,5 @@
+import type { Dayjs } from "dayjs";
+
 export interface IUser {
     username: String;
     permissionMap: Record<string, string>;
@@ -10,6 +12,11 @@ export type ScheduleType = typeof scheduleTypes[number];
 
 export const scheduleWeekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 export type ScheduleWeekdays = typeof scheduleWeekdays[number];
+
+export type ScheduleWithDate = {
+    schedule: Schedule;
+    scheduleDate: Dayjs;
+}
 
 export type Schedule = {
     scheduleId: string;

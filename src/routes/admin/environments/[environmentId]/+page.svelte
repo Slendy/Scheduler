@@ -18,10 +18,10 @@
 		let timeA = new Date(a.updatedAt);
 		let timeB = new Date(b.updatedAt);
 
-		if (a === activeSchedule) {
+		if (a === activeSchedule?.schedule) {
 			return -1;
 		}
-		if (b === activeSchedule) {
+		if (b === activeSchedule?.schedule) {
 			return 1;
 		}
 
@@ -98,7 +98,7 @@
 			<ScheduleCard
 				environmentId={data.environment._id}
 				{...schedule}
-				isActive={activeSchedule == schedule}
+				isActive={activeSchedule?.schedule == schedule}
 				bind:deleteScheduleId
 				bind:deleteScheduleName
 			/>

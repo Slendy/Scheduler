@@ -1,9 +1,10 @@
 import { EnvironmentModel } from '$lib/server/models.js';
 import { dayjs } from '$lib/shared/dayjs';
+import { hashObject } from '$lib/shared/hash.js';
 import { getActiveSchedule } from '$lib/shared/schedule.js';
 import { error } from '@sveltejs/kit';
 
-export const GET = async ({ params }) => {
+export const GET = async ({ params, request }) => {
     const { environmentDomain } = params;
 
     let environment = await EnvironmentModel.findOne({ environmentDomain });
@@ -17,14 +18,13 @@ export const GET = async ({ params }) => {
     }
 
     // strip out identifying fields
-    const { createdAt, updatedAt, enabled, name, ...responseSchedule } = activeSchedule;
+    const { createdAt, updatedAt, enabled, name, scheduleType, scheduleWeekdays, scheduleDate, ...responseSchedule } = activeSchedule.schedule;
 
-    // don't send empty fields
-    if (responseSchedule.scheduleType === 'one-time') {
-        delete responseSchedule.scheduleWeekdays;
-    } else if (responseSchedule.scheduleType === 'repeating') {
-        delete responseSchedule.scheduleDate;
-    }
+    responseSchedule.scheduleDate = activeSchedule.scheduleDate.toDate();
 
-    return Response.json(responseSchedule);
+    return Response.json(responseSchedule, {
+        headers: {
+            "ETag": await hashObject(responseSchedule),
+        }
+    });
 }

@@ -1,4 +1,4 @@
-import type { CachedSchedule, EventWithDate, Schedule, ScheduleEvent, ScheduleWeekdays } from '$lib/shared/types';
+import type { CachedSchedule, EventWithDate, Schedule, ScheduleEvent, ScheduleWeekdays, ScheduleWithDate } from '$lib/shared/types';
 import { scheduleTypes, scheduleWeekdays } from '$lib/shared/types';
 import type { Dayjs } from 'dayjs';
 import { dayjs } from './dayjs';
@@ -159,18 +159,18 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
     return { inProgress, target, title }
 }
 
-export function getLastEvent(schedule: Schedule, baseDate: Date): Date {
-    let highestDate = new Date(0);
+export function getLastEvent(schedule: Schedule, baseDate: Dayjs): Dayjs | undefined {
+    let highestDate: Dayjs | undefined;
     for (let event of schedule.events) {
         let eventEndDate = convertTimeToDate(event.endTime, baseDate);
-        if (eventEndDate > highestDate) {
+        if (highestDate == null || eventEndDate.isAfter(highestDate)) {
             highestDate = eventEndDate;
         }
     }
     return highestDate;
 }
 
-export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): Schedule | undefined {
+export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
     if (zonedDate == null) {
         return undefined;
     }
@@ -195,8 +195,14 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
 
             let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
+            let lastEvent = getLastEvent(schedule, scheduleDate);
+            if (lastEvent == null) {
+                console.error("Schedule " + schedule.scheduleId + " has no last event");
+                continue;
+            }
+
             // if the beginning of the schedule day has already begun and the last event has already ended
-            if (scheduleDistance < 0 && date > getLastEvent(schedule, scheduleDate.toDate())) {
+            if (scheduleDistance < 0 && zonedDate.isAfter(lastEvent)) {
                 console.log("skipping one-time")
                 continue;
             }
@@ -217,7 +223,7 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
                 // if we have to look ahead a whole year it's chalked
                 const MAX_LOOKAHEAD = 52;
                 let iterations = 0;
-                while ((scheduleDate.startOf('day').unix() < zonedDate.startOf('day').unix() || isBlockout) && iterations < MAX_LOOKAHEAD) {
+                while ((scheduleDate.startOf('day').isBefore(zonedDate.startOf('day') as any) || isBlockout) && iterations < MAX_LOOKAHEAD) {
                     console.log("stepping forward by 1 week");
                     scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7);
                     iterations++;
@@ -225,8 +231,13 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
                 console.log(scheduleDate.toISOString());
                 let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
+                let lastEvent = getLastEvent(schedule, scheduleDate);
+                if (lastEvent == null) {
+                    console.error("Schedule " + schedule.scheduleId + " has no last event");
+                    continue;
+                }
 
-                if (scheduleDistance < 0 && date > getLastEvent(schedule, scheduleDate.toDate())) {
+                if (scheduleDistance < 0 && zonedDate.isAfter(lastEvent)) {
                     continue;
                 }
 
@@ -249,7 +260,7 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
         return a.scheduleDistance - b.scheduleDistance;
     })
 
-    return scheduleDistances[0]?.schedule || undefined;
+    return scheduleDistances[0] || undefined;
 }
 
 export function createCachedSchedule(schedule: Schedule, scheduleDate: Date): CachedSchedule | undefined {
@@ -282,13 +293,10 @@ export function extractHoursAndSeconds(time: string): [number, number] {
     return [hourAndSecond[0], hourAndSecond[1]];
 }
 
-export function convertTimeToDate(time: string, baseDate: Date) {
+export function convertTimeToDate(time: string, baseDate: Dayjs) {
     let timeComponents = extractHoursAndSeconds(time);
 
-    let newDate = new Date(baseDate);
-
-    newDate.setUTCHours(timeComponents[0], timeComponents[1], 0)
-    return newDate;
+    return baseDate.set('hour', timeComponents[0]).set('minute', timeComponents[1]);
 }
 
 export function convertTimeToSeconds(time: string): number {
