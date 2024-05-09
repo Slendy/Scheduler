@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
+	import PlaceholderCard from '$lib/components/PlaceholderCard.svelte';
 	import UserCard from '$lib/components/UserCard.svelte';
 
 	export let data;
@@ -8,7 +9,14 @@
 <Header>Users</Header>
 
 {#await data.users}
-	<h4>Loading users...</h4>
+	<p class="placeholder-wave">
+		<span class="placeholder col-3"></span>
+	</p>
+	<div class="row row-cols-sm-auto row-cols-1 g-4">
+		<PlaceholderCard />
+		<PlaceholderCard />
+		<PlaceholderCard />
+	</div>
 {:then users}
 	<div class="mb-3">
 		<h4>There are {users.length} users</h4>

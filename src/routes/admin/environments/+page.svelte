@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '../../../lib/components/Header.svelte';
 	import EnvironmentCard from '$lib/components/EnvironmentCard.svelte';
+	import PlaceholderCard from '$lib/components/PlaceholderCard.svelte';
 
 	export let data;
 </script>
@@ -14,10 +15,18 @@
 	</div>
 {/await}
 
-<div class="row row-cols-sm-auto row-cols-1 g-4">
-	{#await data.environments}
-		<p>loading...</p>
-	{:then environments}
+{#await data.environments}
+	<p class="placeholder-wave">
+		<span class="placeholder col-3"></span>
+	</p>
+	<button class="btn btn-secondary disabled placeholder placeholder-wave col-2 mb-3"></button>
+	<div class="row row-cols-sm-auto row-cols-1 g-4">
+		<PlaceholderCard />
+		<PlaceholderCard />
+		<PlaceholderCard />
+	</div>
+{:then environments}
+	<div class="row row-cols-sm-auto row-cols-1 g-4">
 		{#each environments as environment}
 			<EnvironmentCard
 				environmentId={environment._id}
@@ -26,7 +35,7 @@
 				totalSchedules={environment.totalSchedules || 0}
 			/>
 		{/each}
-	{:catch error}
-		<p>Error: {error.message}</p>
-	{/await}
-</div>
+	</div>
+{:catch error}
+	<p>Error: {error.message}</p>
+{/await}

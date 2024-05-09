@@ -7,7 +7,9 @@
 <Header>Scheduler</Header>
 
 {#await data.stats}
-	<p>Loading...</p>
+	<p class="placeholder-wave">
+		<span class="placeholder col-6"></span>
+	</p>
 {:then stats}
 	<h3>Running {stats.totalEnvironments} environments with {stats.totalUsers} users</h3>
 {:catch error}
