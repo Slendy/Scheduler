@@ -46,10 +46,10 @@
 		</select>
 	</div>
 
-	<button class="btn btn-secondary" class:disabled={submitting} type="submit"
-		>Create environment</button
-	>
-	<a href="/admin/environments" class="btn btn-danger" class:disabled={submitting}
-		>Discard changes</a
-	>
+	<button class="btn btn-secondary" class:disabled={submitting} type="submit">
+		Create environment
+	</button>
+	<a href="/admin/environments" class="btn btn-danger" class:disabled={submitting}>
+		Discard changes
+	</a>
 </EnhancedForm>

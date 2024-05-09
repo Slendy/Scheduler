@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 	import ScheduleEventTable from '$lib/components/schedule/ScheduleEventTable.svelte';
-	import ScheduleView from '$lib/components/schedule/ScheduleView.svelte';
+	import ScheduleCountdown from '$lib/components/schedule/ScheduleCountdown.svelte';
 	import { dayjs } from '$lib/shared/dayjs.js';
 	import { hashObject } from '$lib/shared/hash.js';
 	import { getLastEvent } from '$lib/shared/schedule.js';
@@ -105,7 +105,7 @@
 <DarkModeToggle />
 
 <div class="schedule-container transition">
-	<ScheduleView schedule={data.schedule} bind:selectedVariations {onEventChange} />
+	<ScheduleCountdown schedule={data.schedule} bind:selectedVariations {onEventChange} />
 	<footer class="schedule-footer refresh" style="display:none" id="refresh">
 		<span> A newer version is available. Please</span>
 		<a id="update" class="update"> refresh this page</a>

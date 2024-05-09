@@ -25,7 +25,7 @@ export const POST = async ({ params, request }) => {
     }
     const timeZone = data.get('envTimezone');
     if (timeZone == null || !isValidTimeZone(timeZone.toString())) {
-        return apiFormError('Invalid environment timezone');
+        return apiFormError('Invalid environment time zone');
     }
     if (await EnvironmentModel.exists({ environmentDomain: domain, _id: { $ne: environment._id } })) {
         return apiFormError('An environment already exists with this domain')

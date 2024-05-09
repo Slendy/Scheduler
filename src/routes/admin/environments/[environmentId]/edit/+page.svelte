@@ -72,6 +72,8 @@
 	<a
 		href="/admin/environments/{data.environment._id}"
 		class="btn btn-danger"
-		class:disabled={submitting}>Discard changes</a
+		class:disabled={submitting}
 	>
+		Discard changes
+	</a>
 </EnhancedForm>

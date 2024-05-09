@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createCachedSchedule, getNextEvent } from '$lib/shared/schedule';
-	import type { Schedule, ScheduleEvent, ScheduleVariation } from '$lib/shared/types';
+	import type { Schedule } from '$lib/shared/types';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { dayjs } from '$lib/shared/dayjs';
@@ -257,7 +257,7 @@
 
 	.timer-number {
 		display: inherit;
-		font-weight: 700;
+		font-weight: bold;
 		padding-left: 0.5em;
 		padding-right: 0.35em;
 	}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import OneThirdHeader from '$lib/components/OneThirdHeader.svelte';
 	import RadioSelector from '$lib/components/RadioSelector.svelte';
-	import ScheduleView from '$lib/components/schedule/ScheduleView.svelte';
+	import ScheduleCountdown from '$lib/components/schedule/ScheduleCountdown.svelte';
 	import ScheduleEventTable from '$lib/components/schedule/ScheduleEventTable.svelte';
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import ScheduleEnableToggle from '$lib/components/schedule/ScheduleEnableToggle.svelte';
@@ -113,6 +113,6 @@
 		</div>
 	</div>
 	<div class="d-flex border border-secondary p-2 rounded-3">
-		<ScheduleView schedule={data.schedule} selectedVariations={allVariations} bind:customTime />
+		<ScheduleCountdown schedule={data.schedule} selectedVariations={allVariations} bind:customTime />
 	</div>
 {/if}

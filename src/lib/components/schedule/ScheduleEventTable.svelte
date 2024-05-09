@@ -23,7 +23,7 @@
 		</span>
 		<table class="schedule-table">
 			<tbody>
-				{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || selectedVariations.some( (v) => e.variations.includes(v) )) as event}
+				{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || selectedVariations.some((v) => e.variations.includes(v))) as event}
 					<tr>
 						<td class="table-left">{event.name}</td>
 						<td class="table-right">
