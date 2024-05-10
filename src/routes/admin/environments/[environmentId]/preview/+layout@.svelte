@@ -10,7 +10,7 @@
     <link href="/css/overrides.css" rel="stylesheet" />
 </svelte:head>
 
-<div class="overlay-container">
+<div class="overlay-container transition">
 	<span class="overlay">You are currently in preview mode</span>
 	<a href="/admin/environments/{data.environment._id}" class="overlay-link">Exit preview mode</a>
 </div>
@@ -35,6 +35,7 @@
 		padding: 1em;
         border-radius: 1em;
         border: 1px solid var(--schedule-scheduleborder);
+		color: var(--schedule-text-color);
 	}
 	.overlay {
 		display: block;

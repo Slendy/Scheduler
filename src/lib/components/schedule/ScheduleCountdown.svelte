@@ -8,17 +8,10 @@
 	export let schedule: Schedule;
 
 	// this should update only whenever schedule changes
-	$: cachedSchedule = createCachedSchedule(schedule, scheduleDate);
-
-	enum TimeComp {
-		Milliseconds,
-		Seconds,
-		Minutes,
-		Hours,
-		Days,
-		Months,
-		Years
-	}
+	$: cachedSchedule = createCachedSchedule(
+		schedule,
+		dayjs.tz(scheduleDate, schedule?.scheduleTimeZone)
+	);
 
 	const timeKeys = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'] as const;
 	type TimeComponent = (typeof timeKeys)[number];
@@ -28,7 +21,7 @@
 	export let selectedVariations: string[];
 	export let customTime: Date | undefined = undefined;
 	export let time: Date | undefined = customTime;
-	export let scheduleDate: Date = new Date(schedule?.scheduleDate as string);
+	$: scheduleDate = new Date(schedule?.scheduleDate as string);
 	export let onEventChange: (oldEvent: any, newEvent: any) => any = () => {};
 
 	function plural(value: number, label: string) {
@@ -39,7 +32,10 @@
 
 	function getAndFormatNextEvent(time: Date) {
 		if (!browser || cachedSchedule == null) {
-			cachedSchedule = createCachedSchedule(schedule, scheduleDate);
+			cachedSchedule = createCachedSchedule(
+				schedule,
+				dayjs.tz(scheduleDate, schedule?.scheduleTimeZone)
+			);
 		}
 
 		let next = getNextEvent(cachedSchedule, time, selectedVariations);
@@ -78,7 +74,14 @@
 		time = customTime || new Date();
 
 		let newNextEvent = getAndFormatNextEvent(time);
-		if (newNextEvent != nextEvent) {
+		if (
+			(newNextEvent == null && nextEvent != null) ||
+			(newNextEvent != null && nextEvent == null) ||
+			newNextEvent?.inProgress != nextEvent?.inProgress ||
+			newNextEvent?.target?.getTime() != nextEvent?.target?.getTime() ||
+			newNextEvent?.timeDescription != nextEvent?.timeDescription ||
+			newNextEvent?.title != nextEvent?.title
+		) {
 			onEventChange(nextEvent, newNextEvent);
 			nextEvent = newNextEvent;
 		}
@@ -98,13 +101,13 @@
 
 			let value = Math.floor(duration.as(component));
 
-			if (value >= 1 || component == 'second') {
+			if (value >= 1 || component == 'second' || component == 'millisecond') {
 				duration = duration.subtract(value, component);
 				durations = [
 					...durations,
 					{
 						id: component,
-						value: value
+						value
 					}
 				];
 			}
@@ -114,17 +117,21 @@
 	function updateFrame() {
 		setTime();
 
-		requestAnimationFrame(updateFrame);
+		animationTimer = requestAnimationFrame(updateFrame);
 	}
 
 	let nextEvent: any;
-	let durations: any[];
+	let durations: any[] = [];
+
+	let animationTimer: any;
 
 	onMount(() => {
-		let timer = requestAnimationFrame(updateFrame);
+		if (!animationTimer) {
+			animationTimer = requestAnimationFrame(updateFrame);
+		}
 
 		return () => {
-			cancelAnimationFrame(timer);
+			cancelAnimationFrame(animationTimer);
 		};
 	});
 
@@ -136,10 +143,16 @@
 		<div class="header-container">
 			<div class="header-wrapper">
 				<div class="event-wrapper">
-					{#if nextEvent != null}
+					{#if schedule == null}
+						<h1 class="header">No more events</h1>
+						<br class="event-break" />
+						<div class="timer-wrapper">
+							<span class="timer-label timer">Try checking back later</span>
+						</div>
+					{:else if nextEvent != null}
 						<h1 class="header">{nextEvent?.title || ''}</h1>
 						<h1 class="header event-text">{nextEvent?.inProgress ? 'ends in' : 'begins in'}</h1>
-					{:else}
+					{:else if nextEvent == null}
 						<div class="placeholder-wave">
 							<div class="placeholder placeholder"></div>
 						</div>
@@ -151,21 +164,28 @@
 				</div>
 			</div>
 
-			{#if nextEvent != null}
+			{#if schedule != null && nextEvent != null}
 				<br class="event-break" />
 				{#each durations as duration}
-					{#key duration.id == 'millisecond' ? duration.value : duration.id}
-						<div class="timer-wrapper" id={duration.id}>
-							<span class="timer-number timer" class:timer={duration.id != 'millisecond'}
-								>{duration.value}</span
-							>
+					<div class="timer-wrapper">
+						{#key duration.id}
+							{#if duration.id == 'millisecond'}
+								<span class="milliseconds timer-label timer">
+									{duration.value}
+								</span>
+							{:else}
+								<span class="timer-number timer">
+									{duration.value}
+								</span>
+							{/if}
+
 							{#if duration.id != 'millisecond'}
 								<span class="timer-label timer">{plural(duration.value, duration.id)}</span>
 							{/if}
-						</div>
-					{/key}
+						{/key}
+					</div>
 				{/each}
-			{:else}
+			{:else if schedule != null && nextEvent == null}
 				<br class="event-break" />
 				<div class="timer-wrapper">
 					<div class="placeholder-wave">
@@ -174,9 +194,9 @@
 				</div>
 			{/if}
 
-			{#if nextEvent != null}
+			{#if schedule != null && nextEvent != null}
 				<br class="timer-break" />
-				<span class="timer-date" id="time">{nextEvent.timeDescription}</span>
+				<span class="timer-date" id="time">{nextEvent?.timeDescription}</span>
 				<br class="timer-break" />
 			{/if}
 		</div>
@@ -216,6 +236,15 @@
 		display: inherit;
 		margin: 0;
 		line-height: 1em;
+	}
+
+	.milliseconds {
+		font-size: 3.5vmin !important;
+		margin-left: -1em;
+		-webkit-transform: translateY(-100%);
+		transform: translateY(-100%);
+		vertical-align: super;
+		width: 2.25em;
 	}
 
 	.timer {

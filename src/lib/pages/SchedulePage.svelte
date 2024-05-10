@@ -9,6 +9,7 @@
 	import { hashObject } from '$lib/shared/hash.js';
 	import { getLastEvent } from '$lib/shared/schedule.js';
 	import { onMount } from 'svelte';
+	import type { Dayjs } from 'dayjs';
 
 	function slugify(input: string) {
 		return input
@@ -20,56 +21,89 @@
 	let nextSchedule: any;
 	let nextScheduleHash: string;
 
+	export let data: any;
+
 	export let environmentDomain: string;
 
 	async function preloadNextSchedule() {
-		if (!$page.data.schedule) return;
-		let lastEvent = getLastEvent($page.data.schedule, dayjs($page.data.schedule.scheduleDate));
-		if (!lastEvent) return;
-		let timeUntilEnd = lastEvent.unix() - dayjs().unix();
-		console.log(timeUntilEnd);
-		console.log((lastEvent.unix() + 1) * 1000);
-
-		// if there are 5 minutes left in the schedule then try and prefetch the next schedule
-		if (timeUntilEnd < 5) {
-			let startOfNext = (lastEvent.unix() + 1) * 1000;
-			let response = await fetch(
-				`/api/v1/environments/domain/${environmentDomain}/schedule/time/${startOfNext}`,
-				{
-					headers: {
-						'If-None-Match': nextScheduleHash
-					}
-				}
-			);
-			if (!response.ok) return;
-
-			nextSchedule = await response.json();
-			nextScheduleHash = await hashObject(nextSchedule);
-		}
+		// if there are 5 minutes left in the schedule then try and fetch the next schedule
+		requestNextSchedule((lastEvent: Dayjs) => {
+			return lastEvent.unix() - dayjs().unix() < 3 * 60;
+		}).then((r) => {
+			nextSchedule = r?.nextSchedule;
+			nextScheduleHash = r?.nextScheduleHash || '';
+		});
 	}
 
 	function onEventChange(oldEvent: any, newEvent: any) {
-		if (oldEvent && !newEvent && nextSchedule) {
-			$page.data.schedule = nextSchedule;
-			$page.data.scheduleHash = nextScheduleHash;
-			nextSchedule = undefined;
-			nextScheduleHash = '';
+		if (oldEvent != null && newEvent == null) {
+			if (nextSchedule) {
+				data.schedule = nextSchedule;
+				data.scheduleHash = nextScheduleHash;
+				nextSchedule = undefined;
+				nextScheduleHash = '';
+			} else {
+				// if we didn't preload the schedule somehow then load it
+				requestNextSchedule(data.schedule).then((r) => {
+					data.schedule = r?.nextSchedule;
+					data.scheduleHash = r?.nextScheduleHash;
+					nextSchedule = undefined;
+					nextScheduleHash = '';
+				});
+			}
 		}
 	}
 
-	async function requestNewSchedule() {
+	async function requestNextSchedule(predicate: (time: Dayjs) => boolean = () => true) {
+		if (!data.schedule) {
+			return undefined;
+		}
+
+		let lastEvent = getLastEvent(data.schedule, dayjs(data.schedule.scheduleDate));
+		if (!lastEvent) {
+			return undefined;
+		}
+
+		if (!predicate(lastEvent)) {
+			return undefined;
+		}
+		let startOfNext = (lastEvent.unix() + 1) * 1000;
+		let response = await fetch(
+			`/api/v1/environments/domain/${environmentDomain}/schedule/time/${startOfNext}`,
+			{
+				headers: {
+					'If-None-Match': nextScheduleHash
+				}
+			}
+		);
+		if (!response.ok) {
+			return undefined;
+		}
+
+		let nextSchedule = await response.json();
+
+		return { nextSchedule, nextScheduleHash: await hashObject(nextSchedule) };
+	}
+
+	async function fetchCurrentSchedule() {
 		let response = await fetch(
 			`/api/v1/environments/domain/${environmentDomain}/schedule/current`,
 			{
 				headers: {
-					'If-None-Match': $page.data.scheduleHash
+					'If-None-Match': data.scheduleHash
 				}
 			}
 		);
+		// there is no more schedule
+		if (response.status == 404) {
+			data.schedule = undefined;
+			data.scheduleHash = undefined;
+		}
+
 		if (!response.ok) return;
 
-		$page.data.schedule = await response.json();
-		$page.data.scheduleHash = await hashObject($page.data.schedule);
+		data.schedule = await response.json();
+		data.scheduleHash = await hashObject(data.schedule);
 	}
 
 	onMount(() => {
@@ -80,10 +114,11 @@
 		// check for schedule updates every minute
 		let interval = setInterval(async () => {
 			await preloadNextSchedule();
-			await requestNewSchedule();
+			await fetchCurrentSchedule();
 		}, 60 * 1000);
 
-		for (let variation of $page.data.schedule.variations) {
+		// set initial variation based on query params
+		for (let variation of data.schedule?.variations || []) {
 			let queryParam = $page.url.searchParams.get(slugify(variation.name)) || '';
 			let urlOption =
 				variation.options.find((o: any) => slugify(o) === slugify(queryParam)) ||
@@ -105,20 +140,15 @@
 		href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap"
 		rel="stylesheet"
 	/>
-	<link
-		href="/css/schedule.css"
-		rel="stylesheet"
-	/>
+	<link href="/css/schedule.css" rel="stylesheet" />
 </svelte:head>
 
 <body class="transition schedule-body"></body>
 
-<div class="toggle">
-	<DarkModeToggle />
-</div>
+<DarkModeToggle />
 
 <div class="schedule-container transition">
-	<ScheduleCountdown schedule={$page.data.schedule} bind:selectedVariations {onEventChange} />
+	<ScheduleCountdown bind:schedule={data.schedule} bind:selectedVariations {onEventChange} />
 	<footer class="schedule-footer refresh" style="display:none" id="refresh">
 		<span> A newer version is available. Please</span>
 		<a id="update" class="link update"> refresh this page</a>
@@ -127,43 +157,50 @@
 	<div class="schedule-footer transition" id="transition-footer">
 		<span>
 			Made by
-			<a href="https://github.com/Slendy" style="text-decoration: underline; font-weight: normal" class="schedule-link">
+			<a
+				href="https://github.com/Slendy"
+				style="text-decoration: underline; font-weight: normal"
+				class="schedule-link"
+			>
 				josh
-			</a> |
+			</a>
 		</span>
-		<div id="footer-selectors" style="display: inline">
-			{#each $page.data.schedule.variations as variation}
-				{#each variation.options as option}
-					<button
-						class="footer-button footer-selector transition"
-						class:selected={selectedVariations.includes(option)}
-						on:click={() => {
-							// remove other selected options from this variation
-							selectedVariations = selectedVariations.filter((v) => !variation.options.includes(v));
+		{#each data.schedule?.variations || [] as variation}
+			{#each variation.options as option}
+				<span>{' | '}</span>
+				<button
+					class="footer-button footer-selector transition"
+					class:selected={selectedVariations.includes(option)}
+					on:click={() => {
+						// remove other selected options from this variation
+						selectedVariations = selectedVariations.filter((v) => !variation.options.includes(v));
 
-							$page.url.searchParams.set(slugify(variation.name), slugify(option));
+						$page.url.searchParams.set(slugify(variation.name), slugify(option));
 
-							replaceState($page.url, $page.state);
+						replaceState($page.url, $page.state);
 
-							selectedVariations.push(option);
-						}}>{option}</button
-					>
-					<span> | </span>
-				{/each}
+						selectedVariations.push(option);
+					}}
+				>
+					{option}
+				</button>
 			{/each}
-		</div>
-		<button
-			class="footer-button transition"
-			id="toggle-schedule"
-			on:click={() => (displayTable = !displayTable)}
-		>
-			View schedule
-		</button>
+		{/each}
+		{#if data.schedule != null}
+			<span>{' | '}</span>
+			<button
+				class="footer-button transition"
+				id="toggle-schedule"
+				on:click={() => (displayTable = !displayTable)}
+			>
+				View schedule
+			</button>
+		{/if}
 		<span class="footer-text" id="footer-right"></span>
 	</div>
 </div>
-{#if displayTable}
+{#if displayTable && data.schedule != null}
 	<div class="table-container">
-		<ScheduleEventTable schedule={$page.data.schedule} bind:selectedVariations />
+		<ScheduleEventTable bind:schedule={data.schedule} bind:selectedVariations />
 	</div>
 {/if}

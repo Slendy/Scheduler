@@ -11,7 +11,7 @@
 
 	let allVariations = data.schedule.variations
 		.map((v: any) => v.options)
-		.reduce((prev: any, cur: any) => [...prev, ...cur]);
+		.reduce((prev: any, cur: any) => [...prev, ...cur], []);
 	//TODO: this should be user selectable
 	let selectedVariations: string[] = [];
 	let selectedTime = 'current-time';
@@ -32,6 +32,14 @@
 
 			customTime = dateTime.toDate();
 		}
+	}
+	let scheduleWithNoDate: any;
+
+	$: {
+		const { scheduleDate, ...rest } = data.schedule;
+		scheduleWithNoDate = rest;
+		// get today's date in yyyy-mm-dd format
+		scheduleWithNoDate.scheduleDate = dayjs.tz(undefined, data.environment.timeZone).toISOString().split("T")[0];
 	}
 </script>
 
@@ -89,7 +97,7 @@
 {#if selectedWindow === 'events'}
 	<div class="d-flex">
 		<ScheduleEventTable
-			schedule={data.schedule}
+			schedule={scheduleWithNoDate}
 			selectedVariations={allVariations}
 			transition={false}
 			limitHeight={false}
@@ -113,6 +121,10 @@
 		</div>
 	</div>
 	<div class="d-flex border border-secondary p-2 rounded-3">
-		<ScheduleCountdown schedule={data.schedule} selectedVariations={allVariations} bind:customTime />
+		<ScheduleCountdown
+			schedule={scheduleWithNoDate}
+			selectedVariations={allVariations}
+			bind:customTime
+		/>
 	</div>
 {/if}

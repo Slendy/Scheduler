@@ -1,14 +1,15 @@
 <script lang="ts">
+	import { dayjs } from '$lib/shared/dayjs';
 	import { createCachedSchedule } from '$lib/shared/schedule';
 	import type { Schedule } from '$lib/shared/types';
 	import { scale } from 'svelte/transition';
 
 	export let schedule: Schedule;
-	export let scheduleDate: Date = new Date();
+	$: scheduleDate = new Date(schedule?.scheduleDate as string);
 	export let selectedVariations: string[];
 	export let transition: boolean = true;
 	export let limitHeight: boolean = true;
-	$: cachedSchedule = createCachedSchedule(schedule, scheduleDate);
+	$: cachedSchedule = createCachedSchedule(schedule, dayjs.tz(scheduleDate, schedule.scheduleTimeZone));
 
 	//NOTE(josh): if this component starts acting wacky it's probably because of the global transition
 </script>

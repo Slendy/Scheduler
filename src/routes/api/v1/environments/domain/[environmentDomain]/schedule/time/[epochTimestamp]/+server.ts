@@ -8,7 +8,7 @@ export const GET = async ({ params }) => {
     const { environmentDomain, epochTimestamp } = params;
 
     let environment = await EnvironmentModel.findOne({ environmentDomain });
-    if (!environment) return error(404, "Environment not found");
+    if (!environment) return error(400, "Invalid environment");
 
     let parsedTimestamp = parseInt(epochTimestamp);
     if(isNaN(parsedTimestamp) || parsedTimestamp == 0){
@@ -26,6 +26,7 @@ export const GET = async ({ params }) => {
     const { createdAt, updatedAt, enabled, name, scheduleType, scheduleWeekdays, scheduleDate, ...responseSchedule } = activeSchedule.schedule;
 
     responseSchedule.scheduleDate = activeSchedule.scheduleDate.toDate();
+    responseSchedule.scheduleTimeZone = environment.timeZone;
 
     return Response.json(responseSchedule, {
         headers: {

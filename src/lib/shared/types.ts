@@ -23,6 +23,7 @@ export type Schedule = {
     scheduleType: ScheduleType;
     scheduleDate: string | undefined;
     scheduleWeekdays: ScheduleWeekdays[] | undefined;
+    scheduleTimeZone: string | undefined;
     enabled: boolean;
     name: string;
     events: ScheduleEvent[];

@@ -4,7 +4,7 @@
     --schedule-bg-color-dark: #121212;
     --schedule-accent-color-dark: rgba(23, 23, 23);
     --schedule-accent2-dark: rgba(255, 255, 255, .04);
-    --schedule-schedulebg-dark: rgba(18, 18, 18, 0.9);
+    --schedule-schedulebg-dark: rgba(18, 18, 18, 0.97);
     --schedule-scheduleborder-dark: rgba(255, 255, 255, .2);
     --schedule-red-dark: #f64747;
 
@@ -12,7 +12,7 @@
     --schedule-bg-color-light: white;
     --schedule-accent-color-light: #f7f7f7;
     --schedule-accent2-light: rgba(0, 0, 0, .04);
-    --schedule-schedulebg-light: rgba(255, 255, 255, 0.9);
+    --schedule-schedulebg-light: rgba(255, 255, 255, 0.85);
     --schedule-scheduleborder-light: rgba(0, 0, 0, .2);
     --schedule-red-light: #f22613;
 

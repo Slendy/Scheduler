@@ -4,11 +4,11 @@ import { hashObject } from '$lib/shared/hash.js';
 import { getActiveSchedule } from '$lib/shared/schedule.js';
 import { error } from '@sveltejs/kit';
 
-export const GET = async ({ params, request }) => {
+export const GET = async ({ params }) => {
     const { environmentDomain } = params;
 
     let environment = await EnvironmentModel.findOne({ environmentDomain });
-    if (!environment) return error(404, "Environment not found");
+    if (!environment) return error(400, "Invalid environment");
 
     let schedules = environment.toApiResponse().schedules;
 
@@ -21,6 +21,8 @@ export const GET = async ({ params, request }) => {
     const { createdAt, updatedAt, enabled, name, scheduleType, scheduleWeekdays, scheduleDate, ...responseSchedule } = activeSchedule.schedule;
 
     responseSchedule.scheduleDate = activeSchedule.scheduleDate.toDate();
+    responseSchedule.scheduleTimeZone = environment.timeZone;
+
 
     return Response.json(responseSchedule, {
         headers: {

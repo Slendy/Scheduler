@@ -4,14 +4,18 @@ import { hashObject } from "$lib/shared/hash.js";
 export const load = async ({ parent, fetch }) => {
     let { environment } = await parent();
 
-    const response = await fetch(`/api/v1/environments/domain/${environment.environmentDomain}/schedule/current`).then((res) => {
-        if (!res.ok) return null;
-        return res.json()
-    }).catch(() => null);
+    const response = await fetch(`/api/v1/environments/domain/${environment.environmentDomain}/schedule/current`);
 
-    if (response == null) {
-        throw error(404, "Environment not found");
+    // If there are no schedules don't trigger the error page
+    if (response.status == 404) {
+        return { schedule: undefined, scheduleHash: undefined }
     }
 
-    return { schedule: response, scheduleHash: await hashObject(response) }
+    if (!response.ok) {
+        throw error(400, "Invalid environment");
+    }
+
+    let scheduleResponse = await response.json();
+
+    return { schedule: scheduleResponse, scheduleHash: await hashObject(scheduleResponse) }
 }

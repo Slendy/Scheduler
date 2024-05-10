@@ -8,6 +8,7 @@ export const defaultSchedule: Schedule = {
     scheduleType: 'one-time',
     scheduleDate: undefined,
     scheduleWeekdays: undefined,
+    scheduleTimeZone: undefined,
     enabled: false,
     events: [],
     name: '',
@@ -153,7 +154,7 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
     }
 
     if (time.getTime() > highestTime) {
-        return undefined
+        return undefined;
     }
 
     return { inProgress, target, title }
@@ -257,22 +258,17 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
     return scheduleDistances[0] || undefined;
 }
 
-export function createCachedSchedule(schedule: Schedule, scheduleDate: Date): CachedSchedule | undefined {
+export function createCachedSchedule(schedule: Schedule, scheduleDate: Dayjs): CachedSchedule | undefined {
     if (schedule == undefined) {
         return undefined;
     }
 
     let newEvents: (ScheduleEvent & EventWithDate)[] = [];
     for (let event of schedule.events) {
-        let start = new Date(scheduleDate);
-        start.setHours(0, 0, 0);
-        start.setSeconds(convertTimeToSeconds(event.startTime));
+        let start = scheduleDate.startOf('day').set('second', convertTimeToSeconds(event.startTime));
+        let end = scheduleDate.startOf('day').set('second', convertTimeToSeconds(event.endTime));
 
-        let end = new Date(scheduleDate);
-        end.setHours(0, 0, 0);
-        end.setSeconds(convertTimeToSeconds(event.endTime));
-
-        newEvents.push({ ...event, startTimeDate: start, endTimeDate: end });
+        newEvents.push({ ...event, startTimeDate: start.toDate(), endTimeDate: end.toDate() });
     }
 
     return { ...schedule, events: newEvents };
