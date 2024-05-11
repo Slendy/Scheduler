@@ -286,7 +286,7 @@ export function extractHoursAndSeconds(time: string): [number, number] {
 export function convertTimeToDate(time: string, baseDate: Dayjs) {
     let timeComponents = extractHoursAndSeconds(time);
 
-    return baseDate.set('hour', timeComponents[0]).set('minute', timeComponents[1]);
+    return baseDate.startOf('day').set('hour', timeComponents[0]).set('minute', timeComponents[1]);
 }
 
 export function convertTimeToSeconds(time: string): number {
