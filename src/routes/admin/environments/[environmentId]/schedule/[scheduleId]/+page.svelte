@@ -6,6 +6,7 @@
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import ScheduleEnableToggle from '$lib/components/schedule/ScheduleEnableToggle.svelte';
 	import { dayjs } from '$lib/shared/dayjs.js';
+	import { getLastEvent } from '$lib/shared/schedule.js';
 
 	export let data;
 
@@ -38,8 +39,15 @@
 	$: {
 		const { scheduleDate, ...rest } = data.schedule;
 		scheduleWithNoDate = rest;
+		
+		let curTime = dayjs(customTime, data.environment.timeZone);
+		let lastEvent = getLastEvent(data.schedule, curTime);
+		if(lastEvent != null && curTime.isAfter(lastEvent as any)){
+			curTime = curTime.add(1, 'day');	
+		}
 		// get today's date in yyyy-mm-dd format
-		scheduleWithNoDate.scheduleDate = dayjs.tz(undefined, data.environment.timeZone).toISOString().split("T")[0];
+		scheduleWithNoDate.scheduleTimeZone = data.environment.timeZone;
+		scheduleWithNoDate.scheduleDate = curTime.toISOString();
 	}
 </script>
 
