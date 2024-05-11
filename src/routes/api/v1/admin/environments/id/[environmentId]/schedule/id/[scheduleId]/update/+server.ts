@@ -45,9 +45,13 @@ export const POST = async ({ request, params }) => {
     (existingSchedule as any).events = newSchedule.events;
     (existingSchedule as any).variations = newSchedule.variations;
     existingSchedule.scheduleType = newSchedule.scheduleType;
-    existingSchedule.scheduleDate = newSchedule.scheduleDate!;
-    existingSchedule.scheduleWeekdays = newSchedule.scheduleWeekdays!;
-
+    if (existingSchedule.scheduleType == 'one-time') {
+        existingSchedule.scheduleDate = newSchedule.scheduleDate!;
+        existingSchedule.scheduleWeekdays = undefined;
+    } else if (existingSchedule.scheduleType == 'repeating') {
+        existingSchedule.scheduleWeekdays = newSchedule.scheduleWeekdays!;
+        existingSchedule.scheduleDate = undefined;
+    }
 
     let time = new Date().toISOString();
 
