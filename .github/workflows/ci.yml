@@ -21,7 +21,7 @@ jobs:
       - name: Run unit tests
         run: bun test
 
-      - name: Process test results
+      - name: Handle test failures
         if: ${{ failure() }}
         run: |
           echo "There were test failures."
