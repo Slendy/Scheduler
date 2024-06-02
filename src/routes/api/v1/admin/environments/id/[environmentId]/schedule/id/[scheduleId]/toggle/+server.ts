@@ -1,16 +1,10 @@
-import { EnvironmentModel } from '$lib/server/models';
 import { apiFormError, apiFormSuccess } from '$lib/server/utils.js';
-import { isValidObjectId } from 'mongoose';
+import { validateEnvironmentId } from '$lib/server/validation';
 
 export const POST = async ({ request, params }) => {
     const { environmentId, scheduleId } = params;
-    if (!isValidObjectId(environmentId)) {
-        return apiFormError('Invalid environment ID');
-    }
-    const environment = await EnvironmentModel.findOne({ _id: environmentId });
-    if (environment === null) {
-        return apiFormError('Environment not found', 404);
-    }
+    let [environment, error] = await validateEnvironmentId(environmentId);
+    if (!environment) return error!;
 
     const existingSchedule = environment.schedules.find((s: any) => s.scheduleId == scheduleId);
     if (!existingSchedule) {

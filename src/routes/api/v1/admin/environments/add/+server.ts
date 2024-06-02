@@ -13,7 +13,7 @@ export const POST = async ({ request }) => {
     if (domain == null || domain.toString().length == 0 || !isValidDomain(domain.toString())) {
         return apiFormError('Invalid environment domain')
     }
-    const timeZone = data.get('envTimezone');
+    const timeZone = data.get('envTimeZone');
     if (timeZone == null || !isValidTimeZone(timeZone.toString())) {
         return apiFormError('Invalid environment time zone');
     }

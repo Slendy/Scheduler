@@ -1,18 +1,12 @@
-import { EnvironmentModel } from '$lib/server/models';
 import { apiFormError, apiFormErrorCustom, apiFormSuccess } from '$lib/server/utils.js';
-import { isValidObjectId } from 'mongoose';
 import type { Schedule } from '$lib/shared/types.js';
 import { verifySchedule } from '$lib/shared/schedule.js';
+import { validateEnvironmentId } from '$lib/server/validation';
 
 export const POST = async ({ request, params }) => {
     const { environmentId, scheduleId } = params;
-    if (!isValidObjectId(environmentId)) {
-        return apiFormError('Invalid environment ID');
-    }
-    const environment = await EnvironmentModel.findOne({ _id: environmentId });
-    if (environment === null) {
-        return apiFormError('Environment not found', 404);
-    }
+    let [environment, error] = await validateEnvironmentId(environmentId);
+    if (!environment) return error!;
 
     const existingSchedule = environment.schedules.find((s: any) => s.scheduleId == scheduleId);
     if (!existingSchedule) {
@@ -47,10 +41,11 @@ export const POST = async ({ request, params }) => {
     existingSchedule.scheduleType = newSchedule.scheduleType;
     if (existingSchedule.scheduleType == 'one-time') {
         existingSchedule.scheduleDate = newSchedule.scheduleDate!;
-        existingSchedule.scheduleWeekdays = undefined;
+        // we have to cast to any to set a non required field to undefined
+        (existingSchedule as any).scheduleWeekdays = undefined;
     } else if (existingSchedule.scheduleType == 'repeating') {
         existingSchedule.scheduleWeekdays = newSchedule.scheduleWeekdays!;
-        existingSchedule.scheduleDate = undefined;
+        (existingSchedule as any).scheduleDate = undefined;
     }
 
     let time = new Date().toISOString();

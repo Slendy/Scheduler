@@ -20,7 +20,7 @@ export const MAX_VARIATION_NAME_LEN = 20;
 export const MAX_VARIATION_OPTION_LEN = 20;
 export const MAX_EVENT_NAME_LEN = 32;
 
-export function isScheduleModified(schedule: Schedule): boolean {
+export function isScheduleEmpty(schedule: Schedule): boolean {
     if (schedule.name !== "") return true;
     if (schedule.events.length > 0) return true;
     if (schedule.variations.length > 0) return true;
@@ -168,15 +168,19 @@ export function getLastEvent(schedule: Schedule, baseDate: Dayjs): Dayjs | undef
             highestDate = eventEndDate;
         }
     }
+    
     return highestDate;
+}
+
+//TODO implement
+export function isDateBlockout(date: Dayjs){
+    return false;
 }
 
 export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
     if (zonedDate == null) {
         return undefined;
     }
-
-    // TODO: if the current date is a blockout return undefined
 
     if (schedules.length == 0) {
         return undefined;
@@ -193,6 +197,10 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
 
         if (schedule.scheduleType == 'one-time' && schedule.scheduleDate) {
             let scheduleDate = dayjs.tz(schedule.scheduleDate, timeZone).startOf('day');
+
+            if(isDateBlockout(scheduleDate)){
+                continue;
+            }
 
             let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
@@ -217,12 +225,11 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
                     continue;
                 }
                 let scheduleDate = dayjs.tz(date, timeZone).startOf('day').set('day', i);
-                let isBlockout = false;
                 // if we have to look ahead a whole year it's chalked
                 const MAX_LOOKAHEAD = 52;
                 let iterations = 0;
-                while ((scheduleDate.startOf('day').isBefore(zonedDate.startOf('day') as any) || isBlockout) && iterations < MAX_LOOKAHEAD) {
-                    scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7);
+                while ((scheduleDate.isBefore(zonedDate.startOf('day') as any) || isDateBlockout(scheduleDate)) && iterations < MAX_LOOKAHEAD) {
+                    scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7).startOf('day');
                     iterations++;
                 }
                 let scheduleDistance = scheduleDate.unix() - zonedDate.unix();

@@ -1,20 +1,14 @@
-import { EnvironmentModel } from "$lib/server/models";
-import { error } from "@sveltejs/kit";
-import { isValidObjectId } from "mongoose";
+import { validateEnvironmentId } from "$lib/server/validation";
+import { error as errorResponse } from "@sveltejs/kit";
 
 export const GET = async ({ params }) => {
     const { environmentId, scheduleId } = params;
-    if (!isValidObjectId(environmentId)) {
-        return error(400, "Invalid environment ID");
-    }
-    const environment = await EnvironmentModel.findOne({ _id: environmentId });
-    if (environment === null) {
-        return error(404, "Environment not found");
-    }
+    let [environment, error] = await validateEnvironmentId(environmentId);
+    if (!environment) return error!;
 
     let schedule = environment.schedules.find((schedule: any) => schedule.scheduleId?.toString() == scheduleId);
     if (schedule == null) {
-        return error(404, "Schedule not found");
+        return errorResponse(404, "Schedule not found");
     }
 
     return Response.json(schedule.toObject());

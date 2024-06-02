@@ -1,19 +1,13 @@
-import { EnvironmentModel } from '$lib/server/models';
 import { apiFormError, apiFormErrorCustom, apiFormSuccess } from '$lib/server/utils.js';
-import { isValidObjectId } from 'mongoose';
 import type { Schedule } from '$lib/shared/types.js';
 import { mongo } from 'mongoose';
 import { verifySchedule } from '$lib/shared/schedule.js';
+import { validateEnvironmentId } from '$lib/server/validation';
 
 export const POST = async ({ request, params }) => {
     const { environmentId } = params;
-    if (!isValidObjectId(environmentId)) {
-        return apiFormError('Invalid environment ID');
-    }
-    const environment = await EnvironmentModel.findOne({ _id: environmentId });
-    if (environment === null) {
-        return apiFormError('Environment not found', 404);
-    }
+    let [environment, error] = await validateEnvironmentId(environmentId);
+    if (!environment) return error!;
 
     const formData = await request.formData();
 
@@ -30,7 +24,7 @@ export const POST = async ({ request, params }) => {
         return apiFormErrorCustom({ errors: scheduleErrors })
     }
 
-    let newSchedule: Schedule = {
+    let newSchedule: any = {
         scheduleId: new mongo.ObjectId().toString(),
         name: schedule.name,
         scheduleDate: schedule.scheduleDate,
