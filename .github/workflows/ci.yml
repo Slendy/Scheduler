@@ -1,0 +1,26 @@
+on: [ push, pull_request ]
+name: Continuous Integration
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1.2.2
+        with:
+          bun-version: latest
+
+      - name: Run unit tests
+        run: bun test
+
+      - name: Process test results
+        if: ${{ failure() }}
+        run: |
+          echo "There were test failures."
+          exit 1
+        
