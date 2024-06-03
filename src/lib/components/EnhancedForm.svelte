@@ -17,6 +17,7 @@
 	export let method = 'post';
 	export let action = '';
 	export let submitting = false;
+	export let encType = "application/x-www-form-urlencoded";
 	export let fail: (result: any) => any = () => {};
 	export let succeed: (result: any) => any;
 	export let onSubmit: (e: Event) => any = () => {};
@@ -27,6 +28,7 @@
 <form
 	{method}
 	{action}
+	enctype="{encType}"
 	on:keydown={(e) => onKeydown(e)}
 	on:submit={(e) => {
 		if (submitting) {

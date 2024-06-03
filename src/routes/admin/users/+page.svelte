@@ -26,7 +26,6 @@
 			<UserCard
 				userId={user._id}
 				isAdmin={user.isAdmin}
-				permissionMap={user.permissionMap}
 				username={user.username}
 			/>
 		{/each}

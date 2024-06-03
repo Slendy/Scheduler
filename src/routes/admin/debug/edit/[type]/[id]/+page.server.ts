@@ -9,7 +9,10 @@ export const load = async ({ params }) => {
     }
 
     if (params.type === 'environment') {
-        return { serialized: JSON.stringify(await EnvironmentModel.findById(params.id), null, 4) }
+        let environment = (await EnvironmentModel.findById(params.id))?.toObject({getters: true});
+        if (environment == null) return null;
+        environment.environmentIcon = environment.environmentIcon.toString('base64');
+        return { serialized: JSON.stringify(environment, null, 4) }
     } else if (params.type === 'user') {
         return { serialized: JSON.stringify(await UserModel.findById(params.id), null, 4) }
     } else {
@@ -31,17 +34,18 @@ export const actions = {
             let parsedEnvironment = JSON.parse(serialized.toString());
             if (parsedEnvironment == null) return { success: false, message: 'Failed to parse json' }
 
-            await EnvironmentModel.updateOne({_id: id}, parsedEnvironment)
+            // convert from base64 since we serve the image data b64 encoded
+            parsedEnvironment.environmentIcon = Buffer.from(parsedEnvironment.environmentIcon, 'base64');
 
             return { success: true }
         } else if (type === 'user') {
             let user = await UserModel.findById(id);
             if (user == null) return { success: false }
 
-            user = JSON.parse(serialized.toString());
-            if (user == null) return { success: false, message: 'Failed to parse json' }
+            let parsedUser = JSON.parse(serialized.toString());
+            if (parsedUser == null) return { success: false, message: 'Failed to parse json' }
 
-            await user.save();
+            await UserModel.updateOne({ id: id }, parsedUser);
 
             return { success: true }
         } else {

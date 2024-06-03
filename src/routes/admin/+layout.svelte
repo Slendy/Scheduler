@@ -101,7 +101,9 @@
 					<span class="float-start transition-workaround">
 						<div>
 							<span class="fw-bold">
-								<a href="https://github.com/Slendy">@slendy</a>/scheduler/{PUBLIC_GIT_BRANCH}</span>
+								<a href="https://github.com/Slendy">@slendy</a>
+								/scheduler/{PUBLIC_GIT_BRANCH}
+							</span>
 						</div>
 						<div>
 							Version: {PUBLIC_VERSION}, Commit:
@@ -113,7 +115,7 @@
 				</div>
 				<div class="col">
 					<span class="transition-workaround float-start float-md-end text-start text-md-end">
-						<div title="{PUBLIC_BUILD_DATE}">
+						<div title={PUBLIC_BUILD_DATE}>
 							Build date: {new Date(PUBLIC_BUILD_DATE).toLocaleDateString()}
 						</div>
 						<div>
