@@ -27,7 +27,7 @@
 	fail={(result) => {
 		formError = result.message;
 	}}
-	succeed={async (result) => {
+	succeed={async (_) => {
 		formSuccess = "The environment settings have been successfully updated.";
 		invalidateAll();
 		setTimeout(() => {

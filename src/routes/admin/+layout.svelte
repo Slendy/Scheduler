@@ -101,8 +101,7 @@
 					<span class="float-start transition-workaround">
 						<div>
 							<span class="fw-bold">
-								<a href="https://github.com/Slendy">@slendy</a>
-								/scheduler/{PUBLIC_GIT_BRANCH}
+								<a href="https://github.com/Slendy">@slendy</a>/scheduler/{PUBLIC_GIT_BRANCH}
 							</span>
 						</div>
 						<div>
