@@ -108,6 +108,23 @@ div {
 
 /* END BOOTSTRAP OVERRIDES */
 
+/* BEGIN SVELTE-MULTISELECT OVERRIDES */
+::highlight(sms-search-matches) {
+    color: var(--schedule-red) !important;
+    text-decoration: underline;
+  }
+
+div.multiselect > ul.options > li:hover {
+    background-color: var(--schedule-accent-color-2) !important;
+}
+
+div.multiselect {
+    border: var(--schedule-accent2) solid 2px !important;
+    border-radius: 3px !important;
+}
+
+/* END SVELTE-MULTISELECT OVERRIDES */
+
 /* BEGIN NPROGRESS OVERRIDES */
 #nprogress .bar {
     background: var(--schedule-red) !important;
