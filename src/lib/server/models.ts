@@ -64,12 +64,17 @@ const scheduleSchema = new Schema({
     history: [Schema.Types.Mixed]
 }, { _id: false, timestamps: true });
 
+const environmentCollaboratorSchema = new Schema({
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    permissions: { type: Number, required: true },
+});
+
 export const environmentSchema = new Schema({
     environmentName: { type: String, required: true },
     environmentDomain: { type: String, required: true },
     environmentIcon: { type: Buffer },
     environmentOwner: { type: Schema.Types.ObjectId, ref: 'User' },
-    // environmentCollaborators: {type: }
+    environmentCollaborators: { type: [environmentCollaboratorSchema], required: true, default: [] },
     timeZone: {
         type: String,
         required: true,

@@ -31,7 +31,9 @@
 <hr />
 
 {#if data.environment?.environmentCollaborators?.length || 0 > 0}
-	<p>rows go here</p>
+	{#each data.environment.environmentCollaborators as collaborator}
+		<p>{collaborator.userId}</p>
+	{/each}
 	<hr />
 {/if}
 
@@ -50,10 +52,13 @@
 			succeed={() => {
 				displayNewCollaborator = false;
 			}}
-			action="/api/v1/admin/environments/{data.environment._id}/collaborators/add"
+			fail={(error) => {
+				errorMessage = error.message;
+			}}
+			action="/api/v1/admin/environments/id/{data.environment._id}/collaborators/add"
 			onSubmit={() => {
-				if(!selectedUser){
-					errorMessage = "You must select a valid user";
+				if (!selectedUser) {
+					errorMessage = 'You must select a valid user';
 					return false;
 				}
 			}}
