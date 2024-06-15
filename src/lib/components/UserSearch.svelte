@@ -6,7 +6,7 @@
 
 	let fetchTask: Promise<any> | undefined;
 
-	let results: any[] = [];
+	let results: any[] | undefined;
 	let hideResults = false;
 	async function loadAutocomplete(input: string) {
 		if (input.length == 0) {
@@ -76,11 +76,11 @@
 					class="list-group list-group-item-dark rounded-0 rounded-bottom"
 					style="max-height: 10rem; overflow-y: auto;"
 				>
-					{#if !fetchTask && inputValue?.length > 0 && results.length == 0}
+					{#if !fetchTask && inputValue?.length > 0 && results && results.length == 0}
 						<li class="list-group-item">No results</li>
 					{:else if fetchTask}
 						<li class="list-group-item">Loading...</li>
-					{:else}
+					{:else if results}
 						{#each results as result}
 							<button
 								class="list-group-item list-group-item-action"
