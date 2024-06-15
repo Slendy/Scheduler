@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Modal from './Modal.svelte';
 	import type { Schedule } from '$lib/shared/types';
-	import { isScheduleModified } from '$lib/shared/schedule';
+	import { isScheduleEmpty } from '$lib/shared/schedule';
 	import { dayjs } from '$lib/shared/dayjs';
 
 	export let environment: any;
@@ -24,7 +24,7 @@
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	</div>
 	<div class="modal-body">
-		{#if isScheduleModified(schedule)}
+		{#if !isScheduleEmpty(schedule)}
 			<div class="alert alert-warning" role="alert">
 				The current schedule will be overwritten after importing
 			</div>

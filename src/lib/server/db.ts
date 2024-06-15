@@ -11,7 +11,6 @@ export async function generateDefaultUser() {
         let defaultUser = new UserModel({
             username: "admin",
             isAdmin: true,
-            permissionMap: {},
             passwordHash: await Bun.password.hash("admin"),
         });
         await defaultUser.save();
@@ -20,10 +19,12 @@ export async function generateDefaultUser() {
 }
 
 export async function generateDefaultEnvironment() {
+    // TODO save this into a separate model so environments are auto regenerated if all of them are deleted
     if (await EnvironmentModel.estimatedDocumentCount() === 0) {
         let defaultEnvironment = new EnvironmentModel({
             environmentDomain: "example.com",
             environmentName: "default",
+            environmentOwner: UserModel.findOne(), // should default to the admin user
             isVerified: false,
             schedules: [],
         });

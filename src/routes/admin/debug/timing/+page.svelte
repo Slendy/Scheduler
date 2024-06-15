@@ -16,7 +16,7 @@
 		: undefined;
 	let schedule = data.environmentSerialized ? JSON.parse(data.scheduleSerialized || '') : undefined;
 
-	$: cachedSchedule = createCachedSchedule(schedule, dayjs.tz(scheduleDate, environment.timeZone));
+	$: cachedSchedule = createCachedSchedule(schedule, dayjs.tz(scheduleDate, environment?.timeZone ?? "UTC"));
 
 	let time: string;
 	let scheduleDate: string = new Date().toISOString().split("T")[0];

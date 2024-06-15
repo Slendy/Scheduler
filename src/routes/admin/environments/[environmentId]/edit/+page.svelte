@@ -1,20 +1,25 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { invalidateAll } from '$app/navigation';
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
-	import Header from '$lib/components/Header.svelte';
+	import SuccessAlert from '$lib/components/SuccessAlert.svelte';
 	import { timeZoneNames } from '$lib/shared/timezones.js';
 
 	export let data;
 
 	let submitting = false;
 
-	export let formError: string | null = null;
+	let formError: string | null = null;
+	let formSuccess: string | null = null;
 </script>
 
-<Header>Edit {data.environment.environmentName}</Header>
+<h3>Settings</h3>
+<p class="text-body-secondary">General settings for this environment</p>
+<hr />
 
 <ErrorAlert message={formError} />
+
+<SuccessAlert message={formSuccess} />
 
 <EnhancedForm
 	bind:submitting
@@ -22,8 +27,12 @@
 	fail={(result) => {
 		formError = result.message;
 	}}
-	succeed={async (result) => {
-		await goto(`/admin/environments/${result._id}`);
+	succeed={async (_) => {
+		formSuccess = "The environment settings have been successfully updated.";
+		invalidateAll();
+		setTimeout(() => {
+			formSuccess = null;
+		}, 3000);
 	}}
 >
 	<div class="mb-3">
@@ -69,11 +78,4 @@
 	</div>
 
 	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Save changes</button>
-	<a
-		href="/admin/environments/{data.environment._id}"
-		class="btn btn-danger"
-		class:disabled={submitting}
-	>
-		Discard changes
-	</a>
 </EnhancedForm>

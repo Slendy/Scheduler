@@ -1,17 +1,17 @@
 import { Schema, model, models } from 'mongoose';
 import { type IUser } from '$lib/shared/types';
 
-
 const userSchema = new Schema<IUser>({
     username: { type: String, required: true },
-    permissionMap: { type: Map, of: String, required: true },
     isAdmin: { type: Boolean, required: true },
     passwordHash: { type: String, required: true }
-});
-
-userSchema.method('toApiResponse', function () {
-    let { passwordHash, ...userObject } = this.toObject();
-    return userObject;
+}, {
+    methods: {
+        toApiResponse: function () {
+            let { passwordHash, ...userObject } = this.toObject();
+            return userObject;
+        }
+    }
 });
 
 const authTokenSchema = new Schema({
@@ -64,9 +64,17 @@ const scheduleSchema = new Schema({
     history: [Schema.Types.Mixed]
 }, { _id: false, timestamps: true });
 
-const environmentSchema = new Schema({
+const environmentCollaboratorSchema = new Schema({
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    permissions: { type: Number, required: true },
+});
+
+export const environmentSchema = new Schema({
     environmentName: { type: String, required: true },
     environmentDomain: { type: String, required: true },
+    environmentIcon: { type: Buffer },
+    environmentOwner: { type: Schema.Types.ObjectId, ref: 'User' },
+    environmentCollaborators: { type: [environmentCollaboratorSchema], required: true, default: [] },
     timeZone: {
         type: String,
         required: true,
@@ -74,13 +82,15 @@ const environmentSchema = new Schema({
     },
     isVerified: { type: Boolean, required: true },
     schedules: [scheduleSchema],
-});
+}, {
+    methods: {
+        toApiResponse: function () {
+            let responseEnvironment: any = this.toObject({ getters: true });
 
-environmentSchema.method('toApiResponse', function () {
-    let responseEnvironment: any = this.toObject({ getters: true });
-
-    responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
-    return responseEnvironment;
+            responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
+            return responseEnvironment;
+        }
+    },
 });
 
 export const UserModel = models['User'] || model('User', userSchema);

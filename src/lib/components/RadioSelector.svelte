@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let options: any[]
+	export let options: {id: string, label: string}[]
 
 	export let name: string;
     export let value;

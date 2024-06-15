@@ -1,5 +1,6 @@
 import type { Cookies } from "@sveltejs/kit";
 import { TokenModel } from "./models";
+import { dev } from "$app/environment";
 import { randomBytes } from 'crypto';
 
 export async function getUserFromCookie(cookies: Cookies) {
@@ -39,12 +40,15 @@ export function setCookieToken(cookies: Cookies, token: any) {
         maxAge: 60 * 60,
         httpOnly: true,
         sameSite: 'lax',
+        // cookies should be secure if not in dev mode
+        secure: !dev,
     });
     cookies.set('refresh-token', token.refreshToken, {
         path: '/',
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
         sameSite: 'lax',
+        secure: !dev,
     });
 }
 

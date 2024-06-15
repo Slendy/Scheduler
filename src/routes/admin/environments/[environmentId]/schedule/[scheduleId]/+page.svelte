@@ -6,7 +6,7 @@
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import ScheduleEnableToggle from '$lib/components/schedule/ScheduleEnableToggle.svelte';
 	import { dayjs } from '$lib/shared/dayjs.js';
-	import { getLastEvent } from '$lib/shared/schedule.js';
+	import { getActiveSchedule, getLastEvent } from '$lib/shared/schedule.js';
 
 	export let data;
 
@@ -35,6 +35,8 @@
 		}
 	}
 	let scheduleWithNoDate: any;
+
+	let isScheduleActive = getActiveSchedule(data.environment.schedules, dayjs(null, data.environment.timeZone), data.environment.timeZone)?.schedule.scheduleId == data.schedule.scheduleId;
 
 	$: {
 		const { scheduleDate, ...rest } = data.schedule;
@@ -86,7 +88,7 @@
 		environmentId={data.environment._id}
 		scheduleId={data.schedule.scheduleId}
 		enabled={data.schedule.enabled}
-		active={false}
+		active={isScheduleActive}
 	/>
 </div>
 

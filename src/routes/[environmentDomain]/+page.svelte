@@ -5,4 +5,8 @@
 	export let data;
 </script>
 
+<svelte:head>
+    <link rel="shortcut icon" href="/{$page.params.environmentDomain}/favicon.ico" />
+</svelte:head>
+
 <SchedulePage environmentDomain={$page.params.environmentDomain} bind:data />

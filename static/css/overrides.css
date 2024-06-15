@@ -41,6 +41,7 @@
     flex-direction: column;
     min-height: 100vh;
     min-height: 100svh;
+    width: 100vw;
 }
 
 .main-content {
@@ -57,6 +58,7 @@ body {
     --bs-body-bg: var(--schedule-bg-color) !important;
     --bs-body-color: var(--schedule-text-color) !important;
     --bs-border-color: var(--schedule-scheduleborder) !important;
+    overflow-x: hidden;
 }
 
 nav {
@@ -91,7 +93,37 @@ div {
     --bs-accordion-border-color: var(--schedule-scheduleborder) !important;
 }
 
+.sidebar > .list-group-item {
+    --bs-list-group-border-width: 0px !important;
+    --bs-list-group-active-bg: var(--schedule-accent-color-2) !important;
+    --bs-list-group-active-color: var(--schedule-text-color) !important;
+    --bs-list-group-action-hover-bg: var(--schedule-accent-color) !important;
+    --bs-list-group-action-active-bg: rgba(0, 0, 0, 0) !important;
+    --bs-list-group-action-hover-color: var(--schedule-text-color) !important;
+}
+
+.sidebar > .list-group-item-action.active {
+    font-weight: bold;
+}
+
 /* END BOOTSTRAP OVERRIDES */
+
+/* BEGIN SVELTE-MULTISELECT OVERRIDES */
+::highlight(sms-search-matches) {
+    color: var(--schedule-red) !important;
+    text-decoration: underline;
+  }
+
+div.multiselect > ul.options > li:hover {
+    background-color: var(--schedule-accent-color-2) !important;
+}
+
+div.multiselect {
+    border: var(--schedule-accent2) solid 2px !important;
+    border-radius: 3px !important;
+}
+
+/* END SVELTE-MULTISELECT OVERRIDES */
 
 /* BEGIN NPROGRESS OVERRIDES */
 #nprogress .bar {
