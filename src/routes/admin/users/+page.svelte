@@ -20,14 +20,11 @@
 {:then users}
 	<div class="mb-3">
 		<h4>There are {users.length} users</h4>
+		<a href="/admin/users/add" class="btn btn-secondary">Add new user</a>
 	</div>
 	<div class="row row-cols-1 row-cols-sm-auto g-4">
 		{#each users as user}
-			<UserCard
-				userId={user._id}
-				isAdmin={user.isAdmin}
-				username={user.username}
-			/>
+			<UserCard userId={user._id} isAdmin={user.isAdmin} username={user.username} />
 		{/each}
 	</div>
 {:catch error}
