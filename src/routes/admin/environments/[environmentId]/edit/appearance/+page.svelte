@@ -62,7 +62,7 @@
 			bind:files={environmentFiles}
 		/>
 	</div>
-	<div class="form-text">The icon that will be displayed in the tab preview</div>
+	<div class="form-text">The icon that will be displayed in the web browser tab.</div>
 	{#if environmentIcon != null}
 		<div class="mb-3 mt-3">
 			<img
@@ -74,5 +74,7 @@
 		</div>
 	{/if}
 
-	<button class="btn btn-secondary" class:disabled={submitting} type="submit">Save changes</button>
+	<button class="btn btn-secondary mt-3" class:disabled={submitting} type="submit">
+		Save changes
+	</button>
 </EnhancedForm>

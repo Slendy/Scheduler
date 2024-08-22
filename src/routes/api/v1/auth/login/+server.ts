@@ -8,8 +8,6 @@ export const POST = async ({ request, cookies }) => {
     //TODO add toggleable instance settings that will be stored in db but will have defaults if they don't exist for some reason
     // each setting in DB should store it's value, the last user to edit it, and the last time it was edited (similar to cloudflare)
 
-    //TODO: fix git info embedding: https://stackoverflow.com/a/48958120
-
     const username = data.get('username');
     const password = data.get('password');
     if (!username || !password) {

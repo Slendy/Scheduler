@@ -29,5 +29,5 @@ export const POST = async ({ request }) => {
     })
     await newEnvironment.save();
     console.log(`Created new environment with name '${name}' and domain '${domain}'`)
-    return apiFormSuccess({ environment: newEnvironment.toApiResponse() })
+    return apiFormSuccess({ environment: await newEnvironment.toApiResponse() })
 }

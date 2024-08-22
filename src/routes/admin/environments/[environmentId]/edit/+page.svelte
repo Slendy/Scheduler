@@ -2,6 +2,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
+	import Modal from '$lib/components/modal/Modal.svelte';
 	import SuccessAlert from '$lib/components/SuccessAlert.svelte';
 	import { timeZoneNames } from '$lib/shared/timezones.js';
 
@@ -28,7 +29,7 @@
 		formError = result.message;
 	}}
 	succeed={async (_) => {
-		formSuccess = "The environment settings have been successfully updated.";
+		formSuccess = 'The environment settings have been successfully updated.';
 		invalidateAll();
 		setTimeout(() => {
 			formSuccess = null;

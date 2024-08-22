@@ -22,7 +22,7 @@ const authTokenSchema = new Schema({
     refreshToken: { type: String, required: true },
     // refresh token expires when the document expires which is 1 month
     // when a refresh token is used the token object is regenerated
-    expiresAt: { type: Date, required: true },
+    refreshTokenExpiration: { type: Date, required: true },
 });
 
 const eventSchema = new Schema({
@@ -65,7 +65,7 @@ const scheduleSchema = new Schema({
 }, { _id: false, timestamps: true });
 
 const environmentCollaboratorSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     permissions: { type: Number, required: true },
 });
 
@@ -84,8 +84,14 @@ export const environmentSchema = new Schema({
     schedules: [scheduleSchema],
 }, {
     methods: {
-        toApiResponse: function () {
-            let responseEnvironment: any = this.toObject({ getters: true });
+        toApiResponse: async function () {
+            let responseEnvironment: any = (await this.populate('environmentCollaborators.user')).toObject({ getters: true });
+
+            responseEnvironment.environmentCollaborators.forEach((c: any) => {
+                delete c.user.passwordHash;
+            })
+
+            responseEnvironment.environmentCollaborators = responseEnvironment.environmentCollaborators.map(({ passwordHash, ...rest }: any) => rest);
 
             responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
             return responseEnvironment;

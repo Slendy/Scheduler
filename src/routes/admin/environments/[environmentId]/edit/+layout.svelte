@@ -1,5 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import Modal from '$lib/components/modal/Modal.svelte';
 	import SettingsSidebar from '$lib/components/SettingsSidebar.svelte';
+	import { onMount } from 'svelte';
+	import UserPermissionForm from '$lib/components/UserPermissionForm.svelte';
 	export let data;
 
 	let items = [
@@ -14,23 +18,49 @@
 		{
 			display: 'Collaborators',
 			href: `/admin/environments/${data.environment._id}/edit/collaborators`
+		},
+		{
+			display: 'Blockouts',
+			href: `/admin/environments/${data.environment._id}/edit/blockouts`
 		}
-		// {
-		// 	display: 'Blockouts',
-		// 	href: `/admin/environments/${data.environment._id}/edit/blockouts`
-		// }
 	];
+
+	let modalRefresher = false;
+
+	onMount(() => {
+		// TODO: display modals from a nested element without sacrificing my sanity
+		document.addEventListener('modalChange', () => {
+			modalRefresher = !modalRefresher;
+		});
+	});
 
 	/* TODO: when the layout changes the state of the slot component is reset.
 	 * There doesn't seem to be an easy way to prevent this with layouts, maybe
 	 * it will be fixed in Svelte 5
 	 */
-	
 </script>
+
+<Modal modalId={'edit-user'} size="modal-lg">
+	{#key modalRefresher}
+		<div class="modal-header">
+			<p>Edit permissions for {$page.data.collaboratorModalUser?.user?.username}</p>
+			<button
+				on:click={() => {
+					alert(JSON.stringify($page.data));
+				}}
+			></button>
+		</div>
+		<div class="modal-body">
+			<UserPermissionForm url={'/'} user={$page.data.collaboratorModalUser} />
+		</div>
+	{/key}
+</Modal>
 
 <div class="row row-cols-1 row-cols-md-3 flex-column-reverse flex-md-row">
 	<div class="col d-flex justify-content-center justify-content-md-start align-items-center">
-		<a href="/admin/environments/{data.environment._id}" class="btn btn-secondary m-1 mt-2">Go back</a>
+		<a href="/admin/environments/{data.environment._id}" class="btn btn-secondary m-1 mt-2"
+			>Go back</a
+		>
 	</div>
 	<div class="col text-center">
 		<h1>Environment settings</h1>

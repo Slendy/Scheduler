@@ -1,7 +1,7 @@
 <script lang="ts">
 	import UserSearch from '$lib/components/UserSearch.svelte';
 
-	let selectedUser: any | undefined;
+	let selectedUser: any | undefined = 'test';
 </script>
 
 <h1>Search tester</h1>
