@@ -11,7 +11,11 @@
 	let deleteScheduleId: string = '';
 	let deleteScheduleName: string = '';
 
-	$: activeSchedule = getActiveSchedule(data.environment.schedules, dayjs.tz(undefined, data.environment.timeZone), data.environment.timeZone);
+	$: activeSchedule = getActiveSchedule(
+		data.environment.schedules,
+		dayjs.tz(undefined, data.environment.timeZone),
+		data.environment.timeZone
+	);
 
 	// sort schedules by active first, then most recently updated
 	$: data.environment.schedules.sort((a: any, b: any) => {
@@ -62,26 +66,19 @@
 	</div>
 </OneThirdHeader>
 
-<div class="d-flex mb-3" style="margin-top: -3rem">
-	<div class="text-center m-auto">
-		<a
-			href="/admin/environments/{data.environment._id}/preview"
-			class="btn btn-primary float-start m-1 mt-2"
-		>
-			Preview environment
-		</a>
-	</div>
-</div>
-
-<div class="d-flex mb-3">
-	<div class="text-center m-auto">
-		<a
-			href="/admin/environments/{data.environment._id}/schedule/new"
-			class="btn btn-secondary float-start m-1 mt-2"
-		>
-			Create schedule
-		</a>
-	</div>
+<div class="d-flex justify-content-end mb-3">
+	<a
+		href="/admin/environments/{data.environment._id}/schedule/new"
+		class="btn btn-success float-start m-1 mt-2"
+	>
+		New schedule
+	</a>
+	<a
+		href="/admin/environments/{data.environment._id}/preview"
+		class="btn btn-primary float-start m-1 mt-2"
+	>
+		Preview environment
+	</a>
 </div>
 
 {#if data.environment.schedules.length == 0}
