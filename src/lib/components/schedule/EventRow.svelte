@@ -4,7 +4,7 @@
 	import { MultiSelect } from 'svelte-multiselect';
 
 	import { scale } from 'svelte/transition';
-		
+
 	export let event: ScheduleEvent;
 	export let schedule: Schedule;
 	export let generateRandomId: () => string;
@@ -13,7 +13,6 @@
 		(cur: any, next: any) => [...cur, ...next.options],
 		[]
 	);
-	
 </script>
 
 <div

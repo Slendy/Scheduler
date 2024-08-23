@@ -37,6 +37,6 @@ export const POST = async ({ params, request }) => {
 
     await user.save();
 
-    console.log(`Updated user ${user._id} new name: '${name}', isAdmin: '${isAdmin}'`)
+    console.log(`Updated user ${user._id} new name: '${user.username}', isAdmin: '${user.isAdmin}'`)
     return apiFormSuccess({ user })
 }

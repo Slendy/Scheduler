@@ -31,8 +31,8 @@ export function isScheduleEmpty(schedule: Schedule): boolean {
 
 export function verifySchedule(schedule: Schedule): string[] {
     let errors: string[] = [];
-    function addError(error: string){
-        if(!errors.includes(error)){
+    function addError(error: string) {
+        if (!errors.includes(error)) {
             errors.push(error);
         }
     }
@@ -102,7 +102,7 @@ export function verifySchedule(schedule: Schedule): string[] {
                 let endTime = convertTimeToSeconds(event.endTime);
                 if (timeSeconds > startTime) {
                     addError(
-                        `Event #${i + 1} start time is before event #${i} end time (${schedule.events[i+1].startTime} > ${event.endTime})`
+                        `Event #${i + 1} start time is before event #${i} end time (${schedule.events[i + 1].startTime} > ${event.endTime})`
                     );
                 }
                 if (startTime > endTime) {
@@ -173,21 +173,23 @@ export function getLastEvent(schedule: Schedule, baseDate: Dayjs): Dayjs | undef
             highestDate = eventEndDate;
         }
     }
-    
+
     return highestDate;
 }
 
 //TODO implement
-export function isDateBlockout(date: Dayjs){
+export function isDateBlockout(date: Dayjs) {
     return false;
 }
 
 export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
     if (zonedDate == null) {
+        console.error("getActiveSchedule(): Input date is null.");
         return undefined;
     }
 
-    if (schedules.length == 0) {
+    if (!schedules?.length || schedules.length === 0) {
+        console.error("getActiveSchedule(): List of input schedules is empty.")
         return undefined;
     }
 
@@ -203,7 +205,7 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
         if (schedule.scheduleType == 'one-time' && schedule.scheduleDate) {
             let scheduleDate = dayjs.tz(schedule.scheduleDate, timeZone).startOf('day');
 
-            if(isDateBlockout(scheduleDate)){
+            if (isDateBlockout(scheduleDate)) {
                 continue;
             }
 

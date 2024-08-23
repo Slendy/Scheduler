@@ -15,7 +15,7 @@ export const GET = async ({ params }) => {
         return error(400, "Timestamp is invalid");
     }
 
-    let schedules = await environment.toApiResponse().schedules;
+    let schedules = (await environment.toApiResponse()).schedules;
 
     let activeSchedule = getActiveSchedule(schedules, dayjs.tz(dayjs(parsedTimestamp), environment.timeZone), environment.timeZone) as any
     if (!activeSchedule) {
