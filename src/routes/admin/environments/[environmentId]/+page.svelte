@@ -11,6 +11,8 @@
 	let deleteScheduleId: string = '';
 	let deleteScheduleName: string = '';
 
+	let scheduleDisplayMode: 'grid' | 'column' = 'grid';
+
 	$: activeSchedule = getActiveSchedule(
 		data.environment.schedules,
 		dayjs.tz(undefined, data.environment.timeZone),
@@ -66,6 +68,13 @@
 	</div>
 </OneThirdHeader>
 
+<button
+	class="btn btn-primary"
+	on:click={() => {
+		scheduleDisplayMode = scheduleDisplayMode == 'column' ? 'grid' : 'column';
+	}}>Toggle view mode</button
+>
+
 <div class="d-flex justify-content-end mb-3">
 	<a
 		href="/admin/environments/{data.environment._id}/schedule/new"
@@ -101,15 +110,60 @@
 		bind:scheduleName={deleteScheduleName}
 		bind:scheduleId={deleteScheduleId}
 	/>
-	<div class="row row-cols-1 row-cols-md-auto g-4">
-		{#each data.environment.schedules as schedule}
-			<ScheduleCard
-				environmentId={data.environment._id}
-				{...schedule}
-				isActive={activeSchedule?.schedule == schedule}
-				bind:deleteScheduleId
-				bind:deleteScheduleName
-			/>
-		{/each}
-	</div>
+	{#if scheduleDisplayMode == 'grid'}
+		<div class="row row-cols-1 row-cols-md-auto g-4">
+			{#each data.environment.schedules as schedule (schedule.scheduleId)}
+				<ScheduleCard
+					environmentId={data.environment._id}
+					{...schedule}
+					isActive={activeSchedule?.schedule == schedule}
+					bind:deleteScheduleId
+					bind:deleteScheduleName
+				/>
+			{/each}
+		</div>
+	{:else}
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">Schedule ID</th>
+						<th scope="col">Name</th>
+						<th scope="col">Date</th>
+						<th scope="col">Events</th>
+						<th scope="col">Active</th>
+						<th scope="col">Last updated</th>
+						<th scope="col">Edit</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each data.environment.schedules as schedule (schedule.scheduleId)}
+						<tr>
+							<td>{schedule.scheduleId}</td>
+
+							<td>{schedule.name}</td>
+
+							<td>{schedule.scheduleDate || 'Invalid date'}</td>
+
+							<td>{schedule.events.length}</td>
+
+							<td>{activeSchedule?.schedule == schedule}</td>
+
+							<td>{dayjs(schedule.updatedAt).fromNow()}</td>
+
+							<td>
+								<button
+									style="border: none; padding: 0; outline: inherit; background: none; text-decoration: underline;"
+									data-bs-toggle="modal"
+									data-bs-target="#edit-user"
+								>
+									Edit schedule
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
 {/if}

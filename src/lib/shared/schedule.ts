@@ -127,10 +127,11 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
         return undefined;
     }
 
-    let target = events[0].startTimeDate;
-    let title = events[0].name;
+    let target = undefined;
+    let title = undefined;
     let inProgress = false;
     let highestTime = 0;
+    let soonestEvent: { time: number, event: any } = { time: Number.MAX_SAFE_INTEGER, event: undefined };
     for (let i = 0; i < events.length; i++) {
         if (schedule.variations.length > 0 && events[i].variations.every(v => !selectedVariations.includes(v))) {
             continue;
@@ -140,26 +141,31 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
             highestTime = events[i].endTimeDate.getTime();
         }
 
-        if (
-            time.getTime() >= events[i].startTimeDate.getTime() &&
-            time.getTime() <= events[i].endTimeDate.getTime()
-        ) {
+        // if event is ongoing
+        if (time.getTime() >= events[i].startTimeDate.getTime() &&
+            time.getTime() <= events[i].endTimeDate.getTime()) {
             inProgress = true;
             target = events[i].endTimeDate;
             title = events[i].name;
-        } else if (
-            events[i + 1] &&
-            time.getTime() >= events[i].endTimeDate.getTime() &&
-            time.getTime() <= events[i + 1].startTimeDate.getTime()
-        ) {
-            inProgress = false;
-            target = events[i + 1].startTimeDate;
-            title = events[i + 1].name;
+        } else {
+            // track when next event is
+            let eventDelta = events[i].startTimeDate.getTime() - time.getTime();
+            if (eventDelta > 0 && eventDelta < soonestEvent.time) {
+                soonestEvent.event = events[i];
+                soonestEvent.time = eventDelta;
+            }
         }
     }
 
     if (time.getTime() > highestTime) {
         return undefined;
+    }
+
+    // if we are not in the middle of an event then set the next event as the closest in the future
+    if (target == undefined) {
+        target = soonestEvent.event.startTimeDate;
+        title = soonestEvent.event.name;
+        inProgress = false;
     }
 
     return { inProgress, target, title }

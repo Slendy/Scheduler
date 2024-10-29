@@ -78,7 +78,7 @@
 		<hr class="mt-3" />
 		<h5 class="mb-2">Add new user</h5>
 		<UserPermissionForm
-			url={'/api/v1/admin/environments/id/{data.environment._id}/collaborators/add'}
+			url={`/api/v1/admin/environments/id/${data.environment._id}/collaborators/add`}
 		/>
 		<!-- <ErrorAlert message={errorMessage}></ErrorAlert>
 		<EnhancedForm

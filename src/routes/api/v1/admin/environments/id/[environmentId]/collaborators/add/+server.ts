@@ -25,7 +25,7 @@ export const POST = async ({ params, request }) => {
 
     let permissionBitmask = parseInt(permissions) as EnvironmentPermissions;
 
-    environment.environmentCollaborators.push({ userId, permissions: permissionBitmask });
+    environment.environmentCollaborators.push({ user: userId, permissions: permissionBitmask });
     await environment.save();
 
     return apiFormSuccess();

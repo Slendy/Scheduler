@@ -9,6 +9,8 @@
 	export let schedule: Schedule;
 	export let generateRandomId: () => string;
 
+	//TODO: duplicating an event links the variation selection
+
 	$: allVariationOptions = schedule.variations.reduce(
 		(cur: any, next: any) => [...cur, ...next.options],
 		[]
