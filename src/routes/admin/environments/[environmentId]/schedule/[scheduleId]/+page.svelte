@@ -36,16 +36,21 @@
 	}
 	let scheduleWithNoDate: any;
 
-	let isScheduleActive = getActiveSchedule(data.environment.schedules, dayjs(null, data.environment.timeZone), data.environment.timeZone)?.schedule.scheduleId == data.schedule.scheduleId;
+	let isScheduleActive =
+		getActiveSchedule(
+			data.environment.schedules,
+			dayjs().tz(data.environment.timeZone),
+			data.environment.timeZone
+		)?.schedule.scheduleId == data.schedule.scheduleId;
 
 	$: {
 		const { scheduleDate, ...rest } = data.schedule;
 		scheduleWithNoDate = rest;
-		
+
 		let curTime = dayjs(customTime, data.environment.timeZone);
 		let lastEvent = getLastEvent(data.schedule, curTime);
-		if(lastEvent != null && curTime.isAfter(lastEvent as any)){
-			curTime = curTime.add(1, 'day');	
+		if (lastEvent != null && curTime.isAfter(lastEvent as any)) {
+			curTime = curTime.add(1, 'day');
 		}
 		// get today's date in yyyy-mm-dd format
 		scheduleWithNoDate.scheduleTimeZone = data.environment.timeZone;

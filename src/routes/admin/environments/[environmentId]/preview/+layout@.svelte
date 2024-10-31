@@ -2,17 +2,20 @@
 	import NProgress from 'nprogress';
 
 	export let data;
-    
+
 	NProgress.done();
 </script>
 
 <svelte:head>
-    <link href="/css/overrides.css" rel="stylesheet" />
+	<link href="/css/overrides.css" rel="stylesheet" />
+	<link href="/css/schedule.css" rel="stylesheet" />
 </svelte:head>
 
 <div class="overlay-container transition">
 	<span class="overlay">You are currently in preview mode</span>
-	<a href="/admin/environments/{data.environment._id}" class="overlay-link overlay">Exit preview mode</a>
+	<a href="/admin/environments/{data.environment._id}" class="overlay-link overlay">
+		Exit preview mode
+	</a>
 </div>
 
 <slot />
@@ -37,8 +40,8 @@
 		transform: translate(-50%, 25%);
 		background-color: var(--schedule-accent-color);
 		padding: 1em;
-        border-radius: 1em;
-        border: 1px solid var(--schedule-scheduleborder);
+		border-radius: 1em;
+		border: 1px solid var(--schedule-scheduleborder);
 		color: var(--schedule-text-color);
 	}
 

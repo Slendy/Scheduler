@@ -44,13 +44,15 @@
 				nextScheduleHash = '';
 			} else {
 				// if we didn't preload the schedule somehow then load it
-				requestNextSchedule(data.schedule).then((r) => {
+				requestNextSchedule().then((r) => {
 					data.schedule = r?.nextSchedule;
 					data.scheduleHash = r?.nextScheduleHash;
 					nextSchedule = undefined;
 					nextScheduleHash = '';
 				});
 			}
+			// if the new schedule has changed the variations, then we need to select defaults
+			setInitialVariation();
 		}
 	}
 
@@ -106,6 +108,34 @@
 		data.scheduleHash = await hashObject(data.schedule);
 	}
 
+	async function updateSelectedVariation(variation: any, option: any) {
+		if (selectedVariations.includes(option)) {
+			return;
+		}
+
+		// remove other selected options from this variation
+		selectedVariations = selectedVariations.filter((v) => !variation.options.includes(v));
+
+		$page.url.searchParams.set(slugify(variation.name), slugify(option));
+
+		replaceState($page.url, $page.state);
+
+		selectedVariations.push(option);
+
+		await fetchCurrentSchedule();
+	}
+
+	function setInitialVariation() {
+		for (let variation of data.schedule?.variations || []) {
+			let queryParam = $page.url.searchParams.get(slugify(variation.name)) || '';
+			let urlOption =
+				variation.options.find((o: any) => slugify(o) === slugify(queryParam)) ||
+				variation.options[0];
+
+			selectedVariations = [...selectedVariations, urlOption];
+		}
+	}
+
 	onMount(() => {
 		if (!browser) {
 			return;
@@ -117,15 +147,8 @@
 			await fetchCurrentSchedule();
 		}, 60 * 1000);
 
-		// set initial variation based on query params
-		for (let variation of data.schedule?.variations || []) {
-			let queryParam = $page.url.searchParams.get(slugify(variation.name)) || '';
-			let urlOption =
-				variation.options.find((o: any) => slugify(o) === slugify(queryParam)) ||
-				variation.options[0];
+		setInitialVariation();
 
-			selectedVariations = [...selectedVariations, urlOption];
-		}
 		return () => {
 			clearInterval(interval);
 		};
@@ -171,15 +194,8 @@
 				<button
 					class="footer-button footer-selector transition"
 					class:selected={selectedVariations.includes(option)}
-					on:click={() => {
-						// remove other selected options from this variation
-						selectedVariations = selectedVariations.filter((v) => !variation.options.includes(v));
-
-						$page.url.searchParams.set(slugify(variation.name), slugify(option));
-
-						replaceState($page.url, $page.state);
-
-						selectedVariations.push(option);
+					on:click={async () => {
+						await updateSelectedVariation(variation, option);
 					}}
 				>
 					{option}

@@ -74,6 +74,10 @@
 		time = customTime || new Date();
 
 		let newNextEvent = getAndFormatNextEvent(time);
+		// workaround for no events left in variation
+		if (newNextEvent == null && nextEvent == null) {
+			onEventChange({}, null);
+		}
 		if (
 			(newNextEvent == null && nextEvent != null) ||
 			(newNextEvent != null && nextEvent == null) ||
@@ -130,12 +134,12 @@
 			animationTimer = requestAnimationFrame(updateFrame);
 		}
 
+		setTime();
+
 		return () => {
 			cancelAnimationFrame(animationTimer);
 		};
 	});
-
-	setTime();
 </script>
 
 <div class="countdown-container transition">

@@ -189,8 +189,8 @@ export function isDateBlockout(date: Dayjs) {
 }
 
 export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
-    if (zonedDate == null) {
-        console.error("getActiveSchedule(): Input date is null.");
+    if (zonedDate == null || !zonedDate.isValid()) {
+        console.error("getActiveSchedule(): Input date is invalid.");
         return undefined;
     }
 
@@ -203,6 +203,8 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
 
     let scheduleDistances = [];
 
+    let overrideDays: string[] = [];
+
     for (let schedule of schedules) {
         if (!schedule.enabled) {
             continue;
@@ -214,6 +216,8 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
             if (isDateBlockout(scheduleDate)) {
                 continue;
             }
+
+            overrideDays.push(scheduleDate.toISOString());
 
             let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
@@ -238,6 +242,12 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
                     continue;
                 }
                 let scheduleDate = dayjs.tz(date, timeZone).startOf('day').set('day', i);
+
+                // a repeating event cannot occur on the same day as a one-time event
+                if (overrideDays.includes(scheduleDate.toISOString())) {
+                    continue;
+                }
+
                 // if we have to look ahead a whole year it's chalked
                 const MAX_LOOKAHEAD = 52;
                 let iterations = 0;
