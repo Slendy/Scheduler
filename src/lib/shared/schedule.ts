@@ -189,29 +189,58 @@ export function isDateBlockout(date: Dayjs) {
 }
 
 export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
-    if (zonedDate == null || !zonedDate.isValid()) {
-        console.error("getActiveSchedule(): Input date is invalid.");
-        return undefined;
-    }
-
     if (!schedules?.length || schedules.length === 0) {
         console.error("getActiveSchedule(): List of input schedules is empty.")
         return undefined;
     }
 
+    if (zonedDate == null || !zonedDate.isValid()) {
+        console.error("getActiveSchedule(): Input date is invalid.");
+        return undefined;
+    }
+
+    if (!timeZone || timeZone.length == 0) {
+        console.error("getActiveSchedule(): Input timezone is invalid")
+    }
+
     let date = zonedDate.toDate();
 
-    let scheduleDistances = [];
+    let scheduleDistances: { schedule: any, scheduleDate: any, scheduleDistance: any }[] = [];
 
     let overrideDays: string[] = [];
 
-    for (let schedule of schedules) {
-        if (!schedule.enabled) {
-            continue;
+    processOneTimeSchedules();
+    processRepeatingSchedules();
+
+    scheduleDistances.sort((a, b) => {
+        // schedules with specific dates should be chosen over a repeating schedules
+        if (a.schedule.scheduleType == 'one-time' && b.schedule.scheduleType == 'repeating') {
+            return -1;
+        } else if (b.schedule.scheduleType == 'one-time' && a.schedule.scheduleType == 'repeating') {
+            return 1;
         }
 
-        if (schedule.scheduleType == 'one-time' && schedule.scheduleDate) {
+        return a.scheduleDistance - b.scheduleDistance;
+    })
+
+    return scheduleDistances[0] || undefined;
+
+    function processOneTimeSchedules() {
+        // process one-time schedules
+        for (let schedule of schedules) {
+            if (!schedule.enabled) {
+                continue;
+            }
+            if (schedule.scheduleType != 'one-time' || !schedule.scheduleDate) {
+                continue;
+            }
+
             let scheduleDate = dayjs.tz(schedule.scheduleDate, timeZone).startOf('day');
+
+            // if more than 2 days have passed it's safe to skip
+            if (zonedDate.diff(scheduleDate, 'day') > 2) {
+                continue;
+            }
 
             if (isDateBlockout(scheduleDate)) {
                 continue;
@@ -233,7 +262,19 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
             }
 
             scheduleDistances.push({ scheduleDistance, scheduleDate, schedule });
-        } else if (schedule.scheduleType == 'repeating' && schedule.scheduleWeekdays) {
+        }
+    }
+
+    function processRepeatingSchedules() {
+        for (let schedule of schedules) {
+            if (!schedule.enabled) {
+                continue;
+            }
+
+            if (schedule.scheduleType != 'repeating' || !schedule.scheduleWeekdays) {
+                continue;
+            }
+
             let currentDayOfWeek = date.getDay();
 
             for (let i = 0; i < 7; i++) {
@@ -243,15 +284,14 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
                 }
                 let scheduleDate = dayjs.tz(date, timeZone).startOf('day').set('day', i);
 
-                // a repeating event cannot occur on the same day as a one-time event
-                if (overrideDays.includes(scheduleDate.toISOString())) {
-                    continue;
-                }
-
                 // if we have to look ahead a whole year it's chalked
                 const MAX_LOOKAHEAD = 52;
                 let iterations = 0;
-                while ((scheduleDate.isBefore(zonedDate.startOf('day') as any) || isDateBlockout(scheduleDate)) && iterations < MAX_LOOKAHEAD) {
+                // skip dates that have already passed, are blocked out, or already have a one-time schedule
+                while ((scheduleDate.isBefore(zonedDate.startOf('day') as any)
+                    || isDateBlockout(scheduleDate)
+                    || overrideDays.includes(scheduleDate.toISOString()))
+                    && iterations < MAX_LOOKAHEAD) {
                     scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7).startOf('day');
                     iterations++;
                 }
@@ -273,19 +313,6 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
             }
         }
     }
-
-    scheduleDistances.sort((a, b) => {
-        // schedules with specific dates should override repeating schedules
-        if (a.schedule.scheduleType == 'one-time' && b.schedule.scheduleType == 'repeating') {
-            return -1;
-        } else if (b.schedule.scheduleType == 'one-time' && a.schedule.scheduleType == 'repeating') {
-            return 1;
-        }
-
-        return a.scheduleDistance - b.scheduleDistance;
-    })
-
-    return scheduleDistances[0] || undefined;
 }
 
 export function createCachedSchedule(schedule: Schedule, scheduleDate: Dayjs): CachedSchedule | undefined {
