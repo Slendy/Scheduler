@@ -1,6 +1,13 @@
 import type { Cookies } from "@sveltejs/kit";
 import { TokenModel } from "./models";
+import { dev } from "$app/environment";
 import { randomBytes } from 'crypto';
+
+export async function removeExpiredTokens(){
+    await TokenModel.deleteMany({ refreshTokenExpiration: {
+        $lt: Date.now()
+    }});
+}
 
 export async function getUserFromCookie(cookies: Cookies) {
     const authCookie = cookies.get("auth-token");
@@ -9,12 +16,18 @@ export async function getUserFromCookie(cookies: Cookies) {
         return undefined;
     }
 
+    await removeExpiredTokens();
+
     let token = await TokenModel.findOne({ authToken: authCookie }).populate('user');
 
     // if token is expired
     if (token == undefined || Date.now() > token.authTokenExpiration.getTime()) {
         token = await TokenModel.findOne({ refreshToken: refreshCookie }).populate('user');
         if (token == undefined) return undefined;
+
+        if(Date.now() > token.refreshTokenExpiration) {
+            return undefined;
+        }
 
         // generate new token and delete old one
         await TokenModel.deleteOne({ _id: token._id });
@@ -39,12 +52,15 @@ export function setCookieToken(cookies: Cookies, token: any) {
         maxAge: 60 * 60,
         httpOnly: true,
         sameSite: 'lax',
+        // cookies should be secure if not in dev mode
+        secure: !dev,
     });
     cookies.set('refresh-token', token.refreshToken, {
         path: '/',
         maxAge: 60 * 60 * 24 * 30,
         httpOnly: true,
         sameSite: 'lax',
+        secure: !dev,
     });
 }
 
@@ -62,7 +78,7 @@ export async function generateToken(user: any) {
         authToken: generateRandomToken(),
         refreshToken: generateRandomToken(),
         authTokenExpiration: Date.now() + (1000 * 60 * 60),
-        expiresAt: Date.now() + (1000 * 60 * 60 * 24 * 30)
+        refreshTokenExpiration: Date.now() + (1000 * 60 * 60 * 24 * 30)
     });
 
     await token.populate('user');

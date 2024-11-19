@@ -1,17 +1,17 @@
 import { Schema, model, models } from 'mongoose';
 import { type IUser } from '$lib/shared/types';
 
-
 const userSchema = new Schema<IUser>({
     username: { type: String, required: true },
-    permissionMap: { type: Map, of: String, required: true },
     isAdmin: { type: Boolean, required: true },
     passwordHash: { type: String, required: true }
-});
-
-userSchema.method('toApiResponse', function () {
-    let { passwordHash, ...userObject } = this.toObject();
-    return userObject;
+}, {
+    methods: {
+        toApiResponse: function () {
+            let { passwordHash, ...userObject } = this.toObject();
+            return userObject;
+        }
+    }
 });
 
 const authTokenSchema = new Schema({
@@ -22,7 +22,7 @@ const authTokenSchema = new Schema({
     refreshToken: { type: String, required: true },
     // refresh token expires when the document expires which is 1 month
     // when a refresh token is used the token object is regenerated
-    expiresAt: { type: Date, required: true },
+    refreshTokenExpiration: { type: Date, required: true },
 });
 
 const eventSchema = new Schema({
@@ -64,9 +64,17 @@ const scheduleSchema = new Schema({
     history: [Schema.Types.Mixed]
 }, { _id: false, timestamps: true });
 
-const environmentSchema = new Schema({
+const environmentCollaboratorSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    permissions: { type: Number, required: true },
+});
+
+export const environmentSchema = new Schema({
     environmentName: { type: String, required: true },
     environmentDomain: { type: String, required: true },
+    environmentIcon: { type: Buffer },
+    environmentOwner: { type: Schema.Types.ObjectId, ref: 'User' },
+    environmentCollaborators: { type: [environmentCollaboratorSchema], required: true, default: [] },
     timeZone: {
         type: String,
         required: true,
@@ -74,13 +82,21 @@ const environmentSchema = new Schema({
     },
     isVerified: { type: Boolean, required: true },
     schedules: [scheduleSchema],
-});
+}, {
+    methods: {
+        toApiResponse: async function () {
+            let responseEnvironment: any = (await this.populate('environmentCollaborators.user')).toObject({ getters: true });
 
-environmentSchema.method('toApiResponse', function () {
-    let responseEnvironment: any = this.toObject({ getters: true });
+            responseEnvironment.environmentCollaborators.forEach((c: any) => {
+                delete c.user.passwordHash;
+            })
 
-    responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
-    return responseEnvironment;
+            responseEnvironment.environmentCollaborators = responseEnvironment.environmentCollaborators.map(({ passwordHash, ...rest }: any) => rest);
+
+            responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
+            return responseEnvironment;
+        }
+    },
 });
 
 export const UserModel = models['User'] || model('User', userSchema);

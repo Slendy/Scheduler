@@ -3,6 +3,7 @@
     --schedule-text-color-dark: #eee;
     --schedule-bg-color-dark: #121212;
     --schedule-accent-color-dark: rgba(23, 23, 23);
+    --schedule-accent-color-2-dark: rgba(44, 44, 44);
     --schedule-accent2-dark: rgba(255, 255, 255, .04);
     --schedule-schedulebg-dark: rgba(18, 18, 18, 0.97);
     --schedule-scheduleborder-dark: rgba(255, 255, 255, .2);
@@ -11,6 +12,7 @@
     --schedule-text-color-light: #5e7072;
     --schedule-bg-color-light: white;
     --schedule-accent-color-light: #f7f7f7;
+    --schedule-accent-color-2-light: rgba(109, 109, 109, 0.25);
     --schedule-accent2-light: rgba(0, 0, 0, .04);
     --schedule-schedulebg-light: rgba(255, 255, 255, 0.85);
     --schedule-scheduleborder-light: rgba(0, 0, 0, .2);
@@ -19,6 +21,7 @@
     --schedule-text-color: var(--schedule-text-color-light);
     --schedule-bg-color: var(--schedule-bg-color-light);
     --schedule-accent-color: var(--schedule-accent-color-light);
+    --schedule-accent-color-2: var(--schedule-accent-color-2-light);
     --schedule-accent2: var(--schedule-accent2-light);
     --schedule-schedulebg: var(--schedule-schedulebg-light);
     --schedule-scheduleborder: var(--schedule-scheduleborder-light);
@@ -29,6 +32,7 @@
     --schedule-text-color: var(--schedule-text-color-dark);
     --schedule-bg-color: var(--schedule-bg-color-dark);
     --schedule-accent-color: var(--schedule-accent-color-dark);
+    --schedule-accent-color-2: var(--schedule-accent-color-2-dark);
     --schedule-accent2: var(--schedule-accent2-dark);
     --schedule-schedulebg: var(--schedule-schedulebg-dark);
     --schedule-scheduleborder: var(--schedule-scheduleborder-dark);

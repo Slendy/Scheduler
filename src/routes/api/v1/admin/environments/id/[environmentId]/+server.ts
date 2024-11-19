@@ -5,5 +5,5 @@ export const GET = async ({ params }) => {
     let [environment, error] = await validateEnvironmentId(environmentId);
     if (!environment) return error!;
 
-    return Response.json(environment.toApiResponse());
+    return Response.json(await environment.toApiResponse());
 }

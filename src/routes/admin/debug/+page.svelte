@@ -10,7 +10,9 @@
 <Header>DEBUG</Header>
 
 <div class="m-3">
-	<a href="/admin/debug/timing" class="btn btn-secondary">Schedule event tester</a>
+	<a href="/admin/debug/timing" class="btn btn-secondary mx-1">Schedule event tester</a>
+	<a href="/admin/debug/component/search" class="btn btn-secondary mx-1">Search component tester</a>
+	<a href="/admin/debug/component/multiselect" class="btn btn-secondary mx-1">Multiselect component tester</a>
 	<hr>
 	<h4>
 		There are {environments?.length || 'undefined'} environments and {users?.length || 'undefined'} users

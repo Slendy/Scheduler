@@ -10,9 +10,10 @@ export const GET = async ({ params }) => {
     let environment = await EnvironmentModel.findOne({ environmentDomain });
     if (!environment) return error(400, "Invalid environment");
 
-    let schedules = environment.toApiResponse().schedules;
+    let schedules = (await environment.toApiResponse()).schedules;
 
-    let activeSchedule = getActiveSchedule(schedules, dayjs.tz(dayjs(), environment.timeZone), environment.timeZone) as any
+    let activeSchedule = getActiveSchedule(schedules, dayjs.tz(dayjs(), environment.timeZone), environment.timeZone) as any;
+
     if (!activeSchedule) {
         return error(404, "No schedule found");
     }

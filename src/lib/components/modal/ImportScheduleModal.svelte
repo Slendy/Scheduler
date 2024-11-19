@@ -1,15 +1,22 @@
 <script lang="ts">
 	import Modal from './Modal.svelte';
 	import type { Schedule } from '$lib/shared/types';
-	import { isScheduleModified } from '$lib/shared/schedule';
+	import { isScheduleEmpty } from '$lib/shared/schedule';
 	import { dayjs } from '$lib/shared/dayjs';
 
 	export let environment: any;
-	$: sortedSchedules = environment.schedules.sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+	$: filteredSchedules = environment.schedules
+		.filter((s: any) => {
+			return scheduleSearch.length == 0 || s.name.includes(scheduleSearch);
+		})
+		.sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
 	export let schedule: Schedule;
 
 	let selectedSchedule: string;
+
+	let scheduleSearch: string = '';
 
 	function importSchedule() {
 		let importedSchedule = environment.schedules.find((s: any) => s.scheduleId == selectedSchedule);
@@ -18,22 +25,36 @@
 	}
 </script>
 
-<Modal modalId={'importSchedule'}>
+<Modal modalId={'importSchedule'} size="modal-lg">
 	<div class="modal-header">
 		<h1 class="modal-title fs-5" id="deleteModalLabel">Select an existing schedule to import</h1>
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	</div>
 	<div class="modal-body">
-		{#if isScheduleModified(schedule)}
+		{#if !isScheduleEmpty(schedule)}
 			<div class="alert alert-warning" role="alert">
 				The current schedule will be overwritten after importing
 			</div>
 		{/if}
+
+		<div>
+			<input class="form-control" placeholder="Search for a schedule" bind:value={scheduleSearch} />
+		</div>
+
+		{#if filteredSchedules.length == 0 && scheduleSearch.length != 0}
+			<div class="text-center d-block mt-3">
+				<p>No results matched your search</p>
+				<button class="btn btn-secondary" on:click={() => (scheduleSearch = '')}
+					>Reset search</button
+				>
+			</div>
+		{/if}
+
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		{#each sortedSchedules as schedule}
+		{#each filteredSchedules as schedule}
 			<div
-				class="card m-3 transition"
+				class="card my-3 transition"
 				class:border-primary={selectedSchedule == schedule.scheduleId}
 				on:click={() => (selectedSchedule = schedule.scheduleId)}
 			>

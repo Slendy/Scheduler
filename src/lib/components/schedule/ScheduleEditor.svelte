@@ -9,12 +9,13 @@
 		defaultSchedule
 	} from '$lib/shared/schedule';
 	import { scheduleWeekdays, type Schedule } from '$lib/shared/types.js';
-	import { SortableList } from '@sonderbase/svelte-sortablejs';
+	import Sortable from 'sortablejs';
 	import { onMount } from 'svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { goto } from '$app/navigation';
 	import RadioSelector from '../RadioSelector.svelte';
 	import EventRow from './EventRow.svelte';
+	import { flip } from 'svelte/animate';
 
 	export let schedule: Schedule = { ...defaultSchedule };
 
@@ -60,6 +61,8 @@
 		];
 	}
 
+	let sortable: any | undefined;
+
 	onMount(() => {
 		if (browser) {
 			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -68,6 +71,40 @@
 				// @ts-ignore
 				(tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
 			);
+
+			const element = document.getElementById('sortableList');
+			sortable = Sortable.create(element!, {
+				handle: '.handle',
+				animation: 100,
+
+				scroll: true,
+				scrollSensitivity: 100,
+				scrollSpeed: 50,
+				forceFallback: true,
+				bubbleScroll: true,
+
+				onChoose: function (e) {
+					document.documentElement.classList.add('grabbing');
+				},
+				onStart: function (e) {
+					document.documentElement.classList.add('grabbing');
+				},
+				onUnchoose: function (e) {
+					document.documentElement.classList.remove('grabbing');
+				},
+				onEnd: function (e) {
+					document.documentElement.classList.remove('grabbing');
+				},
+
+				onUpdate: function (e) {
+					let newOrder: string[] = sortable.toArray();
+					let newEvents = schedule.events
+						.slice()
+						.sort((a, b) => newOrder.indexOf(a.eventId) - newOrder.indexOf(b.eventId));
+
+					schedule.events = newEvents;
+				}
+			});
 
 			if (crypto.randomUUID) {
 				generateRandomId = () => crypto.randomUUID();
@@ -109,13 +146,7 @@
 	// this is used to recreate the sortable list whenever we let go of an item to force
 	// the items to actually refresh. TLDR; I wanna krill myself part 2: electric boogaloo
 	let eventRecreate = generateRandomId();
-	function setStore(sortable: any) {
-		let newOrder: string[] = sortable.toArray();
-		schedule.events = schedule.events
-			.slice()
-			.sort((a, b) => newOrder.indexOf(a.eventId) - newOrder.indexOf(b.eventId));
-		eventRecreate = generateRandomId();
-	}
+	function setStore(sortable: any) {}
 </script>
 
 <ErrorAlert messages={errorMessages} />
@@ -146,7 +177,7 @@
 
 		<hr />
 
-		<div class="row row-cols-md-3 row-cols-1">
+		<div class="row row-cols-md-3 row-cols-1 mb-3">
 			<div class="col"></div>
 			<div class="col mt-2">
 				<h5 class="fw-bold mb-3 d-inline">Events</h5>
@@ -163,13 +194,13 @@
 		</div>
 
 		<div id="event-container" class="event-container">
-			{#key eventRecreate}
-				<SortableList class="" handle=".handle" store={{ get: getStore, set: setStore }}>
-					{#each schedule.events as event}
+			<div class="sortableList" id="sortableList">
+				{#each schedule.events as event (event.eventId)}
+					<div animate:flip={{ duration: 200 }} data-id={event.eventId}>
 						<EventRow bind:event bind:schedule {generateRandomId} />
-					{/each}
-				</SortableList>
-			{/key}
+					</div>
+				{/each}
+			</div>
 		</div>
 
 		<hr />

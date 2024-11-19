@@ -1,7 +1,6 @@
 import { isValidObjectId, type HydratedDocument, type HydratedDocumentFromSchema } from "mongoose";
 import { apiFormError } from "./utils";
 import { EnvironmentModel, environmentSchema } from "./models";
-//[typeof EnvironmentModel | undefined, Response | undefined]
 
 export async function validateEnvironmentId(environmentId: string): Promise<[HydratedDocumentFromSchema<typeof environmentSchema>, undefined] | [undefined, Response]> {
     if (!isValidObjectId(environmentId)) {

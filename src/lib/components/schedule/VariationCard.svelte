@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
+	import { scale, slide } from 'svelte/transition';
 	import EditableSpan from './EditableSpan.svelte';
 	import { MAX_VARIATION_NAME_LEN, MAX_VARIATION_OPTION_LEN } from '$lib/shared/schedule';
 	export let title: string = '';
@@ -26,7 +26,7 @@
 	}
 </script>
 
-<div class="col variation-block" id="variation-template" transition:slide>
+<div class="col variation-block" id="variation-template" transition:scale>
 	<div class="card mt-3 text-center mx-auto" style="width: 14rem">
 		<div class="card-header py-0">
 			<EditableSpan

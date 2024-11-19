@@ -20,11 +20,14 @@
 
 		await invalidateAll();
 
-        submitting = false;
+		submitting = false;
 	}
 </script>
 
 {#if enabled}
+	{#if active}
+		<p class="text-danger">This schedule is currently active</p>
+	{/if}
 	<button class="btn btn-danger" class:disabled={submitting} on:click={toggleSchedule}>
 		Disable schedule
 	</button>

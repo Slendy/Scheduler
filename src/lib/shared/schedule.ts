@@ -30,43 +30,48 @@ export function isScheduleEmpty(schedule: Schedule): boolean {
 }
 
 export function verifySchedule(schedule: Schedule): string[] {
-    let errors = [];
+    let errors: string[] = [];
+    function addError(error: string) {
+        if (!errors.includes(error)) {
+            errors.push(error);
+        }
+    }
     if (schedule.name.length === 0) {
-        errors.push('The schedule must have a name');
+        addError('The schedule must have a name');
     }
     if (schedule.name.length > MAX_SCHEDULE_NAME_LEN) {
-        errors.push(`The schedule name is too long (${schedule.name.length} > ${MAX_SCHEDULE_NAME_LEN})`);
+        addError(`The schedule name is too long (${schedule.name.length} > ${MAX_SCHEDULE_NAME_LEN})`);
     }
     if (!scheduleTypes.includes(schedule.scheduleType)) {
-        errors.push('You must select a valid schedule type');
+        addError('You must select a valid schedule type');
     }
     let variations = [...schedule.variations];
     if (variations.length === 0) {
         variations.push({ name: 'default variation', options: ['default option'] });
     }
     if (schedule.events.length === 0) {
-        errors.push('Schedules must have at least one event');
+        addError('Schedules must have at least one event');
     }
     for (let variation of variations) {
         if (variation.name.length === 0) {
-            errors.push('All variations must have a name');
+            addError('All variations must have a name');
         }
         if (variation.name.length > MAX_VARIATION_NAME_LEN) {
-            errors.push(`Variation name cannot be longer than ${MAX_VARIATION_NAME_LEN} characters`);
+            addError(`Variation name cannot be longer than ${MAX_VARIATION_NAME_LEN} characters`);
         }
         if (variation.options.length === 0) {
-            errors.push('All variations must have at least one option');
+            addError('All variations must have at least one option');
         }
 
         for (let option of variation.options) {
             if (option.length > MAX_VARIATION_OPTION_LEN) {
-                errors.push(`Variation option name is too long (${option.length} > ${MAX_VARIATION_OPTION_LEN})`)
+                addError(`Variation option name is too long (${option.length} > ${MAX_VARIATION_OPTION_LEN})`)
             }
             let timeSeconds = 0;
             for (let i = 0; i < schedule.events.length; i++) {
                 let event = schedule.events[i];
                 if (!event.variations) {
-                    errors.push(`Event '${event.name}' is missing variations. (try recreating the event).`)
+                    addError(`Event '${event.name}' is missing variations. (try recreating the event).`)
                     continue;
                 }
                 // skip events that aren't part of this variation, or don't skip when we don't have any variations
@@ -74,34 +79,34 @@ export function verifySchedule(schedule: Schedule): string[] {
                     continue;
                 }
                 if (event.name.length === 0) {
-                    errors.push(`Event #${i + 1} does not have a valid name`);
+                    addError(`Event #${i + 1} does not have a valid name`);
                 }
                 if (event.name.length > MAX_EVENT_NAME_LEN) {
-                    errors.push(`Event #${i + 1} name is too long (${event.name.length} > ${MAX_EVENT_NAME_LEN})`);
+                    addError(`Event #${i + 1} name is too long (${event.name.length} > ${MAX_EVENT_NAME_LEN})`);
                 }
                 if (event.variations.length === 0 && schedule.variations.length !== 0) {
-                    errors.push('Events must be a part of at least one variation');
+                    addError('Events must be a part of at least one variation');
                 }
                 if (event.startTime.length === 0) {
-                    errors.push(`Event #${i + 1} does not have a valid start time`);
+                    addError(`Event #${i + 1} does not have a valid start time`);
                 }
                 if (event.endTime.length === 0) {
-                    errors.push(`Event #${i + 1} does not have a end start time`);
+                    addError(`Event #${i + 1} does not have a end start time`);
                 }
                 if (event.startTime.length !== 0 &&
                     event.endTime.length !== 0 &&
                     event.startTime === event.endTime) {
-                    errors.push(`Event #${i + 1} start time and end time are the same`);
+                    addError(`Event #${i + 1} start time and end time are the same`);
                 }
                 let startTime = convertTimeToSeconds(event.startTime)
                 let endTime = convertTimeToSeconds(event.endTime);
                 if (timeSeconds > startTime) {
-                    errors.push(
-                        `Event #${i + 1} start time is before event #${i} end time`
+                    addError(
+                        `Event #${i + 1} start time is before event #${i} end time (${schedule.events[i + 1].startTime} > ${event.endTime})`
                     );
                 }
                 if (startTime > endTime) {
-                    errors.push(`Event #${i + 1} start time is after event #${i + 1} end time`);
+                    addError(`Event #${i + 1} start time is after event #${i + 1} end time`);
                 }
                 timeSeconds = endTime;
             }
@@ -122,10 +127,11 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
         return undefined;
     }
 
-    let target = events[0].startTimeDate;
-    let title = events[0].name;
+    let target = undefined;
+    let title = undefined;
     let inProgress = false;
     let highestTime = 0;
+    let soonestEvent: { time: number, event: any } = { time: Number.MAX_SAFE_INTEGER, event: undefined };
     for (let i = 0; i < events.length; i++) {
         if (schedule.variations.length > 0 && events[i].variations.every(v => !selectedVariations.includes(v))) {
             continue;
@@ -135,26 +141,31 @@ export function getNextEvent(schedule: CachedSchedule | undefined, time: Date, s
             highestTime = events[i].endTimeDate.getTime();
         }
 
-        if (
-            time.getTime() >= events[i].startTimeDate.getTime() &&
-            time.getTime() <= events[i].endTimeDate.getTime()
-        ) {
+        // if event is ongoing
+        if (time.getTime() >= events[i].startTimeDate.getTime() &&
+            time.getTime() <= events[i].endTimeDate.getTime()) {
             inProgress = true;
             target = events[i].endTimeDate;
             title = events[i].name;
-        } else if (
-            events[i + 1] &&
-            time.getTime() >= events[i].endTimeDate.getTime() &&
-            time.getTime() <= events[i + 1].startTimeDate.getTime()
-        ) {
-            inProgress = false;
-            target = events[i + 1].startTimeDate;
-            title = events[i + 1].name;
+        } else {
+            // track when next event is
+            let eventDelta = events[i].startTimeDate.getTime() - time.getTime();
+            if (eventDelta > 0 && eventDelta < soonestEvent.time) {
+                soonestEvent.event = events[i];
+                soonestEvent.time = eventDelta;
+            }
         }
     }
 
     if (time.getTime() > highestTime) {
         return undefined;
+    }
+
+    // if we are not in the middle of an event then set the next event as the closest in the future
+    if (target == undefined) {
+        target = soonestEvent.event.startTimeDate;
+        title = soonestEvent.event.name;
+        inProgress = false;
     }
 
     return { inProgress, target, title }
@@ -168,39 +179,74 @@ export function getLastEvent(schedule: Schedule, baseDate: Dayjs): Dayjs | undef
             highestDate = eventEndDate;
         }
     }
-    
+
     return highestDate;
 }
 
 //TODO implement
-export function isDateBlockout(date: Dayjs){
+export function isDateBlockout(date: Dayjs) {
     return false;
 }
 
 export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZone: string): ScheduleWithDate | undefined {
-    if (zonedDate == null) {
+    if (!schedules?.length || schedules.length === 0) {
+        console.error("getActiveSchedule(): List of input schedules is empty.")
         return undefined;
     }
 
-    if (schedules.length == 0) {
+    if (zonedDate == null || !zonedDate.isValid()) {
+        console.error("getActiveSchedule(): Input date is invalid.");
         return undefined;
+    }
+
+    if (!timeZone || timeZone.length == 0) {
+        console.error("getActiveSchedule(): Input timezone is invalid")
     }
 
     let date = zonedDate.toDate();
 
-    let scheduleDistances = [];
+    let scheduleDistances: { schedule: any, scheduleDate: any, scheduleDistance: any }[] = [];
 
-    for (let schedule of schedules) {
-        if (!schedule.enabled) {
-            continue;
+    let overrideDays: string[] = [];
+
+    processOneTimeSchedules();
+    processRepeatingSchedules();
+
+    scheduleDistances.sort((a, b) => {
+        // schedules with specific dates should be chosen over a repeating schedules
+        if (a.schedule.scheduleType == 'one-time' && b.schedule.scheduleType == 'repeating') {
+            return -1;
+        } else if (b.schedule.scheduleType == 'one-time' && a.schedule.scheduleType == 'repeating') {
+            return 1;
         }
 
-        if (schedule.scheduleType == 'one-time' && schedule.scheduleDate) {
-            let scheduleDate = dayjs.tz(schedule.scheduleDate, timeZone).startOf('day');
+        return a.scheduleDistance - b.scheduleDistance;
+    })
 
-            if(isDateBlockout(scheduleDate)){
+    return scheduleDistances[0] || undefined;
+
+    function processOneTimeSchedules() {
+        // process one-time schedules
+        for (let schedule of schedules) {
+            if (!schedule.enabled) {
                 continue;
             }
+            if (schedule.scheduleType != 'one-time' || !schedule.scheduleDate) {
+                continue;
+            }
+
+            let scheduleDate = dayjs.tz(schedule.scheduleDate, timeZone).startOf('day');
+
+            // if more than 2 days have passed it's safe to skip
+            if (zonedDate.diff(scheduleDate, 'day') > 2) {
+                continue;
+            }
+
+            if (isDateBlockout(scheduleDate)) {
+                continue;
+            }
+
+            overrideDays.push(scheduleDate.toISOString());
 
             let scheduleDistance = scheduleDate.unix() - zonedDate.unix();
 
@@ -216,7 +262,19 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
             }
 
             scheduleDistances.push({ scheduleDistance, scheduleDate, schedule });
-        } else if (schedule.scheduleType == 'repeating' && schedule.scheduleWeekdays) {
+        }
+    }
+
+    function processRepeatingSchedules() {
+        for (let schedule of schedules) {
+            if (!schedule.enabled) {
+                continue;
+            }
+
+            if (schedule.scheduleType != 'repeating' || !schedule.scheduleWeekdays) {
+                continue;
+            }
+
             let currentDayOfWeek = date.getDay();
 
             for (let i = 0; i < 7; i++) {
@@ -225,10 +283,15 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
                     continue;
                 }
                 let scheduleDate = dayjs.tz(date, timeZone).startOf('day').set('day', i);
+
                 // if we have to look ahead a whole year it's chalked
                 const MAX_LOOKAHEAD = 52;
                 let iterations = 0;
-                while ((scheduleDate.isBefore(zonedDate.startOf('day') as any) || isDateBlockout(scheduleDate)) && iterations < MAX_LOOKAHEAD) {
+                // skip dates that have already passed, are blocked out, or already have a one-time schedule
+                while ((scheduleDate.isBefore(zonedDate.startOf('day') as any)
+                    || isDateBlockout(scheduleDate)
+                    || overrideDays.includes(scheduleDate.toISOString()))
+                    && iterations < MAX_LOOKAHEAD) {
                     scheduleDate = scheduleDate.set('date', scheduleDate.date() + 7).startOf('day');
                     iterations++;
                 }
@@ -250,19 +313,6 @@ export function getActiveSchedule(schedules: Schedule[], zonedDate: Dayjs, timeZ
             }
         }
     }
-
-    scheduleDistances.sort((a, b) => {
-        // schedules with specific dates should override repeating schedules
-        if (a.schedule.scheduleType == 'one-time' && b.schedule.scheduleType == 'repeating') {
-            return -1;
-        } else if (b.schedule.scheduleType == 'one-time' && a.schedule.scheduleType == 'repeating') {
-            return 1;
-        }
-
-        return a.scheduleDistance - b.scheduleDistance;
-    })
-
-    return scheduleDistances[0] || undefined;
 }
 
 export function createCachedSchedule(schedule: Schedule, scheduleDate: Dayjs): CachedSchedule | undefined {

@@ -2,7 +2,6 @@ import type { Dayjs } from "dayjs";
 
 export interface IUser {
     username: String;
-    permissionMap: Record<string, string>;
     isAdmin: Boolean;
     passwordHash: String;
 }
