@@ -4,6 +4,7 @@
 	import SettingsSidebar from '$lib/components/SettingsSidebar.svelte';
 	import { onMount } from 'svelte';
 	import UserPermissionForm from '$lib/components/UserPermissionForm.svelte';
+	import EnvironmentBlockout from '$lib/components/EnvironmentBlockout.svelte';
 	export let data;
 
 	let items = [
@@ -55,12 +56,30 @@
 		</div>
 	{/key}
 </Modal>
+<Modal modalId={'blockout'}>
+	{#key modalRefresher}
+		<div class="modal-header">
+			<h4 class="mb-0">
+				{#if $page.data.blockoutModal}
+					Edit blockout
+				{:else}
+					Add new blockout
+				{/if}
+			</h4>
+
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<EnvironmentBlockout />
+		</div>
+	{/key}
+</Modal>
 
 <div class="row row-cols-1 row-cols-md-3 flex-column-reverse flex-md-row">
 	<div class="col d-flex justify-content-center justify-content-md-start align-items-center">
-		<a href="/admin/environments/{data.environment._id}" class="btn btn-secondary m-1 mt-2"
-			>Go back</a
-		>
+		<a href="/admin/environments/{data.environment._id}" class="btn btn-secondary m-1 mt-2">
+			Go back
+		</a>
 	</div>
 	<div class="col text-center">
 		<h1>Environment settings</h1>

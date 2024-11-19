@@ -27,7 +27,12 @@
 <p class="text-body-secondary">Add other users to edit or view this environment</p>
 <hr />
 
-<div class="table-responsive">
+<button class="btn btn-secondary" on:click={() => (displayNewCollaborator = true)}>
+	Add collaborator
+</button>
+<!-- TODO: turn add collaborator into a modal -->
+
+<div class="table-responsive mt-2">
 	<table class="table">
 		<thead>
 			<tr>
@@ -65,12 +70,6 @@
 			{/if}
 		</tbody>
 	</table>
-</div>
-
-<div class="text-center">
-	<button class="btn btn-secondary" on:click={() => (displayNewCollaborator = true)}>
-		Add collaborator
-	</button>
 </div>
 
 {#if displayNewCollaborator}
