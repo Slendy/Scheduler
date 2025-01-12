@@ -4,18 +4,33 @@
 	import type { Schedule } from '$lib/shared/types';
 	import { scale } from 'svelte/transition';
 
-	export let schedule: Schedule;
-	$: scheduleDate = new Date(schedule?.scheduleDate as string);
-	export let selectedVariations: string[];
-	export let transition: boolean = true;
-	export let limitHeight: boolean = true;
-	$: cachedSchedule = createCachedSchedule(schedule, dayjs.tz(scheduleDate, schedule.scheduleTimeZone));
+	interface Props {
+		schedule: Schedule;
+		selectedVariations: string[];
+		transition?: boolean;
+		limitHeight?: boolean;
+	}
+
+	let {
+		schedule = $bindable(),
+		selectedVariations = $bindable(),
+		transition = true,
+		limitHeight = true
+	}: Props = $props();
+	let scheduleDate = $derived(new Date(schedule?.scheduleDate as string));
+	let cachedSchedule = $derived(
+		createCachedSchedule(schedule, dayjs.tz(scheduleDate, schedule.scheduleTimeZone))
+	);
 
 	//NOTE(josh): if this component starts acting wacky it's probably because of the global transition
 </script>
 
 {#if cachedSchedule != null}
-	<div class="schedule-view transition" class:limit-height={limitHeight} transition:scale|global={{duration: transition ? 400 : 0}}>
+	<div
+		class="schedule-view transition"
+		class:limit-height={limitHeight}
+		transition:scale|global={{ duration: transition ? 400 : 0 }}
+	>
 		<span class="schedule-title">
 			Schedule for {cachedSchedule?.events[0].startTimeDate.toLocaleString('en-US', {
 				month: 'long',
@@ -24,7 +39,7 @@
 		</span>
 		<table class="schedule-table">
 			<tbody>
-				{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || selectedVariations.some((v) => e.variations.includes(v))) as event}
+				{#each cachedSchedule.events.filter((e) => schedule.variations.length == 0 || selectedVariations.some( (v) => e.variations.includes(v) )) as event}
 					<tr>
 						<td class="table-left">{event.name}</td>
 						<td class="table-right">

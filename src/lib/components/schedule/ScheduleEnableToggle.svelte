@@ -1,12 +1,22 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 
-	export let environmentId: string;
-	export let scheduleId: string;
-	export let enabled: boolean;
-	export let active: boolean;
 
-	export let submitting: boolean = false;
+	interface Props {
+		environmentId: string;
+		scheduleId: string;
+		enabled: boolean;
+		active: boolean;
+		submitting?: boolean;
+	}
+
+	let {
+		environmentId,
+		scheduleId,
+		enabled,
+		active,
+		submitting = $bindable(false)
+	}: Props = $props();
 
 	async function toggleSchedule() {
 		if (submitting) {
@@ -28,11 +38,11 @@
 	{#if active}
 		<p class="text-danger">This schedule is currently active</p>
 	{/if}
-	<button class="btn btn-danger" class:disabled={submitting} on:click={toggleSchedule}>
+	<button class="btn btn-danger" class:disabled={submitting} onclick={toggleSchedule}>
 		Disable schedule
 	</button>
 {:else}
-	<button class="btn btn-success" class:disabled={submitting} on:click={toggleSchedule}>
+	<button class="btn btn-success" class:disabled={submitting} onclick={toggleSchedule}>
 		Enable schedule
 	</button>
 {/if}

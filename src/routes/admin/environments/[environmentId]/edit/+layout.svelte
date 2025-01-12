@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import UserPermissionForm from '$lib/components/UserPermissionForm.svelte';
 	import EnvironmentBlockout from '$lib/components/EnvironmentBlockout.svelte';
-	export let data;
+	let { data, children } = $props();
 
 	let items = [
 		{
@@ -26,7 +26,7 @@
 		}
 	];
 
-	let modalRefresher = false;
+	let modalRefresher = $state(false);
 
 	onMount(() => {
 		// TODO: display modals from a nested element without sacrificing my sanity
@@ -46,7 +46,7 @@
 		<div class="modal-header">
 			<p>Edit permissions for {$page.data.collaboratorModalUser?.user?.username}</p>
 			<button
-				on:click={() => {
+				onclick={() => {
 					alert(JSON.stringify($page.data));
 				}}
 			></button>
@@ -97,7 +97,7 @@
 		</div>
 	</div>
 	<div class="container-fluid">
-		<slot />
+		{@render children?.()}
 	</div>
 </div>
 <div class="row d-none d-md-flex">
@@ -107,6 +107,6 @@
 		</div>
 	</div>
 	<div class="col">
-		<slot />
+		{@render children?.()}
 	</div>
 </div>

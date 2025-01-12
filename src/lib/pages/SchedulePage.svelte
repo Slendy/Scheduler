@@ -21,9 +21,12 @@
 	let nextSchedule: any;
 	let nextScheduleHash: string;
 
-	export let data: any;
+	interface Props {
+		data: any;
+		environmentDomain: string;
+	}
 
-	export let environmentDomain: string;
+	let { data = $bindable(), environmentDomain }: Props = $props();
 
 	async function preloadNextSchedule() {
 		// if there are 5 minutes left in the schedule then try and fetch the next schedule
@@ -154,8 +157,8 @@
 		};
 	});
 
-	let selectedVariations: string[] = [];
-	let displayTable: boolean = false;
+	let selectedVariations: string[] = $state([]);
+	let displayTable: boolean = $state(false);
 </script>
 
 <svelte:head>
@@ -165,8 +168,6 @@
 	/>
 	<link href="/css/schedule.css" rel="stylesheet" />
 </svelte:head>
-
-<body class="transition schedule-body"></body>
 
 <DarkModeToggle />
 
@@ -194,7 +195,7 @@
 				<button
 					class="footer-button footer-selector transition"
 					class:selected={selectedVariations.includes(option)}
-					on:click={async () => {
+					onclick={async () => {
 						await updateSelectedVariation(variation, option);
 					}}
 				>
@@ -207,7 +208,7 @@
 			<button
 				class="footer-button transition"
 				id="toggle-schedule"
-				on:click={() => (displayTable = !displayTable)}
+				onclick={() => (displayTable = !displayTable)}
 			>
 				View schedule
 			</button>

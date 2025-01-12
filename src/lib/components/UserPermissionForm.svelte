@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { invalidateAll } from '$app/navigation';
 	import EnhancedForm from './EnhancedForm.svelte';
 	import UserSearch from './UserSearch.svelte';
@@ -7,12 +9,15 @@
 	import ErrorAlert from './ErrorAlert.svelte';
 	import { EnvironmentPermissions } from '$lib/shared/permissions';
 
-	let errorMessage: string;
-	let selectedUser: any;
-	$: selectedUserId = selectedUser?._id?.toString();
-	let selectedPermissionPreset: string = 'viewer';
-	let userPermissions: EnvironmentPermissions;
-	$: {
+	let errorMessage: string | undefined = $state();
+	let selectedUser: any = $state();
+	let selectedUserId = $state();
+	$effect(() => {
+		selectedUserId = selectedUser?._id?.toString();
+	});
+	let selectedPermissionPreset: string = $state('viewer');
+	let userPermissions: EnvironmentPermissions = $state(EnvironmentPermissions.ReadOnly);
+	$effect(() => {
 		if (selectedPermissionPreset == 'viewer') {
 			userPermissions = EnvironmentPermissions.ReadOnly;
 		} else if (selectedPermissionPreset == 'editor') {
@@ -20,10 +25,14 @@
 		} else if (selectedPermissionPreset == 'admin') {
 			userPermissions = EnvironmentPermissions.Admin;
 		}
+	});
+
+	interface Props {
+		url: string;
+		user?: any | undefined;
 	}
 
-	export let url: string;
-	export let user: any | undefined = undefined;
+	let { url, user = undefined }: Props = $props();
 </script>
 
 <ErrorAlert message={errorMessage}></ErrorAlert>
@@ -75,7 +84,7 @@
 		<button
 			type="button"
 			class="btn btn-danger"
-			on:click={() => {
+			onclick={() => {
 				userPermissions = EnvironmentPermissions.ReadOnly;
 				selectedPermissionPreset = 'viewer';
 				selectedUser = undefined;

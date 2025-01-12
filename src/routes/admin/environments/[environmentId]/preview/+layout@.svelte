@@ -1,15 +1,15 @@
 <script lang="ts">
 	import NProgress from 'nprogress';
 
-	export let data;
+	let { data, children } = $props();
 
 	NProgress.done();
 </script>
 
-<svelte:head>
+<!-- <svelte:head>
 	<link href="/css/overrides.css" rel="stylesheet" />
 	<link href="/css/schedule.css" rel="stylesheet" />
-</svelte:head>
+</svelte:head> -->
 
 <div class="overlay-container transition">
 	<span class="overlay">You are currently in preview mode</span>
@@ -18,7 +18,7 @@
 	</a>
 </div>
 
-<slot />
+{@render children?.()}
 
 <style>
 	.overlay-link {

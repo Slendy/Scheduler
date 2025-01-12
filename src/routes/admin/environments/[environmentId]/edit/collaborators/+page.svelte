@@ -1,15 +1,17 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import UserPermissionForm from '$lib/components/UserPermissionForm.svelte';
 	import { EnvironmentPermissions } from '$lib/shared/permissions';
 	import { slide } from 'svelte/transition';
 
-	export let data;
+	let { data = $bindable() } = $props();
 
 	let selectedUser: any;
-	$: selectedUserId = selectedUser?._id?.toString();
+	let selectedUserId = $derived(selectedUser?._id?.toString());
 	let selectedPermissionPreset: string = 'viewer';
-	let newUserPermissions: EnvironmentPermissions;
-	$: {
+	let newUserPermissions: EnvironmentPermissions = $state(EnvironmentPermissions.ReadOnly);
+	run(() => {
 		if (selectedPermissionPreset == 'viewer') {
 			newUserPermissions = EnvironmentPermissions.ReadOnly;
 		} else if (selectedPermissionPreset == 'editor') {
@@ -17,9 +19,9 @@
 		} else if (selectedPermissionPreset == 'admin') {
 			newUserPermissions = EnvironmentPermissions.Admin;
 		}
-	}
+	});
 
-	let displayNewCollaborator: boolean = false;
+	let displayNewCollaborator: boolean = $state(false);
 	let errorMessage: string | undefined;
 </script>
 
@@ -27,7 +29,7 @@
 <p class="text-body-secondary">Add other users to edit or view this environment</p>
 <hr />
 
-<button class="btn btn-secondary" on:click={() => (displayNewCollaborator = true)}>
+<button class="btn btn-secondary" onclick={() => (displayNewCollaborator = true)}>
 	Add collaborator
 </button>
 <!-- TODO: turn add collaborator into a modal -->
@@ -57,7 +59,7 @@
 								style="border: none; padding: 0; outline: inherit; background: none; text-decoration: underline;"
 								data-bs-toggle="modal"
 								data-bs-target="#edit-user"
-								on:click={() => {
+								onclick={() => {
 									data.collaboratorModalUser = collaborator;
 									document.dispatchEvent(new CustomEvent('modalChange'));
 								}}

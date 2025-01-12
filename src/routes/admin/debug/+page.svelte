@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	let environments = JSON.parse(data.serializedEnvironments);
 	let users = JSON.parse(data.serializedUsers);

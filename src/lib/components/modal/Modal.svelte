@@ -1,6 +1,11 @@
 <script lang="ts">
-	export let modalId;
-	export let size: '' | 'modal-xl' | 'modal-lg' | 'modal-sm' = '';
+	interface Props {
+		modalId: any;
+		size?: '' | 'modal-xl' | 'modal-lg' | 'modal-sm';
+		children?: import('svelte').Snippet;
+	}
+
+	let { modalId, size = '', children }: Props = $props();
 </script>
 
 <div
@@ -12,7 +17,7 @@
 >
 	<div class="modal-dialog {size}">
 		<div class="modal-content">
-			<slot></slot>
+			{@render children?.()}
 		</div>
 	</div>
 </div>

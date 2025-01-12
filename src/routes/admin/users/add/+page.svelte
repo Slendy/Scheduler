@@ -4,8 +4,8 @@
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import Header from '$lib/components/Header.svelte';
 
-	let formError: string | null = null;
-	let submitting = false;
+	let formError: string | null = $state(null);
+	let submitting = $state(false);
 </script>
 
 <Header>Create new user</Header>

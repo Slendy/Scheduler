@@ -3,12 +3,16 @@
 	import EnhancedForm from '../EnhancedForm.svelte';
 	import Modal from './Modal.svelte';
 
-	export let environmentName: string;
-	export let environmentId: string;
+	interface Props {
+		environmentName: string;
+		environmentId: string;
+	}
 
-	let submitting = false;
+	let { environmentName, environmentId }: Props = $props();
 
-	let deleteInput: string;
+	let submitting = $state(false);
+
+	let deleteInput: string = $state();
 </script>
 
 <Modal modalId={'deleteConfirmationModal'}>

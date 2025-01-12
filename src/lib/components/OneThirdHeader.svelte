@@ -1,10 +1,22 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let title: string | null = null;
+	interface Props {
+		title?: string | null;
+		left?: import('svelte').Snippet;
+		children?: import('svelte').Snippet;
+		right?: import('svelte').Snippet;
+	}
 
-	let content: HTMLHeadingElement;
-	let text: string;
+	let {
+		title = null,
+		left,
+		children,
+		right
+	}: Props = $props();
+
+	let content: HTMLHeadingElement = $state();
+	let text: string = $state();
 	onMount(() => {
 		if (title !== null) {
 			text = title;
@@ -21,13 +33,13 @@
 
 <div class="row row-cols-1 row-cols-md-3 flex-column flex-md-row">
 	<div class="col d-flex justify-content-center justify-content-md-start align-items-center">
-		<slot name="left"></slot>
+		{@render left?.()}
 	</div>
 	<div class="col">
-		<h1 class="fw-bold text-center mb-0" bind:this={content}><slot></slot></h1>
+		<h1 class="fw-bold text-center mb-0" bind:this={content}>{@render children?.()}</h1>
 	</div>
 	<div class="col d-flex justify-content-center justify-content-md-end align-items-center">
-		<slot name="right"></slot>
+		{@render right?.()}
 	</div>
 </div>
 <hr class="mb-3" />

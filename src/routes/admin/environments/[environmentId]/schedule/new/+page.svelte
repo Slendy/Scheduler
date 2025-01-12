@@ -5,9 +5,9 @@
 	import { defaultSchedule } from '$lib/shared/schedule.js';
 	import type { Schedule } from '$lib/shared/types.js';
 
-	export let data;
+	let { data } = $props();
 
-	let schedule: Schedule = { ...defaultSchedule };
+	let schedule: Schedule = $state({ ...defaultSchedule });
 	//TODO redirect to newly created schedule instead
 </script>
 

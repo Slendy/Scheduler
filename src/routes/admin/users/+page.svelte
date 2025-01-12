@@ -3,7 +3,7 @@
 	import PlaceholderCard from '$lib/components/PlaceholderCard.svelte';
 	import UserCard from '$lib/components/UserCard.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <Header>Users</Header>

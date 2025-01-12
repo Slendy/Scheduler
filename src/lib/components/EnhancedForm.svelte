@@ -14,23 +14,43 @@
 		};
 	};
 
-	export let method = 'post';
-	export let action = '';
-	export let submitting = false;
-	export let encType = "application/x-www-form-urlencoded";
-	export let fail: (result: any) => any = () => {};
-	export let succeed: (result: any) => any;
-	export let onSubmit: (e: Event) => any = () => {};
-	export let onKeydown: (e: any) => any = () => {};
+	interface Props {
+		method?: 'post' | 'dialog' | 'get' | 'DIALOG' | 'GET' | 'POST' | null | undefined;
+		action?: string;
+		submitting?: boolean;
+		encType?:
+			| 'application/x-www-form-urlencoded'
+			| 'multipart/form-data'
+			| 'text/plain'
+			| null
+			| undefined;
+		fail?: (result: any) => any;
+		succeed: (result: any) => any;
+		onSubmit?: (e: Event) => any;
+		onKeydown?: (e: any) => any;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		method = 'post',
+		action = '',
+		submitting = $bindable(false),
+		encType = 'application/x-www-form-urlencoded',
+		fail = () => {},
+		succeed,
+		onSubmit = () => {},
+		onKeydown = () => {},
+		children
+	}: Props = $props();
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <form
 	{method}
 	{action}
-	enctype="{encType}"
-	on:keydown={(e) => onKeydown(e)}
-	on:submit={(e) => {
+	enctype={encType}
+	onkeydown={(e) => onKeydown(e)}
+	onsubmit={(e) => {
 		if (submitting) {
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -45,5 +65,5 @@
 	}}
 	use:enhance={() => submitFunction()}
 >
-	<slot></slot>
+	{@render children?.()}
 </form>

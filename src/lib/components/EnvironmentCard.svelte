@@ -1,8 +1,17 @@
 <script lang="ts">
-    export let environmentId: any;
-    export let environmentName: string;
-    export let environmentDomain: string;
-    export let totalSchedules: number;
+    interface Props {
+        environmentId: any;
+        environmentName: string;
+        environmentDomain: string;
+        totalSchedules: number;
+    }
+
+    let {
+        environmentId,
+        environmentName,
+        environmentDomain,
+        totalSchedules
+    }: Props = $props();
 </script>
 
 <div class="col">

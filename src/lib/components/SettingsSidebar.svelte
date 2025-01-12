@@ -1,6 +1,10 @@
 <script lang="ts">
     import { page } from '$app/stores';
-	export let items: { display: string; href: string }[];
+	interface Props {
+		items: { display: string; href: string }[];
+	}
+
+	let { items }: Props = $props();
 </script>
 
 {#each items as item}

@@ -1,5 +1,5 @@
-<script>
-	export let data;
+<script lang="ts">
+	let { data } = $props();
 </script>
 
 <h3>Blockouts</h3>
@@ -9,7 +9,7 @@
 	class="btn btn-secondary"
 	data-bs-toggle="modal"
 	data-bs-target="#blockout"
-	on:click={() => {
+	onclick={() => {
 		document.dispatchEvent(new CustomEvent('modalChange'));
 	}}
 >

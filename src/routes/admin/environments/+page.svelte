@@ -3,7 +3,7 @@
 	import EnvironmentCard from '$lib/components/EnvironmentCard.svelte';
 	import PlaceholderCard from '$lib/components/PlaceholderCard.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <Header>Environments</Header>

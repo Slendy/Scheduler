@@ -5,27 +5,28 @@
 	import { createCachedSchedule, getActiveSchedule, getNextEvent } from '$lib/shared/schedule';
 	import { dayjs } from '$lib/shared/dayjs.js';
 
-	export let data;
+	let { data } = $props();
 	let query = new URLSearchParams($page.url.searchParams.toString());
 
-	let environmentId: string = query.get('environmentId') || '';
-	let scheduleId: string = query.get('scheduleId') || '';
+	let environmentId: string = $state(query.get('environmentId') || '');
+	let scheduleId: string = $state(query.get('scheduleId') || '');
 
 	let environment = data.environmentSerialized
 		? JSON.parse(data.environmentSerialized || '')
 		: undefined;
 	let schedule = data.environmentSerialized ? JSON.parse(data.scheduleSerialized || '') : undefined;
 
-	$: cachedSchedule = createCachedSchedule(schedule, dayjs.tz(scheduleDate, environment?.timeZone ?? "UTC"));
-
-	let time: string;
-	let scheduleDate: string = new Date().toISOString().split("T")[0];
+	let time: string | undefined = $state();
+	let scheduleDate: string = $state(new Date().toISOString().split('T')[0]);
+	let cachedSchedule = $derived(
+		createCachedSchedule(schedule, dayjs.tz(scheduleDate, environment?.timeZone ?? 'UTC'))
+	);
 </script>
 
 <ErrorAlert message={data.error} />
 
 <form
-	on:submit={(e) => {
+	onsubmit={(e) => {
 		e.preventDefault();
 		e.stopImmediatePropagation();
 
@@ -50,7 +51,10 @@
 <pre>{JSON.stringify(data)}</pre>
 {#if environment != null}
 	<div>
-		<span>Active schedule: {getActiveSchedule(environment.schedules, dayjs(time), 'America/Chicago')?.schedule?.name || 'no schedule'}</span>
+		<span
+			>Active schedule: {getActiveSchedule(environment.schedules, dayjs(time), 'America/Chicago')
+				?.schedule?.name || 'no schedule'}</span
+		>
 	</div>
 {/if}
 {#if schedule != null}
@@ -63,9 +67,11 @@
 		<input type="datetime-local" id="time-picker" bind:value={time} />
 	</div>
 
-	<div class="text-start m-3">
+	<div class="m-3 text-start">
 		<pre>
-			Schedule next event: {JSON.stringify(getNextEvent(cachedSchedule, new Date(time), []) || 'no event')}
+			Schedule next event: {JSON.stringify(
+				getNextEvent(cachedSchedule, new Date(time || '0'), []) || 'no event'
+			)}
 		</pre>
 	</div>
 {/if}

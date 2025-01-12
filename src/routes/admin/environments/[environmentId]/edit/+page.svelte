@@ -6,12 +6,12 @@
 	import SuccessAlert from '$lib/components/SuccessAlert.svelte';
 	import { timeZoneNames } from '$lib/shared/timezones.js';
 
-	export let data;
+	let { data } = $props();
 
-	let submitting = false;
+	let submitting = $state(false);
 
-	let formError: string | null = null;
-	let formSuccess: string | null = null;
+	let formError: string | null = $state(null);
+	let formSuccess: string | null = $state(null);
 </script>
 
 <h3>Settings</h3>

@@ -4,25 +4,29 @@
 	import { isScheduleEmpty } from '$lib/shared/schedule';
 	import { dayjs } from '$lib/shared/dayjs';
 
-	export let environment: any;
 
-	$: filteredSchedules = environment.schedules
-		.filter((s: any) => {
-			return scheduleSearch.length == 0 || s.name.includes(scheduleSearch);
-		})
-		.sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
-	export let schedule: Schedule;
+	interface Props {
+		environment: any;
+		schedule: Schedule;
+	}
 
-	let selectedSchedule: string;
+	let { environment, schedule = $bindable() }: Props = $props();
 
-	let scheduleSearch: string = '';
+	let selectedSchedule: string = $state();
+
+	let scheduleSearch: string = $state('');
 
 	function importSchedule() {
 		let importedSchedule = environment.schedules.find((s: any) => s.scheduleId == selectedSchedule);
 		importedSchedule.scheduleId = '';
 		schedule = importedSchedule;
 	}
+	let filteredSchedules = $derived(environment.schedules
+		.filter((s: any) => {
+			return scheduleSearch.length == 0 || s.name.includes(scheduleSearch);
+		})
+		.sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
 </script>
 
 <Modal modalId={'importSchedule'} size="modal-lg">
@@ -44,19 +48,19 @@
 		{#if filteredSchedules.length == 0 && scheduleSearch.length != 0}
 			<div class="text-center d-block mt-3">
 				<p>No results matched your search</p>
-				<button class="btn btn-secondary" on:click={() => (scheduleSearch = '')}
+				<button class="btn btn-secondary" onclick={() => (scheduleSearch = '')}
 					>Reset search</button
 				>
 			</div>
 		{/if}
 
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		{#each filteredSchedules as schedule}
 			<div
 				class="card my-3 transition"
 				class:border-primary={selectedSchedule == schedule.scheduleId}
-				on:click={() => (selectedSchedule = schedule.scheduleId)}
+				onclick={() => (selectedSchedule = schedule.scheduleId)}
 			>
 				<div class="card-header">
 					{schedule.name}
@@ -83,7 +87,7 @@
 			class="btn btn-secondary"
 			data-bs-dismiss="modal"
 			disabled={!selectedSchedule}
-			on:click={importSchedule}
+			onclick={importSchedule}
 		>
 			Import schedule
 		</button>

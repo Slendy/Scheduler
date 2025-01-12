@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import DeleteEnvironmentModal from '$lib/components/modal/DeleteEnvironmentModal.svelte';
 	import DeleteScheduleModal from '$lib/components/modal/DeleteScheduleModal.svelte';
 	import OneThirdHeader from '$lib/components/OneThirdHeader.svelte';
@@ -6,32 +8,34 @@
 	import { dayjs } from '$lib/shared/dayjs.js';
 	import { getActiveSchedule } from '$lib/shared/schedule.js';
 
-	export let data;
+	let { data } = $props();
 
-	let deleteScheduleId: string = '';
-	let deleteScheduleName: string = '';
+	let deleteScheduleId: string = $state('');
+	let deleteScheduleName: string = $state('');
 
-	let scheduleDisplayMode: 'grid' | 'column' = 'grid';
+	let scheduleDisplayMode: 'grid' | 'column' = $state('grid');
 
-	$: activeSchedule = getActiveSchedule(
+	let activeSchedule = $derived(getActiveSchedule(
 		data.environment.schedules,
 		dayjs.tz(undefined, data.environment.timeZone),
 		data.environment.timeZone
-	);
+	));
 
 	// sort schedules by active first, then most recently updated
-	$: data.environment.schedules.sort((a: any, b: any) => {
-		let timeA = new Date(a.updatedAt);
-		let timeB = new Date(b.updatedAt);
+	run(() => {
+		data.environment.schedules.sort((a: any, b: any) => {
+			let timeA = new Date(a.updatedAt);
+			let timeB = new Date(b.updatedAt);
 
-		if (a === activeSchedule?.schedule) {
-			return -1;
-		}
-		if (b === activeSchedule?.schedule) {
-			return 1;
-		}
+			if (a === activeSchedule?.schedule) {
+				return -1;
+			}
+			if (b === activeSchedule?.schedule) {
+				return 1;
+			}
 
-		return timeB.getTime() - timeA.getTime();
+			return timeB.getTime() - timeA.getTime();
+		});
 	});
 
 	//TODO: implement filtering and sorting
@@ -48,29 +52,33 @@
 
 <OneThirdHeader>
 	{data.environment.environmentName}
-	<div slot="left">
-		<a href="/admin/environments" class="btn btn-secondary float-start m-1 mt-2"> Go back </a>
-	</div>
-	<div slot="right">
-		<button
-			class="btn btn-danger float-end m-1 mt-2"
-			data-bs-toggle="modal"
-			data-bs-target="#deleteConfirmationModal"
-		>
-			Delete environment
-		</button>
-		<a
-			href="/admin/environments/{data.environment._id}/edit"
-			class="btn btn-secondary float-end m-1 mt-2"
-		>
-			Edit environment
-		</a>
-	</div>
+	{#snippet left()}
+		<div >
+			<a href="/admin/environments" class="btn btn-secondary float-start m-1 mt-2"> Go back </a>
+		</div>
+	{/snippet}
+	{#snippet right()}
+		<div >
+			<button
+				class="btn btn-danger float-end m-1 mt-2"
+				data-bs-toggle="modal"
+				data-bs-target="#deleteConfirmationModal"
+			>
+				Delete environment
+			</button>
+			<a
+				href="/admin/environments/{data.environment._id}/edit"
+				class="btn btn-secondary float-end m-1 mt-2"
+			>
+				Edit environment
+			</a>
+		</div>
+	{/snippet}
 </OneThirdHeader>
 
 <button
 	class="btn btn-primary"
-	on:click={() => {
+	onclick={() => {
 		scheduleDisplayMode = scheduleDisplayMode == 'column' ? 'grid' : 'column';
 	}}>Toggle view mode</button
 >

@@ -1,8 +1,12 @@
 <script lang="ts">
-	export let options: string[] = [];
-	export let selected: string[] = [];
 
-    export let label: string = "Select options";
+	interface Props {
+		options?: string[];
+		selected?: string[];
+		label?: string;
+	}
+
+	let { options = [], selected = $bindable([]), label = "Select options" }: Props = $props();
 
 	let display: boolean = false;
 
@@ -47,7 +51,7 @@
 						type="button"
 						class="dropdown-item"
 						class:active={selected.includes(option)}
-						on:click={() => toggleOption(option)}
+						onclick={() => toggleOption(option)}
 					>
 						{option}
 					</button>

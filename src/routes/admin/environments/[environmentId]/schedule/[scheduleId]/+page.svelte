@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import OneThirdHeader from '$lib/components/OneThirdHeader.svelte';
 	import RadioSelector from '$lib/components/RadioSelector.svelte';
 	import ScheduleCountdown from '$lib/components/schedule/ScheduleCountdown.svelte';
@@ -8,18 +10,18 @@
 	import { dayjs } from '$lib/shared/dayjs.js';
 	import { getActiveSchedule, getLastEvent } from '$lib/shared/schedule.js';
 
-	export let data;
+	let { data } = $props();
 
 	let allVariations = data.schedule.variations
 		.map((v: any) => v.options)
 		.reduce((prev: any, cur: any) => [...prev, ...cur], []);
 	//TODO: this should be user selectable
 	let selectedVariations: string[] = [];
-	let selectedTime = 'current-time';
-	let selectedWindow = 'events';
-	let timeValue: any = '00:00:00';
-	let customTime: Date | undefined;
-	$: {
+	let selectedTime = $state('current-time');
+	let selectedWindow = $state('events');
+	let timeValue: any = $state('00:00:00');
+	let customTime: Date | undefined = $state();
+	run(() => {
 		if (selectedTime === 'current-time') {
 			customTime = undefined;
 		} else {
@@ -33,8 +35,8 @@
 
 			customTime = dateTime.toDate();
 		}
-	}
-	let scheduleWithNoDate: any;
+	});
+	let scheduleWithNoDate: any = $state();
 
 	let isScheduleActive =
 		getActiveSchedule(
@@ -43,7 +45,7 @@
 			data.environment.timeZone
 		)?.schedule.scheduleId == data.schedule.scheduleId;
 
-	$: {
+	run(() => {
 		const { scheduleDate, ...rest } = data.schedule;
 		scheduleWithNoDate = rest;
 
@@ -55,31 +57,35 @@
 		// get today's date in yyyy-mm-dd format
 		scheduleWithNoDate.scheduleTimeZone = data.environment.timeZone;
 		scheduleWithNoDate.scheduleDate = curTime.toISOString();
-	}
+	});
 </script>
 
 <OneThirdHeader>
 	{data.schedule.name}
-	<a
-		href="/admin/environments/{data.environment._id}"
-		class="btn btn-secondary float-start m-1 mt-2"
-		slot="left"
-	>
-		Go back
-	</a>
-	<div slot="right">
-		<button
-			class="btn btn-danger float-end m-1 mt-2"
-			data-bs-toggle="modal"
-			data-bs-target="#scheduleDeleteConfirmation">Delete schedule</button
-		>
+	{#snippet left()}
 		<a
-			href="/admin/environments/{data.environment._id}/schedule/{data.schedule.scheduleId}/edit"
+			href="/admin/environments/{data.environment._id}"
 			class="btn btn-secondary float-start m-1 mt-2"
+			
 		>
-			Edit schedule
+			Go back
 		</a>
-	</div>
+	{/snippet}
+	{#snippet right()}
+		<div >
+			<button
+				class="btn btn-danger float-end m-1 mt-2"
+				data-bs-toggle="modal"
+				data-bs-target="#scheduleDeleteConfirmation">Delete schedule</button
+			>
+			<a
+				href="/admin/environments/{data.environment._id}/schedule/{data.schedule.scheduleId}/edit"
+				class="btn btn-secondary float-start m-1 mt-2"
+			>
+				Edit schedule
+			</a>
+		</div>
+	{/snippet}
 </OneThirdHeader>
 
 <DeleteScheduleModal

@@ -1,21 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let title: string | null = null;
+	interface Props {
+		title?: string | null;
+		children?: import('svelte').Snippet;
+	}
 
-	let content: HTMLHeadingElement;
-	let text: string;
+	let { title = null, children }: Props = $props();
+
+	let content: HTMLHeadingElement | undefined = $state();
+	let text: string | undefined = $state();
 	onMount(() => {
 		if (title !== null) {
 			text = title;
 		} else {
-			text = content.textContent || '';
+			text = content?.textContent || '';
 		}
 	});
 </script>
 
 <svelte:head>
-	<title>{text || "Scheduler"}</title>
+	<title>{text || 'Scheduler'}</title>
 </svelte:head>
 
-<h1 class="text-center mb-5" bind:this={content}><slot></slot></h1>
+<h1 class="mb-5 text-center" bind:this={content}>{@render children?.()}</h1>

@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 
-	export let message: string | null = null;
+	interface Props {
+		message?: string | null;
+	}
+
+	let { message = null }: Props = $props();
 </script>
 
 {#if message}

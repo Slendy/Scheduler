@@ -48,8 +48,12 @@
 		}
 	];
 
-	export let permissions: EnvironmentPermissions;
-	export let onChange: () => any = () => {};
+	interface Props {
+		permissions: EnvironmentPermissions;
+		onChange?: () => any;
+	}
+
+	let { permissions = $bindable(), onChange = () => {} }: Props = $props();
 
 	function handleClick(event: any, permission: any) {
 		onChange();
@@ -70,7 +74,7 @@
 			id={permission.label.replace(/\s/g, '')}
 			value={permission.permissionBit}
 			checked={(permissions & permission.permissionBit) == permission.permissionBit}
-			on:click={(e) => handleClick(e, permission)}
+			onclick={(e) => handleClick(e, permission)}
 		/>
 		<label class="form-check-label" for={permission.label.replace(/\s/g, '')}>
 			{permission.label}

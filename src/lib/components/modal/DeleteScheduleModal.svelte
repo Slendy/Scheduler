@@ -3,11 +3,15 @@
 	import EnhancedForm from '../EnhancedForm.svelte';
 	import Modal from './Modal.svelte';
 
-	export let scheduleId: string;
-	export let scheduleName: string;
-	export let environmentId: string;
+	interface Props {
+		scheduleId: string;
+		scheduleName: string;
+		environmentId: string;
+	}
 
-	let submitting = false;
+	let { scheduleId = $bindable(), scheduleName = $bindable(), environmentId }: Props = $props();
+
+	let submitting = $state(false);
 </script>
 
 <Modal modalId={'scheduleDeleteConfirmation'}>

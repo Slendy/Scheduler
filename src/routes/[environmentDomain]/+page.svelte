@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
 	import SchedulePage from '$lib/pages/SchedulePage.svelte';
 	import { page } from '$app/stores';
 
-	export let data;
+	let { data = $bindable() } = $props();
 </script>
 
 <svelte:head>

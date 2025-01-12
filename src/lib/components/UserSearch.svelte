@@ -1,15 +1,19 @@
 <script lang="ts">
-	let inputValue: string;
-	let previousInput: string;
+	let inputValue: string | undefined = $state();
+	let previousInput: string | undefined = $state();
 
-	export let selectedUser: any | undefined;
+	interface Props {
+		selectedUser: any | undefined;
+	}
 
-	let fetchTask: Promise<any> | undefined;
+	let { selectedUser = $bindable() }: Props = $props();
 
-	let results: any[] | undefined;
-	let hideResults = false;
-	async function loadAutocomplete(input: string) {
-		if (input.length == 0) {
+	let fetchTask: Promise<any> | undefined = $state();
+
+	let results: any[] | undefined = $state();
+	let hideResults = $state(false);
+	async function loadAutocomplete(input: string | undefined) {
+		if (input == null || input.length == 0) {
 			hideResults = true;
 			selectedUser = undefined;
 			return;
@@ -52,15 +56,15 @@
 			class="form-control"
 			placeholder="Username"
 			bind:value={inputValue}
-			on:focus={() => {
+			onfocus={() => {
 				if (!selectedUser) {
 					hideResults = false;
 				}
 			}}
-			on:blur={() => {
+			onblur={() => {
 				hideResults = true;
 			}}
-			on:keyup={(e) => {
+			onkeyup={(e) => {
 				if (inputValue == previousInput) return;
 
 				previousInput = inputValue;
@@ -76,7 +80,7 @@
 					class="list-group list-group-item-dark rounded-0 rounded-bottom"
 					style="max-height: 10rem; overflow-y: auto;"
 				>
-					{#if !fetchTask && inputValue?.length > 0 && results && results.length == 0}
+					{#if !fetchTask && (inputValue?.length || 0) > 0 && results && results.length == 0}
 						<li class="list-group-item">No results</li>
 					{:else if fetchTask}
 						<li class="list-group-item">Loading...</li>
@@ -84,7 +88,7 @@
 						{#each results as result}
 							<button
 								class="list-group-item list-group-item-action"
-								on:mousedown={() => selectUser(result)}
+								onmousedown={() => selectUser(result)}
 							>
 								{result.username}
 							</button>

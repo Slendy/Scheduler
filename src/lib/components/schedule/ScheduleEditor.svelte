@@ -17,26 +17,31 @@
 	import EventRow from './EventRow.svelte';
 	import { flip } from 'svelte/animate';
 
-	export let schedule: Schedule = { ...defaultSchedule };
+	interface Props {
+		schedule?: Schedule;
+		environmentId: string;
+		redirectUrl: string;
+		discardUrl?: string;
+		actionUrl: string;
+	}
 
-	export let environmentId: string;
-
-	export let redirectUrl: string;
-
-	export let discardUrl: string =
-		schedule.scheduleId.length == 0
+	let {
+		schedule = $bindable({ ...defaultSchedule }),
+		environmentId,
+		redirectUrl,
+		discardUrl = schedule.scheduleId.length == 0
 			? `/admin/environments/${environmentId}`
-			: `/admin/environments/${environmentId}/schedule/${schedule.scheduleId}`;
-
-	export let actionUrl: string;
+			: `/admin/environments/${environmentId}/schedule/${schedule.scheduleId}`,
+		actionUrl
+	}: Props = $props();
 
 	// I wanna krill myself
-	$: serializedSchedule = JSON.stringify(schedule);
+	let serializedSchedule = $derived(JSON.stringify(schedule));
 
-	let errorMessages: string[] | undefined = undefined;
+	let errorMessages: string[] | undefined = $state(undefined);
 	let errorTimer: any | undefined;
 
-	let submitting: boolean = false;
+	let submitting: boolean = $state(false);
 
 	function addNewEvent() {
 		schedule.events = [
@@ -114,11 +119,11 @@
 
 	// some browsers don't let you use randomUUID() in a local environment so by default we use a less secure version
 	// and when mounting the component we replace this function if randomUUID exists.
-	let generateRandomId: () => string = function () {
+	let generateRandomId: () => string = $state(function () {
 		return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
 			(+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16)
 		);
-	};
+	});
 
 	// some simple client-side checks before submitting form to server
 	function verifySchedule(e: Event) {
@@ -166,7 +171,7 @@
 	onSubmit={(e) => verifySchedule(e)}
 >
 	<input name="data" type="hidden" value={serializedSchedule} />
-	<div class="text-center card p-3">
+	<div class="card p-3 text-center">
 		<div class="schedule-title fs-3 d-block">
 			<EditableSpan
 				placeholder={'Schedule name'}
@@ -180,24 +185,24 @@
 		<div class="row row-cols-md-3 row-cols-1 mb-3">
 			<div class="col"></div>
 			<div class="col mt-2">
-				<h5 class="fw-bold mb-3 d-inline">Events</h5>
+				<h5 class="fw-bold d-inline mb-3">Events</h5>
 			</div>
 			<div class="col d-flex justify-content-center justify-content-md-end">
 				<button
 					type="button"
-					class="btn btn-secondary me-md-5 mt-2 mt-md-0"
+					class="btn btn-secondary me-md-5 mt-md-0 mt-2"
 					id="add-event"
 					style="margin-top: -0.25em"
-					on:click={() => addNewEvent()}>Add event</button
+					onclick={() => addNewEvent()}>Add event</button
 				>
 			</div>
 		</div>
 
 		<div id="event-container" class="event-container">
 			<div class="sortableList" id="sortableList">
-				{#each schedule.events as event (event.eventId)}
+				{#each schedule.events as event, i (event.eventId)}
 					<div animate:flip={{ duration: 200 }} data-id={event.eventId}>
-						<EventRow bind:event bind:schedule {generateRandomId} />
+						<EventRow bind:event={schedule.events[i]} bind:schedule {generateRandomId} />
 					</div>
 				{/each}
 			</div>
@@ -208,7 +213,7 @@
 		<div class="row row-cols-md-3 row-cols-1">
 			<div class="col"></div>
 			<div class="col mt-1">
-				<h5 class="fw-bold mb-3 d-inline">Schedule variations</h5>
+				<h5 class="fw-bold d-inline mb-3">Schedule variations</h5>
 				<span
 					data-bs-toggle="tooltip"
 					data-bs-placement="right"
@@ -219,11 +224,11 @@
 			</div>
 			<div class="col d-flex justify-content-center justify-content-md-end">
 				<button
-					class="btn btn-secondary me-md-5 mt-2 mt-md-0"
+					class="btn btn-secondary me-md-5 mt-md-0 mt-2"
 					id="add-variation"
 					style="margin-top: -0.25em;"
 					type="button"
-					on:click={() => addNewVariation()}>Add variation</button
+					onclick={() => addNewVariation()}>Add variation</button
 				>
 			</div>
 		</div>
@@ -265,7 +270,7 @@
 			{#if schedule.scheduleType == 'one-time'}
 				<div class="d-block mt-3">
 					<div class="d-inline">
-						<label class="fw-bold ps-2 pe-1" for="schedule-date">Schedule Date: </label>
+						<label class="fw-bold pe-1 ps-2" for="schedule-date">Schedule Date: </label>
 						<input
 							class="schedule-input"
 							type="date"

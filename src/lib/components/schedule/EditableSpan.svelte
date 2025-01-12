@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	// @ts-nocheck
 
 	import { browser } from '$app/environment';
@@ -6,13 +6,23 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let placeholder;
-	export let maxLength = 20;
-	export let value = '';
-	export let regex = /^[a-zA-Z0-9_\- ]+$/;
-	export let extraClasses = '';
+	interface Props {
+		placeholder: any;
+		maxLength?: number;
+		value?: string;
+		regex?: any;
+		extraClasses?: string;
+	}
 
-	let backupText = null;
+	let {
+		placeholder,
+		maxLength = 20,
+		value = $bindable(''),
+		regex = /^[a-zA-Z0-9_\- ]+$/,
+		extraClasses = ''
+	}: Props = $props();
+
+	let backupText = $state(null);
 
 	function handleInputCommit() {
 		backupText = null;
@@ -120,7 +130,7 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <span
 	id="schedule-title"
 	class="schedule-title p-1 px-2 d-flex text-center mx-auto {extraClasses}"
@@ -128,15 +138,15 @@
 	{placeholder}
 	data-gramm="false"
 	bind:textContent={value}
-	on:keydown={(e) => onKeyDown(e)}
-	on:focusin={(e) => {
+	onkeydown={(e) => onKeyDown(e)}
+	onfocusin={(e) => {
 		backupText = value;
 	}}
-	on:focusout={() => {
+	onfocusout={() => {
 		if (backupText == null || value.length == 0) return;
 
 		handleInputCommit();
 	}}
-	on:paste={(e) => handleInputPaste(e)}
+	onpaste={(e) => handleInputPaste(e)}
 >
 </span>

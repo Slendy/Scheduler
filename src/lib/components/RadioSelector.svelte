@@ -1,8 +1,12 @@
 <script lang="ts">
-	export let options: {id: string, label: string}[]
 
-	export let name: string;
-    export let value;
+	interface Props {
+		options: {id: string, label: string}[];
+		name: string;
+		value: any;
+	}
+
+	let { options, name, value = $bindable() }: Props = $props();
 </script>
 
 {#if options.length > 0}

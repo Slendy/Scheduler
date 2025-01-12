@@ -1,18 +1,20 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { invalidateAll } from '$app/navigation';
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import SuccessAlert from '$lib/components/SuccessAlert.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	let submitting = false;
+	let submitting = $state(false);
 
-	let formError: string | null = null;
-	let formSuccess: string | null = null;
+	let formError: string | null = $state(null);
+	let formSuccess: string | null = $state(null);
 
-	let environmentFiles: FileList | undefined;
-	$: {
+	let environmentFiles: FileList | undefined = $state();
+	run(() => {
 		if (environmentFiles) {
 			environmentFiles
 				?.item(0)
@@ -23,9 +25,9 @@
 					);
 				});
 		}
-	}
-	let environmentIconInput: any;
-	$: environmentIcon = environmentIconInput || data.environment.environmentIcon;
+	});
+	let environmentIconInput: any = $state();
+	let environmentIcon = $derived(environmentIconInput || data.environment.environmentIcon);
 </script>
 
 <h3>Appearance</h3>

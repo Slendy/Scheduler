@@ -1,25 +1,38 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { scale, slide } from 'svelte/transition';
 	import EditableSpan from './EditableSpan.svelte';
 	import { MAX_VARIATION_NAME_LEN, MAX_VARIATION_OPTION_LEN } from '$lib/shared/schedule';
-	export let title: string = '';
 	type Option = {
 		id: string;
 		name: string;
 	};
-	export let options: string[] = [];
 
-	export let generateRandomId: () => string;
 
-	export let deleteCallback: () => {};
+	interface Props {
+		title?: string;
+		options?: string[];
+		generateRandomId: () => string;
+		deleteCallback: () => {};
+	}
+
+	let {
+		title = $bindable(''),
+		options = $bindable([]),
+		generateRandomId,
+		deleteCallback
+	}: Props = $props();
 
 	// initially set internalOptions otherwise it will be immediately cleared out by the reactive statement below
-	let internalOptions: Option[] = options.map(o => ({ name: o, id: generateRandomId() }));
+	let internalOptions: Option[] = $state(options.map(o => ({ name: o, id: generateRandomId() })));
 
 	// update options any time internalOptions changes
-	$: options = internalOptions.map((o) => o.name);
+	run(() => {
+		options = internalOptions.map((o) => o.name);
+	});
 
-	let placeholderValue = '';
+	let placeholderValue = $state('');
 
 	function deleteVariation(variation: Option) {
 		internalOptions = internalOptions.filter((o) => o.id != variation.id);
@@ -35,11 +48,11 @@
 				maxLength={MAX_VARIATION_NAME_LEN}
 				bind:value={title}
 			/>
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<i
 				class="bi bi-trash position-absolute text-danger end-0 top-0 pe-3 pt-1 clickable"
-				on:click={deleteCallback}
+				onclick={deleteCallback}
 			>
 			</i>
 		</div>
@@ -56,11 +69,11 @@
 						/>
 					</div>
 					<div class="col">
-						<!-- svelte-ignore a11y-click-events-have-key-events -->
-						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<i
 							class="bi bi-x d-inline position-static text-secondary fs-3 clickable"
-							on:click={() => deleteVariation(option)}
+							onclick={() => deleteVariation(option)}
 						></i>
 					</div>
 				</div>

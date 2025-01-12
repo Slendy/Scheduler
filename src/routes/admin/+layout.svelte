@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import {
@@ -13,12 +15,12 @@
 	import NProgress from 'nprogress';
 	import { navigating } from '$app/stores';
 
-	let navBarItems = [
+	let navBarItems = $state([
 		['/admin', 'Home'],
 		['/admin/users', 'Users'],
 		['/admin/environments', 'Environments'],
 		['/logout', 'Logout']
-	];
+	]);
 
 	if (dev) {
 		navBarItems[navBarItems.length] = ['/admin/debug', 'DEBUG'];
@@ -35,15 +37,20 @@
 
 	// NProgress css
 	import 'nprogress/nprogress.css';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
 
-	$: {
+	let { children }: Props = $props();
+
+	run(() => {
 		if ($navigating) {
 			NProgress.start();
 		}
 		if (!$navigating) {
 			NProgress.done();
 		}
-	}
+	});
 </script>
 
 <svelte:head>
@@ -92,7 +99,7 @@
 		</div>
 	</nav>
 	<div class="main-content container mb-3">
-		<slot></slot>
+		{@render children?.()}
 	</div>
 	<footer class="footer transition d-flex">
 		<div class="container mt-3 mb-3">

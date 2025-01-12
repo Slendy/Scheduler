@@ -3,25 +3,45 @@
 	import { fade } from 'svelte/transition';
 	import { prettifyWeekdayList } from '$lib/shared/schedule';
 
-	export let environmentId: string;
-	export let scheduleId: string;
-	export let scheduleType: any;
-	export let name: string;
-	export let enabled: boolean = false;
-	export let events: [any];
-	export let variations: [any];
-	export let updatedAt: string;
-	export let createdAt: string;
-	export let scheduleDate: string;
-	export let scheduleWeekdays: [string];
 
-	export let isActive: boolean = false;
 
-	// These options are binds
-	export let deleteScheduleId: string;
-	export let deleteScheduleName: string;
+	
+	interface Props {
+		environmentId: string;
+		scheduleId: string;
+		scheduleType: any;
+		name: string;
+		enabled?: boolean;
+		events: [any];
+		variations: [any];
+		updatedAt: string;
+		createdAt: string;
+		scheduleDate: string;
+		scheduleWeekdays: [string];
+		isActive?: boolean;
+		// These options are binds
+		deleteScheduleId: string;
+		deleteScheduleName: string;
+	}
 
-	let headerText = name;
+	let {
+		environmentId,
+		scheduleId,
+		scheduleType,
+		name,
+		enabled = false,
+		events,
+		variations,
+		updatedAt,
+		createdAt,
+		scheduleDate,
+		scheduleWeekdays,
+		isActive = false,
+		deleteScheduleId = $bindable(),
+		deleteScheduleName = $bindable()
+	}: Props = $props();
+
+	let headerText = $state(name);
 	let copyTimeout: any;
 
 	function copyScheduleId() {
@@ -49,7 +69,7 @@
 					<div class="col"></div>
 					<div class="col-7" title={scheduleId}>
 						{#key headerText}
-							<button class="btn p-0 m-0" on:click={copyScheduleId} in:fade>
+							<button class="btn p-0 m-0" onclick={copyScheduleId} in:fade>
 								{headerText}
 							</button>
 						{/key}
@@ -60,7 +80,7 @@
 							class="btn p-0 px-1 mx-1"
 							data-bs-toggle="modal"
 							data-bs-target="#scheduleDeleteConfirmation"
-							on:click={deleteSchedule}
+							onclick={deleteSchedule}
 						>
 							<i class="bi bi-trash text-danger"></i>
 						</button>

@@ -1,28 +1,31 @@
 <script lang="ts">
 	import { createCachedSchedule, getNextEvent } from '$lib/shared/schedule';
-	import type { Schedule } from '$lib/shared/types';
+	import type { CachedSchedule, Schedule } from '$lib/shared/types';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { dayjs } from '$lib/shared/dayjs';
 
-	export let schedule: Schedule;
-
-	// this should update only whenever schedule changes
-	$: cachedSchedule = createCachedSchedule(
-		schedule,
-		dayjs.tz(scheduleDate, schedule?.scheduleTimeZone)
-	);
-
 	const timeKeys = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'] as const;
 	type TimeComponent = (typeof timeKeys)[number];
 
-	export let timeComponents: TimeComponent[] = ['year', 'month', 'day', 'hour', 'minute', 'second'];
-	// export let hiddenLabels: TimeComponent[] = ["millisecond"];
-	export let selectedVariations: string[];
-	export let customTime: Date | undefined = undefined;
-	export let time: Date | undefined = customTime;
-	$: scheduleDate = new Date(schedule?.scheduleDate as string);
-	export let onEventChange: (oldEvent: any, newEvent: any) => any = () => {};
+	interface Props {
+		schedule: Schedule;
+		timeComponents?: TimeComponent[];
+		// export let hiddenLabels: TimeComponent[] = ["millisecond"];
+		selectedVariations: string[];
+		customTime?: Date | undefined;
+		time?: Date | undefined;
+		onEventChange?: (oldEvent: any, newEvent: any) => any;
+	}
+
+	let {
+		schedule = $bindable(),
+		timeComponents = ['year', 'month', 'day', 'hour', 'minute', 'second'],
+		selectedVariations = $bindable(),
+		customTime = undefined,
+		time = $bindable(customTime),
+		onEventChange = () => {}
+	}: Props = $props();
 
 	function plural(value: number, label: string) {
 		if (value == 1) return label;
@@ -124,8 +127,8 @@
 		animationTimer = requestAnimationFrame(updateFrame);
 	}
 
-	let nextEvent: any;
-	let durations: any[] = [];
+	let nextEvent: any = $state();
+	let durations: any[] = $state([]);
 
 	let animationTimer: any;
 
@@ -140,6 +143,11 @@
 			cancelAnimationFrame(animationTimer);
 		};
 	});
+	let scheduleDate = $derived(new Date(schedule?.scheduleDate as string));
+	// this should update only whenever schedule changes
+	let cachedSchedule = $derived(
+		createCachedSchedule(schedule, dayjs.tz(scheduleDate, schedule?.scheduleTimeZone))
+	);
 </script>
 
 <div class="countdown-container transition">

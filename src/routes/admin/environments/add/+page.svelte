@@ -5,8 +5,8 @@
 	import EnhancedForm from '$lib/components/EnhancedForm.svelte';
 	import { timeZoneNames } from '$lib/shared/timezones.js';
 
-	let formError = '';
-	let submitting = false;
+	let formError = $state('');
+	let submitting = $state(false);
 </script>
 
 <Header>Create new environment</Header>

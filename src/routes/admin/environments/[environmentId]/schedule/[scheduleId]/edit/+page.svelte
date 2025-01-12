@@ -3,10 +3,10 @@
 	import ScheduleEditor from '$lib/components/schedule/ScheduleEditor.svelte';
 	import { page } from '$app/stores';
 
-	export let data;
+	let { data } = $props();
 
 	let referrer = $page.url.searchParams.get('referrer');
-	let redirect = `/admin/environments/${data.environment._id}/schedule/${data.schedule.scheduleId}`;
+	let redirect = $state(`/admin/environments/${data.environment._id}/schedule/${data.schedule.scheduleId}`);
 	if(referrer === 'schedule-list'){
 		redirect = `/admin/environments/${data.environment._id}`
 	}

@@ -1,7 +1,11 @@
 <script lang="ts">
-    export let userId: string;
-    export let username: string;
-    export let isAdmin: boolean;
+    interface Props {
+        userId: string;
+        username: string;
+        isAdmin: boolean;
+    }
+
+    let { userId, username, isAdmin }: Props = $props();
 </script>
 
 <div class="col">

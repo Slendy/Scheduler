@@ -1,7 +1,7 @@
 <script lang="ts">
 	import RadioSelector from '$lib/components/RadioSelector.svelte';
 
-	let dateType = 'one-time';
+	let dateType = $state('one-time');
 </script>
 
 <div class="text-center">

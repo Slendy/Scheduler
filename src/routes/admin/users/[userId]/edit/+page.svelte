@@ -4,10 +4,10 @@
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import Header from '$lib/components/Header.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	let formError: string | null = null;
-	let submitting = false;
+	let formError: string | null = $state(null);
+	let submitting = $state(false);
 </script>
 
 <Header>Edit {data.user.username}</Header>
