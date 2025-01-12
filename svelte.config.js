@@ -15,7 +15,7 @@ const config = {
 			precompress: {
 				gzip: true,
 			},
-		})
+		}),
 	}
 };
 
