@@ -1,0 +1,43 @@
+import { message, setError, superValidate } from 'sveltekit-superforms';
+import { loginSchema } from './schema';
+import { zod } from 'sveltekit-superforms/adapters';
+import { redirect } from '@sveltejs/kit';
+import { UserModel } from '$lib/server/models.js';
+import { generateToken, setCookieToken } from '$lib/server/auth';
+
+export const load = async () => {
+	return {
+		form: await superValidate(zod(loginSchema))
+	};
+};
+
+export const actions = {
+	default: async (event, cookies) => {
+		const form = await superValidate(event, zod(loginSchema));
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		let user = await UserModel.findOne({ username: form.data.username });
+		if (!user) {
+			console.log("invalid username")
+			setError(form, "username", "Invalid username or password");
+			return setError(form, "password", "Invalid username or password");
+		}
+
+		if (!await Bun.password.verify(form.data.password.toString(), user.passwordHash as Bun.StringOrBuffer)) {
+			console.log("invalid pass")
+			setError(form, "username", "Invalid username or password");
+			return setError(form, "password", "Invalid username or password");
+		}
+
+		let token = await generateToken(user);
+		if (token == undefined) {
+			return message(form, 'Failed to generate token', { status: 400 });
+		}
+
+		setCookieToken(cookies, token);
+
+		return redirect(301, '/admin');
+	}
+};

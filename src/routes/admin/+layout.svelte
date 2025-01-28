@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
 
 	import { dev } from '$app/environment';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import {
 		PUBLIC_GIT_BRANCH,
 		PUBLIC_GIT_SHA,
@@ -12,8 +11,6 @@
 	} from '$env/static/public';
 	const { MODE } = import.meta.env;
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
-	import NProgress from 'nprogress';
-	import { navigating } from '$app/stores';
 
 	let navBarItems = $state([
 		['/admin', 'Home'],
@@ -35,22 +32,13 @@
 		return currentUrl.substring(0, thirdSlash);
 	}
 
-	// NProgress css
-	import 'nprogress/nprogress.css';
+
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
 	}
 
 	let { children }: Props = $props();
-
-	run(() => {
-		if ($navigating) {
-			NProgress.start();
-		}
-		if (!$navigating) {
-			NProgress.done();
-		}
-	});
 </script>
 
 <svelte:head>
@@ -76,6 +64,8 @@
 	<link rel="shortcut icon" href="/favicon.ico" />
 </svelte:head>
 
+<ProgressBar />
+
 <div class="main-container">
 	<nav class="navbar navbar-expand-lg h5 text-center transition">
 		<div class="navbar-brand">
@@ -87,7 +77,7 @@
 					<li class="nav-item">
 						<a
 							class="nav-link"
-							class:active={trimUrl($page.url.pathname) === navbar[0]}
+							class:active={trimUrl(page.url.pathname) === navbar[0]}
 							href={navbar[0]}
 							data-sveltekit-preload-data={navbar[0] === '/logout' ? 'false' : undefined}
 						>

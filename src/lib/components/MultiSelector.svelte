@@ -71,7 +71,7 @@
 	{#if display}
 		<div class="d-relative">
 			<div class="d-absolute">
-				<ul class="list-group flex-shrink d-inline-flex w-100">
+				<ul class="list-group shrink d-inline-flex w-100">
 					{#each options as option}
 						<button
 							on:click={() => toggleOption(option)}
