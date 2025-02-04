@@ -12,7 +12,7 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async (event, cookies) => {
+	default: async (event) => {
 		const form = await superValidate(event, zod(loginSchema));
 		if (!form.valid) {
 			return fail(400, { form });
@@ -36,7 +36,7 @@ export const actions = {
 			return message(form, 'Failed to generate token', { status: 400 });
 		}
 
-		setCookieToken(cookies, token);
+		setCookieToken(event.cookies, token);
 
 		return redirect(301, '/admin');
 	}
