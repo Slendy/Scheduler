@@ -25,5 +25,5 @@ export const handle: Handle = async ({ event, resolve }) => {
         return error(403);
     }
 
-    return await resolve(event);
+    return resolve(event);
 }

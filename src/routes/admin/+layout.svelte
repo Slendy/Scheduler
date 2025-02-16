@@ -32,7 +32,6 @@
 		return currentUrl.substring(0, thirdSlash);
 	}
 
-
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	interface Props {
 		children?: import('svelte').Snippet;
