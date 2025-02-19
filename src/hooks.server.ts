@@ -17,11 +17,15 @@ try {
 export const handle: Handle = async ({ event, resolve }) => {
     event.locals.user = await getUserFromCookie(event.cookies);
 
-    if (event.url.pathname.startsWith("/admin") && (!event.locals.user?.isAdmin || false)) {
+    // console.log(event.locals.user._id);
+
+    if (event.url.pathname.startsWith("/admin") && (!event.locals.user?.isAdmin)) {
+        // console.log("admin redirect")
         throw redirect(301, "/");
     }
 
-    if (event.url.pathname.startsWith("/api/v1/admin") && (!event.locals.user?.isAdmin || false)) {
+    if (event.url.pathname.startsWith("/api/v1/admin") && (!event.locals.user?.isAdmin)) {
+        // console.log("admin redirect")
         return error(403);
     }
 

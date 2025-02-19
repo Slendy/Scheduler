@@ -1,5 +1,7 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models, Types } from 'mongoose';
 import { type IUser } from '$lib/shared/types';
+
+Schema.Types.ObjectId.get(v => v == null || v.toString() == "[object Object]" ? v : v.toString())
 
 const userSchema = new Schema<IUser>({
     username: { type: String, required: true },
@@ -65,14 +67,14 @@ const scheduleSchema = new Schema({
 }, { _id: false, timestamps: true });
 
 const environmentCollaboratorSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true, getter: v => v },
     permissions: { type: Number, required: true },
-});
+}, { _id: false, });
 
 export const environmentSchema = new Schema({
     environmentName: { type: String, required: true },
     environmentDomain: { type: String, required: true },
-    environmentIcon: { type: Buffer },
+    environmentIcon: { type: Buffer, getter: v => null },
     environmentOwner: { type: Schema.Types.ObjectId, ref: 'User' },
     environmentCollaborators: { type: [environmentCollaboratorSchema], required: true, default: [] },
     timeZone: {
@@ -85,13 +87,17 @@ export const environmentSchema = new Schema({
 }, {
     methods: {
         toApiResponse: async function () {
-            let responseEnvironment: any = (await this.populate('environmentCollaborators.user')).toObject({ getters: true });
+            let responseEnvironment: any = await this.toObject({getters: true})
 
             responseEnvironment.environmentCollaborators.forEach((c: any) => {
                 delete c.user.passwordHash;
             })
 
             responseEnvironment.environmentCollaborators = responseEnvironment.environmentCollaborators.map(({ passwordHash, ...rest }: any) => rest);
+
+            responseEnvironment.environmentIcon = !responseEnvironment.environmentIcon ? null : responseEnvironment.environmentIcon.toString('base64');
+
+            // console.log(responseEnvironment);
 
             responseEnvironment.schedules = responseEnvironment.schedules.map(({ history, ...rest }: any) => rest);
             return responseEnvironment;

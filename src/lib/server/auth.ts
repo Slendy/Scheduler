@@ -41,9 +41,11 @@ export async function getUserFromCookie(cookies: Cookies) {
         setCookieToken(cookies, newToken);
         token = newToken;
     }
-    let tokenUser = token.user as any;
+    let tokenUser = token.toObject().user as any;
 
-    return tokenUser.toObject();
+    // console.log("returning tokenuser", tokenUser);
+
+    return tokenUser;
 }
 
 export function setCookieToken(cookies: Cookies, token: any) {
