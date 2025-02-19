@@ -21,5 +21,5 @@ export const load = async ({ locals }) => {
 
 	// console.log(environmentsResponse[0].environmentCollaborators[0].user);
 
-	return { environmentsResponse};
+	return { environments: environmentsResponse };
 };

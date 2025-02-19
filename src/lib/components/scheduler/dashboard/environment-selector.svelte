@@ -13,41 +13,46 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
 	import * as Select from '$lib/components/ui/select';
+	import { goto } from '$app/navigation';
 
-	let className: string | undefined | null = undefined;
+	let className: string | undefined | null = $state(undefined);
 	export { className as class };
 
-	const groups = [
-		{
-			label: 'Personal Account',
-			teams: [
-				{
-					label: 'Alicia Koch',
-					value: 'personal'
-				}
-			]
-		},
-		{
-			label: 'Teams',
-			teams: [
-				{
-					label: 'Acme Inc.',
-					value: 'acme-inc'
-				},
-				{
-					label: 'Monsters Inc.',
-					value: 'monsters'
-				}
-			]
-		}
-	];
+	// const groups = [
+	// 	{
+	// 		label: 'Personal Account',
+	// 		teams: [
+	// 			{
+	// 				label: 'Alicia Koch',
+	// 				value: 'personal'
+	// 			}
+	// 		]
+	// 	},
+	// 	{
+	// 		label: 'Teams',
+	// 		teams: [
+	// 			{
+	// 				label: 'Acme Inc.',
+	// 				value: 'acme-inc'
+	// 			},
+	// 			{
+	// 				label: 'Monsters Inc.',
+	// 				value: 'monsters'
+	// 			}
+	// 		]
+	// 	}
+	// ];
+	//
+	// type Team = (typeof groups)[number]['teams'][number];
 
-	type Team = (typeof groups)[number]['teams'][number];
+	let { environments } = $props();
 
-	let open = false;
-	let showTeamDialog = false;
+	console.log(environments);
 
-	let selectedTeam: Team = groups[0].teams[0];
+	let open = $state(false);
+	let showTeamDialog = $state(false);
+
+	let selectedEnvironment = $state(environments[0]);
 
 	function closeAndRefocusTrigger(triggerId: string) {
 		open = false;
@@ -70,52 +75,53 @@
 				>
 					<Avatar.Root class="mr-2 h-5 w-5">
 						<Avatar.Image
-							src="https://avatar.vercel.sh/${selectedTeam.value}.png"
-							alt={selectedTeam.label}
+							src="https://avatar.vercel.sh/${selectedEnvironment.value}.png"
+							alt={selectedEnvironment.environmentName}
 							class="grayscale"
 						/>
 						<Avatar.Fallback>SC</Avatar.Fallback>
 					</Avatar.Root>
-					{selectedTeam.label}
+					{selectedEnvironment.environmentName}
 					<CaretSort class="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			{/snippet}
 		</Popover.Trigger>
 		<Popover.Content class="w-[200px] p-0">
 			<Command.Root>
-				<Command.Input placeholder="Search team..." />
+				<Command.Input placeholder="Search environment..." />
 				<Command.List>
 					<Command.Empty>No team found.</Command.Empty>
-					{#each groups as group}
-						<Command.Group heading={group.label}>
-							{#each group.teams as team}
+					{#each environments as environment}
+<!--						<Command.Group heading={environment.environmentName}>-->
+							<!--{#each group.teams as team}-->
 								<Command.Item
 									onSelect={() => {
 										console.log(open);
-										selectedTeam = team;
+										selectedEnvironment = environment;
 										open = false;
+										goto('/dashboard/' + environment.id)
 									}}
-									value={team.label}
-									class="text-sm"
+									value={environment.environmentName}
+									class="text-sm cursor-pointer"
 								>
 									<Avatar.Root class="mr-2 h-5 w-5">
 										<Avatar.Image
-											src="https://avatar.vercel.sh/${team.value}.png"
-											alt={team.label}
+											src="https://avatar.vercel.sh/${environment.environmentName}.png"
+											alt={environment.environmentName}
 											class="grayscale"
 										/>
 										<Avatar.Fallback>SC</Avatar.Fallback>
 									</Avatar.Root>
-									{team.label}
+									{environment.environmentName}
 									<Check
 										class={cn(
 											"ml-auto h-4 w-4",
-											selectedTeam.value !== team.value && "text-transparent"
+											selectedEnvironment.id !== environment.id && "text-transparent"
 										)}
 									/>
 								</Command.Item>
-							{/each}
-						</Command.Group>
+							<!--{/each}-->
+<!--						</Command.Group>-->
 					{/each}
 				</Command.List>
 				<Command.Separator />
@@ -126,6 +132,7 @@
 								open = false;
 								showTeamDialog = true;
 							}}
+							class="cursor-pointer"
 						>
 							<PlusCircled class="mr-2 h-5 w-5" />
 							Create Team
@@ -144,7 +151,7 @@
 			</Dialog.Description>
 		</Dialog.Header>
 		<Dialog.Footer>
-			<Button variant="outline" on:click={() => (showTeamDialog = false)}>Cancel</Button>
+			<Button variant="outline" onclick={() => (showTeamDialog = false)}>Cancel</Button>
 			<Button type="submit">Continue</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
