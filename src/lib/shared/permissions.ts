@@ -37,11 +37,11 @@ export namespace EnvironmentPermissions {
 }
 
 export function hasPermission(user: any, environment: any, permissions: EnvironmentPermissions): boolean {
-    if (environment.environmentOwner.toString() === user._id.toString()) {
+    if (environment.owner.toString() === user._id.toString()) {
         return true;
     }
 
-    let userPermissions = environment.environmentCollaborators.findOne((c: any) => c._id.toString() == user._id.toString())?.permissions || EnvironmentPermissions.None;
+    let userPermissions = environment.collaborators.findOne((c: any) => c._id.toString() == user._id.toString())?.permissions || EnvironmentPermissions.None;
     if ((userPermissions & permissions) == permissions) return true;
 
     return false;

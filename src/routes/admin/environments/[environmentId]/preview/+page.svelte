@@ -4,4 +4,4 @@
 	let { data = $bindable() } = $props();
 </script>
 
-<SchedulePage environmentDomain={data.environment.environmentDomain} bind:data />
+<SchedulePage environmentDomain={data.environment.domain} bind:data />

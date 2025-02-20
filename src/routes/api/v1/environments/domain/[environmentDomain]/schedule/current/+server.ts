@@ -7,7 +7,7 @@ import { error } from '@sveltejs/kit';
 export const GET = async ({ params }) => {
     const { environmentDomain } = params;
 
-    let environment = await EnvironmentModel.findOne({ environmentDomain });
+    let environment = await EnvironmentModel.findOne({ domain: environmentDomain });
     if (!environment) return error(400, "Invalid environment");
 
     let schedules = (await environment.toApiResponse()).schedules;

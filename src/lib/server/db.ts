@@ -23,11 +23,11 @@ export async function generateDefaultEnvironment() {
     if (await EnvironmentModel.estimatedDocumentCount() === 0) {
         let owner = await UserModel.findOne();
         let defaultEnvironment = new EnvironmentModel({
-            environmentDomain: "example.com",
-            environmentName: "default",
-            environmentOwner: owner, // should default to the admin user
-            environmentCollaborators: [],
-            environmentIcon: [],
+            domain: "example.com",
+            name: "default",
+            owner: owner, // should default to the admin user
+            collaborators: [],
+            icon: [],
             isVerified: false,
             schedules: [],
         });

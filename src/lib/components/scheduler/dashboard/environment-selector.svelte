@@ -45,14 +45,17 @@
 	//
 	// type Team = (typeof groups)[number]['teams'][number];
 
-	let { environments } = $props();
+	let { environments, selectedEnvironment = $bindable(environments[0]) }: {
+		environments: {name: string, id: string}[]
+		selectedEnvironment: any,
+	} = $props();
 
-	console.log(environments);
+	// console.log();
 
 	let open = $state(false);
 	let showTeamDialog = $state(false);
 
-	let selectedEnvironment = $state(environments[0]);
+	// let selectedEnvironment = $state(environments[0]);
 
 	function closeAndRefocusTrigger(triggerId: string) {
 		open = false;
@@ -75,13 +78,13 @@
 				>
 					<Avatar.Root class="mr-2 h-5 w-5">
 						<Avatar.Image
-							src="https://avatar.vercel.sh/${selectedEnvironment.value}.png"
-							alt={selectedEnvironment.environmentName}
-							class="grayscale"
+							src="data:image/png;base64, {selectedEnvironment.icon}"
+							alt={selectedEnvironment.name}
+							class=""
 						/>
-						<Avatar.Fallback>SC</Avatar.Fallback>
+						<Avatar.Fallback>{selectedEnvironment.name.slice(0, 1)}</Avatar.Fallback>
 					</Avatar.Root>
-					{selectedEnvironment.environmentName}
+					{selectedEnvironment.name}
 					<CaretSort class="ml-auto h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			{/snippet}
@@ -92,27 +95,26 @@
 				<Command.List>
 					<Command.Empty>No team found.</Command.Empty>
 					{#each environments as environment}
-<!--						<Command.Group heading={environment.environmentName}>-->
+<!--						<Command.Group heading={environment.name}>-->
 							<!--{#each group.teams as team}-->
 								<Command.Item
 									onSelect={() => {
 										console.log(open);
 										selectedEnvironment = environment;
 										open = false;
-										goto('/dashboard/' + environment.id)
 									}}
-									value={environment.environmentName}
+									value={environment.name}
 									class="text-sm cursor-pointer"
 								>
 									<Avatar.Root class="mr-2 h-5 w-5">
 										<Avatar.Image
-											src="https://avatar.vercel.sh/${environment.environmentName}.png"
-											alt={environment.environmentName}
-											class="grayscale"
+											src="data:image/png;base64, {environment.icon}"
+											alt={environment.name}
+											class=""
 										/>
-										<Avatar.Fallback>SC</Avatar.Fallback>
+										<Avatar.Fallback>{environment.name.slice(0, 1)}</Avatar.Fallback>
 									</Avatar.Root>
-									{environment.environmentName}
+									{environment.name}
 									<Check
 										class={cn(
 											"ml-auto h-4 w-4",
@@ -135,7 +137,7 @@
 							class="cursor-pointer"
 						>
 							<PlusCircled class="mr-2 h-5 w-5" />
-							Create Team
+							Create Environment
 						</Command.Item>
 					</Command.Group>
 				</Command.List>
@@ -156,122 +158,3 @@
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
-
-<!--<Dialog.Root bind:open={showTeamDialog}>-->
-<!--	<Popover.Root bind:open let:ids>-->
-<!--		<Popover.Trigger asChild let:builder>-->
-<!--			<Button-->
-<!--				builders={[builder]}-->
-<!--				variant="outline"-->
-<!--				role="combobox"-->
-<!--				aria-expanded={open}-->
-<!--				aria-label="Select a team"-->
-<!--				class={cn("w-[200px] justify-between", className)}-->
-<!--			>-->
-<!--				<Avatar.Root class="mr-2 h-5 w-5">-->
-<!--					<Avatar.Image-->
-<!--						src="https://avatar.vercel.sh/${selectedTeam.value}.png"-->
-<!--						alt={selectedTeam.label}-->
-<!--						class="grayscale"-->
-<!--					/>-->
-<!--					<Avatar.Fallback>SC</Avatar.Fallback>-->
-<!--				</Avatar.Root>-->
-<!--				{selectedTeam.label}-->
-<!--				<CaretSort class="ml-auto h-4 w-4 shrink-0 opacity-50" />-->
-<!--			</Button>-->
-<!--		</Popover.Trigger>-->
-<!--		<Popover.Content class="w-[200px] p-0">-->
-<!--			<Command.Root>-->
-<!--				<Command.Input placeholder="Search team..." />-->
-<!--				<Command.List>-->
-<!--					<Command.Empty>No team found.</Command.Empty>-->
-<!--					{#each groups as group}-->
-<!--						<Command.Group heading={group.label}>-->
-<!--							{#each group.teams as team}-->
-<!--								<Command.Item-->
-<!--									onSelect={() => {-->
-<!--										selectedTeam = team;-->
-<!--										closeAndRefocusTrigger(ids.trigger);-->
-<!--									}}-->
-<!--									value={team.label}-->
-<!--									class="text-sm"-->
-<!--								>-->
-<!--									<Avatar.Root class="mr-2 h-5 w-5">-->
-<!--										<Avatar.Image-->
-<!--											src="https://avatar.vercel.sh/${team.value}.png"-->
-<!--											alt={team.label}-->
-<!--											class="grayscale"-->
-<!--										/>-->
-<!--										<Avatar.Fallback>SC</Avatar.Fallback>-->
-<!--									</Avatar.Root>-->
-<!--									{team.label}-->
-<!--									<Check-->
-<!--										class={cn(-->
-<!--											"ml-auto h-4 w-4",-->
-<!--											selectedTeam.value !== team.value && "text-transparent"-->
-<!--										)}-->
-<!--									/>-->
-<!--								</Command.Item>-->
-<!--							{/each}-->
-<!--						</Command.Group>-->
-<!--					{/each}-->
-<!--				</Command.List>-->
-<!--				<Command.Separator />-->
-<!--				<Command.List>-->
-<!--					<Command.Group>-->
-<!--						<Command.Item-->
-<!--							onSelect={() => {-->
-<!--								open = false;-->
-<!--								showTeamDialog = true;-->
-<!--							}}-->
-<!--						>-->
-<!--							<PlusCircled class="mr-2 h-5 w-5" />-->
-<!--							Create Team-->
-<!--						</Command.Item>-->
-<!--					</Command.Group>-->
-<!--				</Command.List>-->
-<!--			</Command.Root>-->
-<!--		</Popover.Content>-->
-<!--	</Popover.Root>-->
-<!--	<Dialog.Content>-->
-<!--		<Dialog.Header>-->
-<!--			<Dialog.Title>Create team</Dialog.Title>-->
-<!--			<Dialog.Description>-->
-<!--				Add a new team to manage products and customers.-->
-<!--			</Dialog.Description>-->
-<!--		</Dialog.Header>-->
-<!--		<div>-->
-<!--			<div class="space-y-4 py-2 pb-4">-->
-<!--				<div class="space-y-2">-->
-<!--					<Label for="name">Team name</Label>-->
-<!--					<Input id="name" placeholder="Acme Inc." />-->
-<!--				</div>-->
-<!--				<div class="space-y-2">-->
-<!--					<Label for="plan">Subscription plan</Label>-->
-<!--					<Select.Root>-->
-<!--						<Select.Trigger>-->
-<!--							<Select.Value placeholder="Select a plan" />-->
-<!--						</Select.Trigger>-->
-<!--						<Select.Content>-->
-<!--							<Select.Item value="free">-->
-<!--								<span class="font-medium">Free </span>-<span-->
-<!--								class="text-muted-foreground"-->
-<!--							>-->
-<!--									Trial for two weeks-->
-<!--								</span>-->
-<!--							</Select.Item>-->
-<!--							<Select.Item value="pro">-->
-<!--								<span class="font-medium">Pro</span> - -->
-<!--								<span class="text-muted-foreground"> $9/month per user </span>-->
-<!--							</Select.Item>-->
-<!--						</Select.Content>-->
-<!--					</Select.Root>-->
-<!--				</div>-->
-<!--			</div>-->
-<!--		</div>-->
-<!--		<Dialog.Footer>-->
-<!--			<Button variant="outline" on:click={() => (showTeamDialog = false)}>Cancel</Button>-->
-<!--			<Button type="submit">Continue</Button>-->
-<!--		</Dialog.Footer>-->
-<!--	</Dialog.Content>-->
-<!--</Dialog.Root>-->

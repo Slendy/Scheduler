@@ -27,7 +27,7 @@
 		}
 	});
 	let environmentIconInput: any = $state();
-	let environmentIcon = $derived(environmentIconInput || data.environment.environmentIcon);
+	let environmentIcon = $derived(environmentIconInput || data.environment.icon);
 </script>
 
 <h3>Appearance</h3>

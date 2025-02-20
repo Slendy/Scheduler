@@ -12,7 +12,7 @@
 
 	let submitting = $state(false);
 
-	let deleteInput: string = $state();
+	let deleteInput: string | undefined = $state();
 </script>
 
 <Modal modalId={'deleteConfirmationModal'}>

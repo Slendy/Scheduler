@@ -45,8 +45,8 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#if data.environment?.environmentCollaborators?.length || 0 > 0}
-				{#each data.environment.environmentCollaborators as collaborator}
+			{#if data.environment?.collaborators?.length || 0 > 0}
+				{#each data.environment.collaborators as collaborator}
 					<tr>
 						<td>{collaborator.user._id}</td>
 

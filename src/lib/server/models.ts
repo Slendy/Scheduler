@@ -72,11 +72,11 @@ const environmentCollaboratorSchema = new Schema({
 }, { _id: false, });
 
 export const environmentSchema = new Schema({
-    environmentName: { type: String, required: true },
-    environmentDomain: { type: String, required: true },
-    environmentIcon: { type: Buffer, getter: v => null },
-    environmentOwner: { type: Schema.Types.ObjectId, ref: 'User' },
-    environmentCollaborators: { type: [environmentCollaboratorSchema], required: true, default: [] },
+    name: { type: String, required: true },
+    domain: { type: String, required: true },
+    icon: { type: Buffer, getter: v => null },
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
+    collaborators: { type: [environmentCollaboratorSchema], required: true, default: [] },
     timeZone: {
         type: String,
         required: true,
@@ -89,13 +89,13 @@ export const environmentSchema = new Schema({
         toApiResponse: async function () {
             let responseEnvironment: any = await this.toObject({getters: true})
 
-            responseEnvironment.environmentCollaborators.forEach((c: any) => {
+            responseEnvironment.collaborators.forEach((c: any) => {
                 delete c.user.passwordHash;
             })
 
-            responseEnvironment.environmentCollaborators = responseEnvironment.environmentCollaborators.map(({ passwordHash, ...rest }: any) => rest);
+            responseEnvironment.collaborators = responseEnvironment.collaborators.map(({ passwordHash, ...rest }: any) => rest);
 
-            responseEnvironment.environmentIcon = !responseEnvironment.environmentIcon ? null : responseEnvironment.environmentIcon.toString('base64');
+            responseEnvironment.icon = !responseEnvironment.icon ? null : responseEnvironment.icon.toString('base64');
 
             // console.log(responseEnvironment);
 

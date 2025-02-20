@@ -33,7 +33,7 @@
 									data-bs-toggle="collapse"
 									data-bs-target="#envCollapse{environment._id}"
 								>
-									{environment.environmentName}
+									{environment.name}
 								</button>
 							</h2>
 							<div
@@ -43,8 +43,8 @@
 							>
 								<div class="accordion-body">
 									<p>Id: {environment._id}</p>
-									<p>Domain: {environment.environmentDomain}</p>
-									<p>Name: {environment.environmentName}</p>
+									<p>Domain: {environment.domain}</p>
+									<p>Name: {environment.name}</p>
 									<p># Schedules: {environment.schedules.length}</p>
 									<a class="link-secondary" href="/admin/debug/edit/environment/{environment._id}"
 										>Edit environment</a

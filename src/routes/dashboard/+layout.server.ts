@@ -7,12 +7,12 @@ export const load = async ({ locals }) => {
 	}
 
 	let environments = await EnvironmentModel.find({
-		$or: [{ environmentOwner: locals.user.id }, {
-			'environmentCollaborators._id':
+		$or: [{ owner: locals.user.id }, {
+			'collaborators._id':
 			locals
 				.user.id
 		}]
-	}).populate('environmentCollaborators.user');
+	}).populate('collaborators.user');
 
 	let environmentsResponse = (await Promise.all(environments.map(env => env.toApiResponse())))
 		.map(env => ({ ...env, totalSchedules: env.schedules.length }))

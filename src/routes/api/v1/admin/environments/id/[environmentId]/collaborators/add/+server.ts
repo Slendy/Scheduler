@@ -14,7 +14,7 @@ export const POST = async ({ params, request }) => {
         return apiFormError("You must specify a user");
     }
 
-    if (environment.environmentOwner?.toString() == userId) {
+    if (environment.owner?.toString() == userId) {
         return apiFormError("You cannot add the owner of the environment as a collaborator");
     }
 
@@ -25,7 +25,7 @@ export const POST = async ({ params, request }) => {
 
     let permissionBitmask = parseInt(permissions) as EnvironmentPermissions;
 
-    environment.environmentCollaborators.push({ user: userId, permissions: permissionBitmask });
+    environment.collaborators.push({ user: userId, permissions: permissionBitmask });
     await environment.save();
 
     return apiFormSuccess();
