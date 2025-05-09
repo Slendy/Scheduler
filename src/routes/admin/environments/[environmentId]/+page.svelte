@@ -42,16 +42,16 @@
 </script>
 
 <DeleteEnvironmentModal
-	environmentName={data.environment.environmentName}
+	environmentName={data.environment.name}
 	environmentId={data.environment._id}
 />
 
 <svelte:head>
-	<title>{data.environment.environmentName}</title>
+	<title>{data.environment.name}</title>
 </svelte:head>
 
 <OneThirdHeader>
-	{data.environment.environmentName}
+	{data.environment.name}
 	{#snippet left()}
 		<div >
 			<a href="/admin/environments" class="btn btn-secondary float-start m-1 mt-2"> Go back </a>
@@ -124,7 +124,7 @@
 				<ScheduleCard
 					environmentId={data.environment._id}
 					{...schedule}
-					isActive={activeSchedule?.schedule == schedule}
+					isActive={activeSchedule?.schedule === schedule}
 					bind:deleteScheduleId
 					bind:deleteScheduleName
 				/>
@@ -155,7 +155,7 @@
 
 							<td>{schedule.events.length}</td>
 
-							<td>{activeSchedule?.schedule == schedule}</td>
+							<td>{activeSchedule?.schedule === schedule}</td>
 
 							<td>{dayjs(schedule.updatedAt).fromNow()}</td>
 

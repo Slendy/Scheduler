@@ -36,6 +36,6 @@ export const actions = {
 
 		setCookieToken(event.cookies, token);
 
-		return redirect(301, '/admin');
+		return redirect(301, user.isAdmin ? '/admin' : '/dashboard');
 	}
 };

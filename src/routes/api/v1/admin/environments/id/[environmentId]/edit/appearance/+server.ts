@@ -18,7 +18,7 @@ export const POST = async ({ params, request }) => {
         
         //TODO re-encode image to resize to 128x128
 
-        environment.environmentIcon = iconBuffer;
+        environment.icon = iconBuffer;
     }
     await environment.save();
     return apiFormSuccess();

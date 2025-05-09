@@ -21,19 +21,24 @@ export async function generateDefaultUser() {
 export async function generateDefaultEnvironment() {
     // TODO save this into a separate model so environments are auto regenerated if all of them are deleted
     if (await EnvironmentModel.estimatedDocumentCount() === 0) {
+        let owner = await UserModel.findOne();
         let defaultEnvironment = new EnvironmentModel({
-            environmentDomain: "example.com",
-            environmentName: "default",
-            environmentOwner: UserModel.findOne(), // should default to the admin user
+            domain: "example.com",
+            name: "default",
+            owner: owner, // should default to the admin user
+            collaborators: [],
+            icon: [],
             isVerified: false,
             schedules: [],
         });
+        console.log(defaultEnvironment);
         await defaultEnvironment.save();
         console.log("No environments were found so a default environment has been created.");
     }
 }
 
 export async function connectToDb() {
+    console.log(env.MONGO_URL);
     await connect(env.MONGO_URL, {
         serverSelectionTimeoutMS: 5000 // Timeout after 5s instead of 30s
     } as ConnectOptions);

@@ -29,9 +29,9 @@
 	<div class="row row-cols-sm-auto row-cols-1 g-4">
 		{#each environments as environment}
 			<EnvironmentCard
-				environmentId={environment._id}
-				environmentDomain={environment.environmentDomain}
-				environmentName={environment.environmentName}
+				id={environment._id}
+				domain={environment.domain}
+				name={environment.name}
 				totalSchedules={environment.totalSchedules || 0}
 			/>
 		{/each}

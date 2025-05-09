@@ -18,6 +18,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Generate type files
+        run: bun run check || true
+
       - name: Run unit tests
         run: bun test
 

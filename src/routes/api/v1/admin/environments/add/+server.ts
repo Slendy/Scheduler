@@ -17,12 +17,12 @@ export const POST = async ({ request }) => {
     if (timeZone == null || !isValidTimeZone(timeZone.toString())) {
         return apiFormError('Invalid environment time zone');
     }
-    if (await EnvironmentModel.exists({ environmentDomain: domain })) {
+    if (await EnvironmentModel.exists({ domain })) {
         return apiFormError("An environment already exists with this domain")
     }
     let newEnvironment = new EnvironmentModel({
-        environmentName: name.toString(),
-        environmentDomain: domain.toString(),
+        name: name.toString(),
+        domain: domain.toString(),
         timeZone: timeZone.toString(),
         isVerified: false,
         schedules: [],

@@ -12,7 +12,7 @@ export const POST = async ({ params, request }) => {
     if (name == null) {
         return apiFormError('Invalid environment name')
     }
-    if (name != environment.environmentName) {
+    if (name != environment.name) {
         return apiFormError("Environment name doesn't match")
     }
     await environment.deleteOne();

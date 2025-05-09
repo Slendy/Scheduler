@@ -40,7 +40,7 @@
 		<label for="envName" class="form-label">Environment name</label>
 		<input
 			type="text"
-			value={data.environment.environmentName}
+			value={data.environment.name}
 			id="envName"
 			name="envName"
 			class="form-control"
@@ -52,7 +52,7 @@
 		<label for="envDomain" class="form-label">Environment domain</label>
 		<input
 			type="text"
-			value={data.environment.environmentDomain}
+			value={data.environment.domain}
 			id="envDomain"
 			name="envDomain"
 			class="form-control"

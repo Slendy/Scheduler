@@ -4,7 +4,7 @@ import { hashObject } from "$lib/shared/hash.js";
 export const load = async ({ parent, fetch }) => {
     let { environment } = await parent();
 
-    const response = await fetch(`/api/v1/environments/domain/${environment.environmentDomain}/schedule/current`);
+    const response = await fetch(`/api/v1/environments/domain/${environment.domain}/schedule/current`);
 
     // If there are no schedules don't trigger the error page
     if (response.status == 404) {
