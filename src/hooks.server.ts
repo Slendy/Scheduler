@@ -1,6 +1,6 @@
 import { getUserFromCookie } from '$lib/server/auth';
 import { connectToDb, generateDefaultEnvironment, generateDefaultUser } from '$lib/server/db';
-import { error, redirect, type Handle, type HandleServerError } from '@sveltejs/kit';
+import { error, redirect, type Handle } from '@sveltejs/kit';
 
 try {
     console.log("Connecting to database...")
@@ -17,13 +17,13 @@ try {
 export const handle: Handle = async ({ event, resolve }) => {
     event.locals.user = await getUserFromCookie(event.cookies);
 
-    if (event.url.pathname.startsWith("/admin") && (!event.locals.user?.isAdmin || false)) {
+    if (event.url.pathname.startsWith("/admin") && (!event.locals.user?.isAdmin)) {
         throw redirect(301, "/");
     }
 
-    if (event.url.pathname.startsWith("/api/v1/admin") && (!event.locals.user?.isAdmin || false)) {
+    if (event.url.pathname.startsWith("/api/v1/admin") && (!event.locals.user?.isAdmin)) {
         return error(403);
     }
 
-    return await resolve(event);
+    return resolve(event);
 }

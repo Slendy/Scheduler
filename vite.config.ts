@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+	// @ts-ignore
 	plugins: [sveltekit(), tailwindcss()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']

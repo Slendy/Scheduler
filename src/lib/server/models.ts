@@ -1,4 +1,6 @@
-import { Schema, model, models } from 'mongoose';
+import pkg from 'mongoose';
+
+const { Schema, model, models } = pkg;
 import { type IUser } from '$lib/shared/types';
 
 const userSchema = new Schema<IUser>({
