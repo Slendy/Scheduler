@@ -1,6 +1,7 @@
 import { TokenModel, UserModel } from '$lib/server/models';
 import { isValidObjectId } from 'mongoose';
 import { apiFormError, apiFormSuccess } from '$lib/server/utils.js';
+import * as argon2 from 'argon2';
 
 export const POST = async ({ params, request }) => {
     const { userId } = params;
@@ -23,10 +24,10 @@ export const POST = async ({ params, request }) => {
     }
 
     if (password != null && password.toString().length > 0) {
-        user.passwordHash = await Bun.password.hash(password.toString());
+        user.passwordHash = await argon2.hash(password.toString());
 
         // if we change a user's password then invalidate all of their auth tokens
-        TokenModel.deleteMany({ user: user._id }).exec();
+        await TokenModel.deleteMany({ user: user._id }).exec();
     }
 
     const isAdmin = data.get('isAdmin');

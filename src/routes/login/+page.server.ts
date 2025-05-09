@@ -4,6 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { fail, redirect } from '@sveltejs/kit';
 import { UserModel } from '$lib/server/models.js';
 import { generateToken, setCookieToken } from '$lib/server/auth';
+import * as argon2 from 'argon2';
 
 export const load = async () => {
 	return {
@@ -24,10 +25,10 @@ export const actions = {
 			return setError(form, 'password', 'Invalid username or password');
 		}
 
-		if (!await Bun.password.verify(form.data.password.toString(), user.passwordHash as Bun.StringOrBuffer)) {
-			setError(form, 'username', 'Invalid username or password');
-			return setError(form, 'password', 'Invalid username or password');
-		}
+        if(!await argon2.verify(user.passwordHash, form.data.password.toString())) {
+            setError(form, 'username', 'Invalid username or password');
+            return setError(form, 'password', 'Invalid username or password');
+        }
 
 		let token = await generateToken(user);
 		if (token == undefined) {

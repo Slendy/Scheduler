@@ -1,6 +1,7 @@
 import { generateToken, setCookieToken } from '$lib/server/auth.js';
 import { UserModel } from '$lib/server/models.js';
 import { apiFormError } from '$lib/server/utils.js';
+import * as argon2 from 'argon2';
 
 export const POST = async ({ request, cookies }) => {
     const data = await request.formData();
@@ -19,7 +20,7 @@ export const POST = async ({ request, cookies }) => {
         return apiFormError('Invalid username or password');
     }
 
-    if (!await Bun.password.verify(password.toString(), user.passwordHash as Bun.StringOrBuffer)) {
+    if (!await argon2.verify(password.toString(), user.passwordHash)) {
         return apiFormError('Invalid username or password');
     }
 

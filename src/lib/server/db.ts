@@ -1,6 +1,7 @@
 import { connect, type ConnectOptions } from 'mongoose';
 import { EnvironmentModel, UserModel } from './models';
 import { env } from '$env/dynamic/private';
+import * as argon2 from 'argon2';
 
 if (!env.MONGO_URL) {
     throw new Error('Please specify the MONGO_URI environment variable')
@@ -11,7 +12,7 @@ export async function generateDefaultUser() {
         let defaultUser = new UserModel({
             username: "admin",
             isAdmin: true,
-            passwordHash: await Bun.password.hash("admin"),
+            passwordHash: await argon2.hash("admin"),
         });
         await defaultUser.save();
         console.log("No users were found so a default admin user has been created.");

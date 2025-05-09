@@ -1,6 +1,6 @@
 import { TokenModel, UserModel } from '$lib/server/models';
-import { isValidObjectId } from 'mongoose';
 import { apiFormError, apiFormSuccess } from '$lib/server/utils.js';
+import * as argon2 from 'argon2';
 
 export const POST = async ({ params, request }) => {
     const data = await request.formData();
@@ -13,14 +13,14 @@ export const POST = async ({ params, request }) => {
         return apiFormError('A user already exists with this username')
     }
 
-    if (!password || password.length == 0) {
+    if (!password || password.toString().length == 0) {
         return apiFormError("Password cannot be empty")
     }
 
     let user = await UserModel.create({
         isAdmin: data.get('isAdmin')?.toString() === "on",
         username: name.toString(),
-        passwordHash: await Bun.password.hash(password.toString())
+        passwordHash: await argon2.hash(password.toString()),
     });
 
     console.log(`Created user ${user._id} new name: '${name}', isAdmin: '${user.isAdmin}'`)

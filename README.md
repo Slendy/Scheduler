@@ -14,7 +14,7 @@ An open source service for scheduling events and publishing live countdowns.
 
 The recommended IDE for development is VSCode.
 
-This project is made in SvelteKit and requires the Bun runtime to be installed. To install Bun, follow the instructions located on their [`website`](https://bun.sh)
+This project is made in SvelteKit and requires the Node runtime to be installed. To install Node, follow the instructions located on their [`website`](https://nodejs.org/en/download)
 
 ### Running locally
 
@@ -24,14 +24,15 @@ git clone https://github.com/Slendy/Scheduler
 ```
 Next, install the required dependencies
 ```bash
-bun install
+npm install
+pnpm install
 ```
 
 The application requires a MongoDB database which is configured by setting the `MONGO_URL` environment variable or by creating a `.env.development` file.
 
 To run the development server use the preconfigured build task or type
 ```bash
-bun --bun run dev
+pnpm dev
 ```
 The app will be available at `http://localhost:5173` and any changes you make to the code or markup will be hot reloaded. Note that if you make changes to the database models the application must be restarted due to how they are compiled by mongoose.
 
@@ -39,11 +40,11 @@ The app will be available at `http://localhost:5173` and any changes you make to
 ### Building manually
 To compile the project run:
 ```bash
-bun run build
+pnpm build
 ```
-The resulting build output will be stored in the `/build` folder and can be ran with:
+The resulting build output will be stored in the `/build` folder and can be run with:
 ```bash
-bun run start
+pnpm start
 ```
 
 ### Using Docker

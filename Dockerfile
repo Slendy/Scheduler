@@ -1,4 +1,4 @@
-FROM oven/bun:latest as build
+FROM node:24 as build
 
 RUN apt-get update && \
     apt-get install -y git && \
@@ -7,15 +7,15 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY package.json bun.lockb ./
+COPY package.json pnpm-lock.yaml ./
 
-RUN bun install
+RUN pnpm install
 
 COPY . .
 
-RUN bun run build
+RUN pnpm run build
 
-FROM oven/bun:alpine as release
+FROM node:24-alpine as release
 
 WORKDIR /scheduler
 
@@ -23,6 +23,6 @@ ENV NODE_ENV="production"
 
 COPY --from=build /app/build/ /scheduler
 
-USER bun
+USER scheduler
 EXPOSE 3000/tcp
-ENTRYPOINT ["bun", "run", "start"]
+ENTRYPOINT ["pnpm", "run", "start"]
