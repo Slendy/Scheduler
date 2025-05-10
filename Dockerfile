@@ -16,16 +16,21 @@ COPY . .
 
 RUN pnpm build
 
+RUN pnpm prune --prod --no-optional
+
 FROM node:24-alpine AS release
 
 WORKDIR /scheduler
 
 ENV NODE_ENV="production"
 
-COPY --from=build /app/build/ /scheduler
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules/
 
-ENV USER_ID=1000
-ENV GROUP_ID=1000
+COPY --from=build /app/build/ ./build
+
+ENV USER_ID=1001
+ENV GROUP_ID=1001
 ENV USER_NAME=scheduler
 ENV GROUP_NAME=scheduler
 
@@ -36,4 +41,4 @@ RUN addgroup -g $GROUP_ID $GROUP_NAME && \
 USER $USER_NAME
 
 EXPOSE 3000/tcp
-ENTRYPOINT ["pnpm", "run", "start"]
+ENTRYPOINT ["node", "build"]
