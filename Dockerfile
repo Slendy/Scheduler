@@ -1,6 +1,7 @@
-FROM node:24 as build
+FROM node:24 AS build
 
 RUN apt-get update && \
+    npm install -g pnpm && \
     apt-get install -y git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -13,9 +14,9 @@ RUN pnpm install
 
 COPY . .
 
-RUN pnpm run build
+RUN pnpm build
 
-FROM node:24-alpine as release
+FROM node:24-alpine AS release
 
 WORKDIR /scheduler
 
